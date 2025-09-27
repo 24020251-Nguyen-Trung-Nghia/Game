@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 class Position {
     int x, y;
@@ -94,9 +95,13 @@ public class Game extends JPanel implements Runnable, KeyListener {
             paddleX = (WIDTH / 2) - (paddle.getWidth() / 2);
             paddleY = (HEIGHT - paddle.getHeight());
             paddlePosition = new Position(paddleX, paddleY);
+            paddlePosition.setBoundSize( paddle.getWidth(), paddle.getHeight());
 
             ballX = (WIDTH / 2) - (ball.getWidth() / 2);
             ballY = (HEIGHT - paddle.getHeight());
+
+            ballDx = -(new Random().nextInt(4) % 4 + 3);
+            ballDy = -5;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,19 +109,50 @@ public class Game extends JPanel implements Runnable, KeyListener {
     }
 
     public void update() {
-        if(right){
-            paddleX +=6;
-        }
-        if(left){
-            paddleX -=6;
+        ballX += ballDx;
+        for( int i =0; i< n; i++){
+            if(new Rectangle((ballX + 3), (ballY+ 3), 6, 6).intersects(blocksPosition[i].bounds)){
+                blocksPosition[i].setPosition(-100, 0);
+                ballDx =- ballDx;
+            }
         }
 
-        if(paddleX >= WIDTH - paddle.getWidth()){
+        ballY += ballDy;
+        for( int i =0; i< n; i++){
+            if(new Rectangle((ballX + 3),ballY +3, 6, 6 ).intersects(blocksPosition[i].bounds)){
+                blocksPosition[i].setPosition(-100, 0);
+                ballDy =- ballDy;
+            }
+        }
+
+        if (ballX < 0 || ballX > WIDTH - ball.getWidth()) {
+            ballDx = -ballDx;
+        }
+        if (ballY < 0 || ballY > HEIGHT - ball.getHeight()) {
+            ballDy = -ballDy;
+        }
+        if(ballY > HEIGHT - ball.getHeight()){
+            isRunning = false;
+        }
+
+        if (right) {
+            paddleX += 6;
+        }
+        if (left) {
+            paddleX -= 6;
+        }
+
+        if (paddleX >= WIDTH - paddle.getWidth()) {
             paddleX = WIDTH - paddle.getWidth();
         }
-        if(paddleX <=0){
-            paddleX =0;
+        if (paddleX <= 0) {
+            paddleX = 0;
         }
+
+        if(new Rectangle(ballX, ballY, 12, 12).intersects(paddlePosition.bounds)){
+            ballDy = -(new Random().nextInt(4) % 4 + 3);
+        }
+        paddlePosition.setPosition(paddleX, paddleY);
     }
 
     public void draw() {
@@ -126,6 +162,15 @@ public class Game extends JPanel implements Runnable, KeyListener {
 
         for (int i = 0; i < n; i++) {
             g.drawImage(block, blocksPosition[i].x, blocksPosition[i].y, block.getWidth(), block.getHeight(), null);
+        }
+
+        if(!isRunning) {
+            g.drawImage(gameOver,
+                    (WIDTH/2) -(gameOver.getWidth()/2),
+                    (HEIGHT/2) -  (gameOver.getHeight()/2),
+                    gameOver.getWidth(),
+                    gameOver.getHeight(),
+                    null);
         }
 
         Graphics g2 = getGraphics();
