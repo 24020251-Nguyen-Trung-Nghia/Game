@@ -1,9 +1,9 @@
-module org.example.demo {
+module org.example.game {
     requires javafx.controls;
     requires javafx.fxml;
 
     requires com.dlsc.formsfx;
 
-    opens org.example.demo to javafx.fxml;
-    exports org.example.demo;
+    opens org.example.game to javafx.fxml;
+    exports org.example.game;
 }
