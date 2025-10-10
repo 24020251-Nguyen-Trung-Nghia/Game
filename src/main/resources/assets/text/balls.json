@@ -1,0 +1,23 @@
+{
+  "balls": [
+    {
+      "id": 1,
+      "name": "default",
+      "sizeW": 20,
+      "sizeH": 20,
+      "visual": {
+        "sprite": "ball_default.png",
+        "frames": 24,
+        "frameW": 129,
+        "frameH": 129,
+        "frameDuration": 0.042
+      },
+      "sounds": {
+        "hitWall": "ball_wall.wav",
+        "hitPaddle": "ball_paddle.wav",
+        "lost": "oof.wav",
+        "hitLightning": "ball_lightning.wav"
+      }
+    }
+  ]
+}

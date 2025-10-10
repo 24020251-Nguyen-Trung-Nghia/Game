@@ -1,0 +1,55 @@
+{
+  "surprises": [
+    {
+      "id": 1,
+      "name": "multiball",
+      "visual": {
+        "sprite": "surprise_multiball.png",
+        "frames": 24,
+        "frameW": 59,
+        "frameH": 59,
+        "frameDuration": 0.042
+      },
+      "fallSpeed": 160,
+      "effect": "MULTIBALL",
+      "params": {
+        "count": 3
+      },
+      "spawnChance": 0.1,
+      "sound": "surprise_pickup.wav"
+    },
+    {
+      "id": 2,
+      "name": "safety_wall",
+      "visual": {
+        "sprite": "surprise_shield.png",
+        "frames": 24,
+        "frameW": 59,
+        "frameH": 59,
+        "frameDuration": 0.042
+      },
+      "fallSpeed": 140,
+      "effect": "SAFETY_WALL",
+      "params": {
+        "durationSec": 10
+      },
+      "spawnChance": 0.1,
+      "sound": "surprise_pickup.wav"
+    },
+    {
+      "id": 3,
+      "name": "bonus_life",
+      "visual": {
+        "sprite": "surprise_life.png",
+        "frames": 24,
+        "frameW": 59,
+        "frameH": 59,
+        "frameDuration": 0.08
+      },
+      "fallSpeed": 140,
+      "effect": "BONUS_LIFE",
+      "spawnChance": 0.042,
+      "sound": "bonus_life.wav"
+    }
+  ]
+}
