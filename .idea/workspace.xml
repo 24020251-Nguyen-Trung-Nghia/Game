@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="364587a4-f6d7-43fa-bfaf-dd5c1ba3e3f8" name="Changes" comment="README">
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarkanoid-21.0.1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Game.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ArkanoidApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigIO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigOptions.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/AudioMixer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/MusicBus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/MusicService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/SfxBus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BallAnimComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BallComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BrickComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/DebugHitboxViewComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/PaddleAnimComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/PaddleComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/SurpriseComponent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/BallEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/BrickEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/EntityRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/LevelEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/PaddleEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/Sprite.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/SurpriseEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/Axis.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/EntityType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/EventType.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/Resolution.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/GameSession.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/LevelBuilder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/LevelManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ResolutionManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/SurpriseService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/core/EventBus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/core/GameEvent.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/loaders/DefinitionsLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/loaders/LevelLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/HUDManager.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/InGameMenuUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/MainMenuUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/MouseUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/OptionsMenuUI.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/ShatteredOverlay.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/BallFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/PaddleFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/SurpriseFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/WallsFactory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/util/BallQueries.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/util/TextureUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_01.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_02.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_03.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_04.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/levels.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_01.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_02.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_03.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_04.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_05.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_cleared.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/loser.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/main_menu.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/scores.mp3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_lightning.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_paddle.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_wall.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/bonus_life.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/glass_brick_hit.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/metal_brick_hit.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/oof.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/regular_brick_hit.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/rubber_brick_hit.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/surprise.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/surprise_pickup.wav" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/balls.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/bricks.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/paddles.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/surprises.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/ball_default.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/black-red-square-rectangle-rq-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/colored-lines-hugging-shapes-5k-6u-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/flowing-objects-abstract-4k-cm-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/group-of-red-black-cubes-c8-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/modern-red-abstract-3d-shapes-r3-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/neon-cubes-pink-jt-2560x1440.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_glass.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_glass_break.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_immortal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_regular.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_rubber.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_ai.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_basic.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_default.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_gold.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_neon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_neon_retro.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_life.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_multiball.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_shield.png" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;24020251-Nguyen-Trung-Nghia&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/24020251-Nguyen-Trung-Nghia/Game.git&quot;,
+    &quot;accountId&quot;: &quot;bda3f831-1740-4ff2-b030-41b1019456c3&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;24020251-Nguyen-Trung-Nghia&quot;,
+    &quot;repository&quot;: &quot;Game&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="33oy124V33AT3k7eS8VCRTgaQcv" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.ArkanoidApp.executor": "Run",
+    "Application.Launcher.executor": "Run",
+    "Gradle.D:/Game/build.gradle.executor": "Run",
+    "Gradle.Game [:com.arkanoid.Launcher.main()].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
+    "git-widget-placeholder": "#1 on nghia__dev",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/admin/Downloads/ArkanoidFX-main/ArkanoidFX-main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.35172415",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="ArkanoidFX-main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="ArkanoidFX-main" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="ArkanoidFX-main" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Python.FlaskServer">
+      <module name="ArkanoidFX-main" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="ArkanoidFX-main" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
+        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="364587a4-f6d7-43fa-bfaf-dd5c1ba3e3f8" name="Changes" comment="" />
+      <created>1759997501018</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1759997501018</updated>
+      <workItem from="1759997502190" duration="1144000" />
+      <workItem from="1759999511051" duration="28000" />
+      <workItem from="1759999854827" duration="190000" />
+      <workItem from="1760023522246" duration="798000" />
+      <workItem from="1760054718369" duration="172000" />
+      <workItem from="1760063352246" duration="211000" />
+      <workItem from="1760067689983" duration="36000" />
+      <workItem from="1760078343193" duration="418000" />
+      <workItem from="1760108968821" duration="572000" />
+      <workItem from="1760109592533" duration="2630000" />
+    </task>
+    <task id="LOCAL-00001" summary="các file cơ bản. thay đổi gói tài nguyên">
+      <option name="closed" value="true" />
+      <created>1760024968732</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1760024968732</updated>
+    </task>
+    <task id="LOCAL-00002" summary="README">
+      <option name="closed" value="true" />
+      <created>1760063467183</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1760063467183</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="điều chỉnh tài nguyên, các hàm đơn giản" />
+    <MESSAGE value="các file cơ bản. thay đổi gói tài nguyên" />
+    <MESSAGE value="README" />
+    <option name="LAST_COMMIT_MESSAGE" value="README" />
+  </component>
+</project>
