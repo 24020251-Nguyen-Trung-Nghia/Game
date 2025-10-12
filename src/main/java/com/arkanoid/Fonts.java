@@ -12,7 +12,7 @@ public class Fonts {
 
     static {
         try {
-            emulogicName  = Font.loadFont(Fonts.class.getResourceAsStream("/com/arkanoid/Emulogic-zrEw.ttf"), 10).getName();
+            emulogicName  = Font.loadFont(Fonts.class.getResourceAsStream("/com.arkanoid/Emulogic-zrEw.ttf"), 10).getName();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
