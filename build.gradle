@@ -57,8 +57,8 @@ dependencies {
 }
 
 
-application.mainModule = 'eu.hansolo.fx.jarkanoid'
-mainClassName          = 'eu.hansolo.fx.jarkanoid.Launcher'
+application.mainModule = 'com.arkanoid'
+mainClassName          = 'com.arkanoid.Launcher'
 description            = 'Arkanoid clone written in JavaFX'
 
 
@@ -87,9 +87,9 @@ jar {
                 'Bundle-Name'           : project.name,
                 'Bundle-License'        : 'https://www.apache.org/licenses/LICENSE-2.0;description=Apache License Version 2.0;link=https://spdx.org/licenses/Apache-2.0.html',
                 'Bundle-Description'    : description,
-                'Bundle-SymbolicName'   : 'eu.hansolo.fx.jarkanoid',
+                'Bundle-SymbolicName'   : 'com.arkanoid',
                 'Class-Path'            : '${project.name}-${project.version}.jar',
-                'Main-Class'            : 'eu.hansolo.fx.jarkanoid.Launcher'
+                'Main-Class'            : 'com.arkanoid.Launcher'
         )
     }
 }
@@ -97,7 +97,7 @@ jar {
 
 // start the from gradle
 task Main(type: JavaExec) {
-    mainClass = "eu.hansolo.fx.jarkanoid.Launcher"
+    mainClass = "com.arkanoid.Launcher"
     classpath = sourceSets.main.runtimeClasspath
 }
 

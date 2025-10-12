@@ -435,7 +435,7 @@ public class Main extends Application {
             }
         });
 
-        stage.setTitle("JArkanoid");
+        stage.setTitle("Arkanoid");
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);

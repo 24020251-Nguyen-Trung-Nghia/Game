@@ -32,7 +32,7 @@ detected_modules=`$JAVA_HOME/bin/jdeps \
   --ignore-missing-deps \
   --print-module-deps \
   --class-path "build/installer/input/libs/*" \
-    build/classes/java/main/eu/hansolo/fx/jarkanoid/Main.class`
+    build/classes/java/main/com/arkanoid/Main.class`
 echo "detected modules: ${detected_modules}"
 
 
@@ -80,12 +80,12 @@ do
   --dest build/installer \
   --input build/installer/input/libs \
   --name Jarkanoid \
-  --main-class eu.hansolo.fx.jarkanoid.Launcher \
+  --main-class com.arkanoid.Launcher \
   --main-jar ${MAIN_JAR} \
   --java-options -Xmx2048m \
   --java-options '--enable-preview' \
   --runtime-image build/java-runtime \
-  --icon src/main/resources/eu/hansolo/fx/jarkanoid/icon.icns \
+  --icon src/main/resources/com/arkanoid/icon.icns \
   --app-version ${APP_VERSION} \
   --vendor "Gerrit Grunwald" \
   --copyright "Copyright © 2023 Gerrit Grunwald" \

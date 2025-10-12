@@ -25,7 +25,7 @@ echo detecting required modules
   --multi-release %JAVA_VERSION% ^
   --ignore-missing-deps ^
   --class-path "build\installer\input\libs\*" ^
-  --print-module-deps build\classes\java\main\eu\hansolo\fx\jarkanoid\Main.class > temp.txt
+  --print-module-deps build\classes\java\main\com\arkanoid\Main.class > temp.txt
 
 set /p detected_modules=<temp.txt
 
@@ -68,12 +68,12 @@ for %%s in ("msi" "exe") do call "%JAVA_HOME%\bin\jpackage" ^
   --dest build\installer ^
   --input build\installer\input\libs ^
   --name Jarkanoid ^
-  --main-class eu.hansolo.fx.jarkanoid.Launcher ^
+  --main-class com.arkanoid.Launcher ^
   --main-jar %MAIN_JAR% ^
   --java-options -Xmx2048m ^
   --java-options '--enable-preview' ^
   --runtime-image build\java-runtime ^
-  --icon src\main\resources\eu\hansolo\fx\jarkanoid\icon.ico ^
+  --icon src\main\resources\com\arkanoid\icon.ico ^
   --win-shortcut ^
   --win-menu ^
   --win-menu-group "Jarkanoid" ^

@@ -4,18 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="364587a4-f6d7-43fa-bfaf-dd5c1ba3e3f8" name="Changes" comment="README">
-      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarkanoid-21.0.1.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Game.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-15.15.15.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-15.51.15.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.26.48.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.26.57.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.48.06.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-23.34.24.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-10-Oct-2025-07.07.39.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/FXGL-10-Oct-2025-09.30.06.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/msibuilder.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ArkanoidApp.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigIO.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigOptions.java" beforeDir="false" />
@@ -112,6 +115,8 @@
       <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_life.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_multiball.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_shield.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/system/Readme.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/system/fxgl.bundle" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -126,14 +131,40 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="jarkanoid" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="jarkanoid" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="jarkanoid" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="other" type="c8890929:TasksNode$1" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -141,123 +172,86 @@
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
     &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;24020251-Nguyen-Trung-Nghia&quot;
+    &quot;assignee&quot;: &quot;HanSolo&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/24020251-Nguyen-Trung-Nghia/Game.git&quot;,
-    &quot;accountId&quot;: &quot;bda3f831-1740-4ff2-b030-41b1019456c3&quot;
-  },
-  &quot;recentNewPullRequestHead&quot;: {
-    &quot;server&quot;: {
-      &quot;useHttp&quot;: false,
-      &quot;host&quot;: &quot;github.com&quot;,
-      &quot;port&quot;: null,
-      &quot;suffix&quot;: null
-    },
-    &quot;owner&quot;: &quot;24020251-Nguyen-Trung-Nghia&quot;,
-    &quot;repository&quot;: &quot;Game&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/24020251-Nguyen-Trung-Nghia/Game.git",
+    "accountId": "bda3f831-1740-4ff2-b030-41b1019456c3"
   }
-}</component>
+}]]></component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="zkj3t0ds" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
-  <component name="ProjectId" id="33oy124V33AT3k7eS8VCRTgaQcv" />
+  <component name="ProjectId" id="2M3390bUxSiaKA3PWbIkTsvl1cs" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Application.ArkanoidApp.executor": "Run",
-    "Application.Launcher.executor": "Run",
-    "Gradle.D:/Game/build.gradle.executor": "Run",
-    "Gradle.Game [:com.arkanoid.Launcher.main()].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Gradle.jarkanoid [Main].executor": "Run",
+    "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Main.main()].executor": "Run",
+    "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Test.main()].executor": "Run",
+    "Gradle.jarkanoid-21.0.1.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "SHELLCHECK.PATH": "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
+    "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "#1 on nghia__dev",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/admin/Downloads/ArkanoidFX-main/ArkanoidFX-main",
+    "last_opened_file_path": "C:/Users/admin/Downloads/jarkanoid-21.0.1/jarkanoid-21.0.1",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
+    "project.structure.last.edited": "Modules",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.35172415",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RunManager">
-    <configuration default="true" type="JetRunConfigurationType">
-      <module name="ArkanoidFX-main" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <module name="ArkanoidFX-main" />
-      <option name="filePath" />
+    <configuration name="jarkanoid [Main]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="Main" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="ArkanoidFX-main" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Python.FlaskServer">
-      <module name="ArkanoidFX-main" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="launchJavascriptDebuger" value="false" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Tox" factoryName="Tox">
-      <module name="ArkanoidFX-main" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <method v="2" />
-    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.jarkanoid [Main]" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -267,50 +261,47 @@
       </set>
     </attachedChunks>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="364587a4-f6d7-43fa-bfaf-dd5c1ba3e3f8" name="Changes" comment="" />
-      <created>1759997501018</created>
+      <changelist id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="" />
+      <created>1676982283561</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1759997501018</updated>
-      <workItem from="1759997502190" duration="1144000" />
-      <workItem from="1759999511051" duration="28000" />
-      <workItem from="1759999854827" duration="190000" />
-      <workItem from="1760023522246" duration="798000" />
-      <workItem from="1760054718369" duration="172000" />
-      <workItem from="1760063352246" duration="211000" />
-      <workItem from="1760067689983" duration="36000" />
-      <workItem from="1760078343193" duration="418000" />
-      <workItem from="1760108968821" duration="572000" />
-      <workItem from="1760109592533" duration="2630000" />
+      <updated>1676982283561</updated>
+      <workItem from="1676982284591" duration="284000" />
+      <workItem from="1676984727538" duration="105000" />
+      <workItem from="1677000775317" duration="771000" />
+      <workItem from="1677001600815" duration="314000" />
+      <workItem from="1677050228669" duration="13242000" />
+      <workItem from="1677077562274" duration="598000" />
+      <workItem from="1677080733773" duration="341000" />
+      <workItem from="1677136879200" duration="28000" />
+      <workItem from="1677147143917" duration="1000" />
+      <workItem from="1677163181246" duration="5504000" />
+      <workItem from="1677222895143" duration="4470000" />
+      <workItem from="1677235419562" duration="15000" />
+      <workItem from="1677238295610" duration="1290000" />
+      <workItem from="1677263216061" duration="122000" />
+      <workItem from="1677271847954" duration="8000" />
+      <workItem from="1677337845008" duration="576000" />
+      <workItem from="1677406309666" duration="19000" />
+      <workItem from="1677406916933" duration="29000" />
+      <workItem from="1677793819001" duration="1294000" />
+      <workItem from="1684161153757" duration="1178000" />
+      <workItem from="1760080735073" duration="3499000" />
+      <workItem from="1760084315582" duration="595000" />
+      <workItem from="1760084967064" duration="154000" />
+      <workItem from="1760085133581" duration="709000" />
+      <workItem from="1760108172544" duration="22000" />
+      <workItem from="1760108773152" duration="5000" />
+      <workItem from="1760108873992" duration="93000" />
+      <workItem from="1760108975439" duration="1127000" />
+      <workItem from="1760111022565" duration="30000" />
     </task>
-    <task id="LOCAL-00001" summary="các file cơ bản. thay đổi gói tài nguyên">
-      <option name="closed" value="true" />
-      <created>1760024968732</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1760024968732</updated>
-    </task>
-    <task id="LOCAL-00002" summary="README">
-      <option name="closed" value="true" />
-      <created>1760063467183</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1760063467183</updated>
-    </task>
-    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="điều chỉnh tài nguyên, các hàm đơn giản" />
-    <MESSAGE value="các file cơ bản. thay đổi gói tài nguyên" />
-    <MESSAGE value="README" />
-    <option name="LAST_COMMIT_MESSAGE" value="README" />
   </component>
 </project>

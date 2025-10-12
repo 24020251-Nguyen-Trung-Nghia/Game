@@ -27,7 +27,7 @@ public class Constants {
     }
 
     protected static final String     HOME_FOLDER           = new StringBuilder(System.getProperty("user.home")).append(File.separator).toString();
-    protected static final String     PROPERTIES_FILE_NAME  = "jarkanoid.properties";
+    protected static final String     PROPERTIES_FILE_NAME  = "arkanoid.properties";
     protected static final String     HIGHSCORE_KEY         = "highscore";
     protected static final String     BALL_SPEED_KEY        = "ball_speed";
     protected static final String     BONUS_BLOCK_SPEED_KEY = "bonus_block_speed";
