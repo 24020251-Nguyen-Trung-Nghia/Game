@@ -4,119 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-15.15.15.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-15.51.15.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.26.48.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.26.57.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-22.48.06.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-09-Oct-2025-23.34.24.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-10-Oct-2025-07.07.39.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/FXGL-10-Oct-2025-09.30.06.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/msibuilder.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ArkanoidApp.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigIO.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/ConfigOptions.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/AudioMixer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/MusicBus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/MusicService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/audio/SfxBus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BallAnimComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BallComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/BrickComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/DebugHitboxViewComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/PaddleAnimComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/PaddleComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/components/SurpriseComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/BallEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/BrickEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/EntityRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/LevelEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/PaddleEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/Sprite.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/entities/SurpriseEntity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/Axis.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/EntityType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/EventType.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/enums/Resolution.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/GameSession.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/LevelBuilder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/LevelManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ResolutionManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/SurpriseService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/core/EventBus.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/core/GameEvent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/loaders/DefinitionsLoader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/loaders/LevelLoader.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/HUDManager.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/InGameMenuUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/MainMenuUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/MouseUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/OptionsMenuUI.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/ui/ShatteredOverlay.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/BallFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/PaddleFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/SurpriseFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/game/world/WallsFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/util/BallQueries.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/overb/arkanoidfx/util/TextureUtils.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_01.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_02.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_03.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/level_04.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/levels/levels.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_01.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_02.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_03.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_04.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_05.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/level_cleared.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/loser.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/main_menu.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/music/scores.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_lightning.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_paddle.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/ball_wall.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/bonus_life.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/glass_brick_hit.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/metal_brick_hit.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/oof.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/regular_brick_hit.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/rubber_brick_hit.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/surprise.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/sounds/surprise_pickup.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/balls.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/bricks.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/paddles.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/text/surprises.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/ball_default.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/black-red-square-rectangle-rq-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/colored-lines-hugging-shapes-5k-6u-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/flowing-objects-abstract-4k-cm-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/group-of-red-black-cubes-c8-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/modern-red-abstract-3d-shapes-r3-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/bg/neon-cubes-pink-jt-2560x1440.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_glass.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_glass_break.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_immortal.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_regular.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/brick_rubber.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_ai.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_basic.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_default.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_gold.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_neon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/paddle_neon_retro.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_life.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_multiball.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/assets/textures/surprise_shield.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/Readme.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/system/fxgl.bundle" beforeDir="false" />
+    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="tinh chỉnh">
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Fonts.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Fonts.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Fonts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Fonts.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,18 +40,7 @@
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="jarkanoid" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="jarkanoid" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="jarkanoid" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="other" type="c8890929:TasksNode$1" />
+                <item name="arkanoid" type="f1a62948:ProjectNode" />
               </path>
             </expand>
             <select />
@@ -175,12 +65,12 @@
     &quot;assignee&quot;: &quot;HanSolo&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/24020251-Nguyen-Trung-Nghia/Game.git",
-    "accountId": "bda3f831-1740-4ff2-b030-41b1019456c3"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/24020251-Nguyen-Trung-Nghia/Game.git&quot;,
+    &quot;accountId&quot;: &quot;273136d2-3e2c-4be2-8395-11b380c7a5ff&quot;
   }
-}]]></component>
+}</component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="zkj3t0ds" />
   </component>
@@ -197,6 +87,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Gradle.Game.executor": "Run",
     "Gradle.jarkanoid [Main].executor": "Run",
     "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Main.main()].executor": "Run",
     "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Test.main()].executor": "Run",
@@ -206,58 +97,30 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "#1 on nghia__dev",
+    "git-widget-placeholder": "#2 on nghia__dev",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/admin/Downloads/jarkanoid-21.0.1/jarkanoid-21.0.1",
+    "last_opened_file_path": "D:/Game",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
+    "project.structure.last.edited": "Problems",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.35172415",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
     "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
-    <configuration name="jarkanoid [Main]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="Main" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>false</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Gradle.jarkanoid [Main]" />
-      </list>
-    </recent_temporary>
-  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
-        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
       </set>
     </attachedChunks>
   </component>
@@ -298,10 +161,29 @@
       <workItem from="1760108873992" duration="93000" />
       <workItem from="1760108975439" duration="1127000" />
       <workItem from="1760111022565" duration="30000" />
+      <workItem from="1760250130549" duration="48000" />
+      <workItem from="1760250189894" duration="278000" />
     </task>
+    <task id="LOCAL-00001" summary="tinh chỉnh">
+      <option name="closed" value="true" />
+      <created>1760249159985</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1760249159985</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="tinh chỉnh" />
+    <option name="LAST_COMMIT_MESSAGE" value="tinh chỉnh" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
