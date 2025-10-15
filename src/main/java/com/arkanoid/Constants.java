@@ -4,7 +4,10 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * class chứa các hằng số (thông tin gạch, tên đường dẫn và các level và cách lấy các level đó)
+ * Các level tạm để ở đây, sau này ta sẽ tạo cách load file để tải level.
+ */
 public class Constants {
     protected enum BlockType {
         NONE(0),

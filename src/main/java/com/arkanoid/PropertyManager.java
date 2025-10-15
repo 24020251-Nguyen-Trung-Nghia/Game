@@ -21,6 +21,7 @@ public enum PropertyManager {
         properties = new Properties();
         // Load properties
         final String jdkMonPropertiesFilePath = new StringBuilder(Constants.HOME_FOLDER).append(Constants.PROPERTIES_FILE_NAME).toString();
+        //System.out.println("Loading properties from " + jdkMonPropertiesFilePath + ".");
 
         // Create properties file if not exists
         Path path = Paths.get(jdkMonPropertiesFilePath);

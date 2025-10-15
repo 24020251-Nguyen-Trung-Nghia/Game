@@ -455,7 +455,7 @@ public class Main extends Application {
 
     // ******************** Helper methods ************************************
     private void loadImages() {
-        logoImg               = new Image(getClass().getResourceAsStream("jarkanoid_logo.png"), 460, 118, true, false);
+        logoImg               = new Image(getClass().getResourceAsStream("arkanoid_logo.png"), 460, 118, true, false);
         copyrightImg          = new Image(getClass().getResourceAsStream("copyright.png"), 458, 115, true, false);
         bkgPatternImg1        = new Image(getClass().getResourceAsStream("backgroundPattern_1.png"), 68, 117, true, false);
         bkgPatternImg2        = new Image(getClass().getResourceAsStream("backgroundPattern_2.png"), 64, 64, true, false);
