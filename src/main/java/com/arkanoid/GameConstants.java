@@ -42,9 +42,9 @@ public class GameConstants {
 
     // Static initializer block
     static {
-        BALL_SPEED = Main.clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
-        BONUS_BLOCK_SPEED = Main.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
-        ENEMY_SPEED = Main.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
+        BALL_SPEED = Utils.clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
+        BONUS_BLOCK_SPEED = Utils.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
+        ENEMY_SPEED = Utils.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
         SCORE_WHITE = Color.WHITE;
 
         BORDER_BOUNDS = new Main.Bounds[]{

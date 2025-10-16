@@ -16,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
@@ -46,6 +45,7 @@ public class Main extends Application {
     private final Images images = new Images();
     private final AutoClips autoClips = new AutoClips();
     private final LoadImages loadImages = new LoadImages();
+    private final LoadSounds loadSounds = new LoadSounds();
     private final DrawBackground drawBackground = new DrawBackground(this);
 
 
@@ -413,60 +413,7 @@ public class Main extends Application {
     }
 
     private void loadSounds(AutoClips autoClips, Main main) {
-        autoClips.gameStartSnd = new AudioClip(main.getClass().getResource("game_start.wav").toExternalForm());
-        autoClips.startLevelSnd = new AudioClip(main.getClass().getResource("level_ready.wav").toExternalForm());
-        autoClips.ballPaddleSnd = new AudioClip(main.getClass().getResource("ball_paddle.wav").toExternalForm());
-        autoClips.ballBlockSnd = new AudioClip(main.getClass().getResource("ball_block.wav").toExternalForm());
-        autoClips.ballHardBlockSnd = new AudioClip(main.getClass().getResource("ball_hard_block.wav").toExternalForm());
-        autoClips.laserSnd = new AudioClip(main.getClass().getResource("gun.wav").toExternalForm());
-        autoClips.explosionSnd = new AudioClip(main.getClass().getResource("explosion.wav").toExternalForm());
-        autoClips.gameOverSnd = new AudioClip(main.getClass().getResource("game_over.wav").toExternalForm());
-    }
-
-    public static double clamp(final double min, final double max, final double value) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
-
-    private static int clamp(final int min, final int max, final int value) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
-
-    private static double computeLineIntersectionX(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
-        return computeLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4, true);
-    }
-
-    private static double computeLineIntersectionY(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
-        return computeLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4, false);
-    }
-
-    private static double computeLineIntersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4, final boolean x) {
-        final double a1 = y2 - y1;
-        final double b1 = x1 - x2;
-        final double c1 = a1 * x1 + b1 * y1;
-
-        final double a2 = y4 - y3;
-        final double b2 = x3 - x4;
-        final double c2 = a2 * x3 + b2 * y3;
-
-        final double delta = a1 * b2 - a2 * b1;
-        return x ? (b2 * c1 - b1 * c2) / delta : (a1 * c2 - a2 * c1) / delta;
-    }
-
-    private static double distance(final double x0, final double y0, final double x1, final double y1) {
-        final double dx = x1 - x0, dy = y1 - y0;
-        return Math.sqrt(dx * dx + dy * dy);
+        loadSounds.loadSounds(autoClips, main);
     }
 
 
@@ -686,7 +633,7 @@ public class Main extends Application {
                         nextLevelDoorOpen = true;
                     }
                     case BONUS_P -> {
-                        noOfLifes = clamp(2, 5, noOfLifes + 1);
+                        noOfLifes = Utils.clamp(2, 5, noOfLifes + 1);
                     }
                 }
             }
@@ -910,131 +857,6 @@ public class Main extends Application {
         }
     }
 
-
-    // ******************** Inner Classes *************************************
-    /*
-    Sprite (abstract) - Lớp cơ sở cho tất cả đối tượng
-    ├── AnimatedSprite (abstract) - Đối tượng có animation
-    │   ├── Paddle - Ván đỡ
-    │   ├── Blink - Hiệu ứng nhấp nháy khi phá block
-    │   ├── BonusBlock - Vật phẩm đặc biệt
-    │   ├── Enemy - Kẻ địch
-    │   ├── Explosion - Hiệu ứng nổ
-    │   └── OpenDoor - Cửa qua level
-    ├── Ball - Bóng
-    ├── Block - Gạch
-    └── Torpedo - Đạn laser
-    */
-    private abstract class Sprite {
-        public Image image;
-        public Bounds bounds;
-        public double x; // Center of Sprite in x-direction
-        public double y; // Center of Sprite in y-direction
-        public double r;
-        public double vX;
-        public double vY;
-        public double vR;
-        public double width;
-        public double height;
-        public double size;
-        public double radius;
-        public boolean toBeRemoved;
-
-
-        // ******************** Constructors **************************************
-        public Sprite() {
-            this(null, 0, 0, 0, 0, 0, 0);
-        }
-
-        public Sprite(final Image image) {
-            this(image, 0, 0, 0, 0, 0, 0);
-        }
-
-        public Sprite(final Image image, final double x, final double y) {
-            this(image, x, y, 0, 0, 0, 0);
-        }
-
-        public Sprite(final Image image, final double x, final double y, final double vX, final double vY) {
-            this(image, x, y, 0, vX, vY, 0);
-        }
-
-        public Sprite(final Image image, final double x, final double y, final double r, final double vX, final double vY) {
-            this(image, x, y, r, vX, vY, 0);
-        }
-
-        public Sprite(final Image image, final double x, final double y, final double r, final double vX, final double vY, final double vR) {
-            this.image = image;
-            this.x = x;
-            this.y = y;
-            this.r = r;
-            this.vX = vX;
-            this.vY = vY;
-            this.vR = vR;
-            this.width = null == image ? 0 : image.getWidth();
-            this.height = null == image ? 0 : image.getHeight();
-            this.size = this.width > this.height ? width : height;
-            this.radius = this.size * 0.5;
-            this.toBeRemoved = false;
-            this.bounds = null == image ? new Bounds(0, 0, 0, 0) : new Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());
-        }
-
-
-        // ******************** Methods *******************************************
-        protected void init() {
-        }
-
-        public void respawn() {
-        }
-
-        public abstract void update();
-    }
-
-    private abstract class AnimatedSprite extends Sprite {
-        protected final int maxFrameX;
-        protected final int maxFrameY;
-        protected double scale;
-        protected int countX;
-        protected int countY;
-
-
-        // ******************** Constructors **************************************
-        public AnimatedSprite(final int maxFrameX, final int maxFrameY, final double scale) {
-            this(0, 0, 0, 0, 0, 0, maxFrameX, maxFrameY, scale);
-        }
-
-        public AnimatedSprite(final double x, final double y, final double vX, final double vY, final int maxFrameX, final int maxFrameY, final double scale) {
-            this(x, y, 0, vX, vY, 0, maxFrameX, maxFrameY, scale);
-        }
-
-        public AnimatedSprite(final double x, final double y, final double r, final double vX, final double vY, final double vR, final int maxFrameX, final int maxFrameY, final double scale) {
-            super(null, x, y, r, vX, vY, vR);
-            this.maxFrameX = maxFrameX;
-            this.maxFrameY = maxFrameY;
-            this.scale = scale;
-            this.countX = 0;
-            this.countY = 0;
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            x += vX;
-            y += vY;
-
-            countX++;
-            if (countX == maxFrameX) {
-                countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
-                    toBeRemoved = true;
-                }
-                countX = 0;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-        }
-    }
 
     private class Paddle extends AnimatedSprite {
 
@@ -1622,7 +1444,7 @@ public class Main extends Application {
             boolean hit = false, inverseVy = false, inverseVx = false;
             // Did the ball hit the bottom border?
             if (y0 >= maxYr && y1 <= maxYr) { // Means that the ball crossed the bottom line (while moving up)
-                xHit = computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
+                xHit = Utils.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
                 hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
                 if (hit) {
                     yHit = maxYr;
@@ -1631,7 +1453,7 @@ public class Main extends Application {
             }
             // If not, did it hit the top border?
             if (!hit && y0 <= minYr && y1 >= minYr) { // Means that the ball crossed the top line (while moving down)
-                xHit = computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
+                xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
                 hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
                 if (hit) {
                     yHit = minYr;
@@ -1640,7 +1462,7 @@ public class Main extends Application {
             }
             // If not, did it hit the left border?
             if (!hit && x0 <= minXr && x1 >= minXr) { // Means that the ball crossed the left line (while moving to right)
-                yHit = computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
+                yHit = Utils.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
                 hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
                 if (hit) {
                     xHit = minXr;
@@ -1649,7 +1471,7 @@ public class Main extends Application {
             }
             // If not, did it hit the right border?
             if (!hit && x0 >= maxXr && x1 <= maxXr) { // Means that the ball crossed the right line (while moving to left)
-                yHit = computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
+                yHit = Utils.computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
                 hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
                 if (hit) {
                     xHit = maxXr;
@@ -1659,7 +1481,7 @@ public class Main extends Application {
             // If not, is the ball inside the bounds? (this may happen with the paddle moving quickly)
             if (!hit && contains(x1, y1)) {
                 hit = true;
-                xHit = computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
+                xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
                 yHit = minYr;
                 //x0 = x1 = xHit;
                 //y0 = y1 = yHit;
@@ -1672,8 +1494,8 @@ public class Main extends Application {
             ballHit.yHit = yHit;
             ballHit.inverseVx = inverseVx;
             ballHit.inverseVy = inverseVy;
-            ballHit.beforeHitDistance = distance(x0, y0, xHit, yHit);
-            double afterHitDistance = distance(xHit, yHit, x1, y1);
+            ballHit.beforeHitDistance = Utils.distance(x0, y0, xHit, yHit);
+            double afterHitDistance = Utils.distance(xHit, yHit, x1, y1);
             ballHit.correctedX = inverseVx ? xHit - (x1 - xHit) * afterHitDistance : x1;
             ballHit.correctedY = inverseVy ? yHit - (y1 - yHit) * afterHitDistance : y1;
             return ballHit;
