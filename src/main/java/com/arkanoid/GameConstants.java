@@ -30,7 +30,7 @@ public class GameConstants {
     static final Font SCORE_FONT = Fonts.emulogic(20);
     static final Color HIGH_SCORE_RED = Color.rgb(229, 2, 1);
     static final Color TEXT_GRAY = Color.rgb(216, 216, 216);
-    static final int BONUS_BLOCK_INTERVAL = 10;
+    static final int BONUS_BLOCK_INTERVAL = 10;  // Cứ 10 cái thì 1 buff
     final static double BIG_VALUE = 100_000;
 
     // Các biến cần khởi tạo từ PropertyManager
@@ -38,19 +38,19 @@ public class GameConstants {
     static final double BONUS_BLOCK_SPEED;
     static final double ENEMY_SPEED;
     static final Color SCORE_WHITE;
-    final static Main.Bounds[] BORDER_BOUNDS;
+    final static Bounds[] BORDER_BOUNDS;
 
     // Static initializer block
     static {
-        BALL_SPEED = Main.clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
-        BONUS_BLOCK_SPEED = Main.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
-        ENEMY_SPEED = Main.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
+        BALL_SPEED = Utils.clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
+        BONUS_BLOCK_SPEED = Utils.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
+        ENEMY_SPEED = Utils.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
         SCORE_WHITE = Color.WHITE;
 
-        BORDER_BOUNDS = new Main.Bounds[]{
-                new Main.Bounds(-BIG_VALUE + INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
-                new Main.Bounds(WIDTH - INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
-                new Main.Bounds(-BIG_VALUE, -BIG_VALUE + UPPER_INSET, 2 * BIG_VALUE, BIG_VALUE)
+        BORDER_BOUNDS = new Bounds[]{
+                new Bounds(-BIG_VALUE + INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
+                new Bounds(WIDTH - INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
+                new Bounds(-BIG_VALUE, -BIG_VALUE + UPPER_INSET, 2 * BIG_VALUE, BIG_VALUE)
         };
     }
 

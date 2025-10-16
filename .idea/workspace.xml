@@ -4,13 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="Debuff">
+=======
+    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="Tách Main">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Ball.java" afterDir="false" />
+>>>>>>> nghia_dev
       <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -23,6 +29,17 @@
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid/magentaBlock.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/arkanoid/magentaBlock.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid/redBlock.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/arkanoid/redBlock.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid/yellowBlock.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/arkanoid/yellowBlock.png" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Ball.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Ball.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Enemy.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Enemy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/GameConstants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/GameConstants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Launcher.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" afterDir="false" />
+>>>>>>> nghia_dev
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,6 +103,9 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -94,6 +114,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;Gradle.Build Game.executor&quot;: &quot;Run&quot;,
@@ -129,9 +150,57 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.Download Sources.executor": "Run",
+    "Gradle.Game [:com.arkanoid.Launcher.main()].executor": "Run",
+    "Gradle.Game [:com.arkanoid.Main.main()].executor": "Run",
+    "Gradle.Game.executor": "Run",
+    "Gradle.jarkanoid [Main].executor": "Run",
+    "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Main.main()].executor": "Run",
+    "Gradle.jarkanoid-21.0.1 [:eu.hansolo.fx.jarkanoid.Test.main()].executor": "Run",
+    "Gradle.jarkanoid-21.0.1.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
+    "WebServerToolWindowFactoryState": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "nghia__dev",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/Game",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.35172415",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="C:\Users\admin\AppData\Local\Temp\qodana_output\qodana.sarif.json" reportGuid="8c302c13-966a-4d9e-b8a7-6faa8d7c4e20" reportId="arkanoid/qodana/2025-10-16" />
+    </option>
+  </component>
+>>>>>>> nghia_dev
   <component name="RecentsManager">
+    <key name="ExtractSuperBase.RECENT_KEYS">
+      <recent name="com.arkanoid" />
+    </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.arkanoid" />
       <recent name="com.arkanoid.qq" />
+    </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
       <recent name="com.arkanoid" />
     </key>
   </component>
@@ -195,6 +264,7 @@
       <workItem from="1760250130549" duration="48000" />
       <workItem from="1760250189894" duration="278000" />
       <workItem from="1760323340371" duration="2078000" />
+      <workItem from="1760619893822" duration="725000" />
     </task>
     <task id="LOCAL-00001" summary="tinh chỉnh">
       <option name="closed" value="true" />
@@ -228,7 +298,39 @@
       <option name="project" value="LOCAL" />
       <updated>1760598995294</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Load sounds">
+      <option name="closed" value="true" />
+      <created>1760601010539</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1760601010539</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Một vài kế thừa">
+      <option name="closed" value="true" />
+      <created>1760602761173</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1760602761173</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Một vài kế thừa">
+      <option name="closed" value="true" />
+      <created>1760602849414</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1760602849414</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Tách Main">
+      <option name="closed" value="true" />
+      <created>1760617719904</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1760617719904</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -248,7 +350,10 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="tinh chỉnh" />
     <MESSAGE value="Debuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="Debuff" />
+    <MESSAGE value="Load sounds" />
+    <MESSAGE value="Một vài kế thừa" />
+    <MESSAGE value="Tách Main" />
+    <option name="LAST_COMMIT_MESSAGE" value="Tách Main" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
