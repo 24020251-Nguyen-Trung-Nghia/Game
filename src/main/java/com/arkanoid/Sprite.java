@@ -18,7 +18,8 @@ Sprite (abstract) - Lớp cơ sở cho tất cả đối tượng
 */
 abstract class Sprite {
     public Image image;
-    public Main.Bounds bounds;
+
+    public Bounds bounds;
     public double x; // Center of Sprite in x-direction
     public double y; // Center of Sprite in y-direction
     public double r;
@@ -28,6 +29,7 @@ abstract class Sprite {
     public double width;
     public double height;
     public double size;
+
     public double radius;
     public boolean toBeRemoved;
 
@@ -66,7 +68,7 @@ abstract class Sprite {
         this.size = this.width > this.height ? width : height;
         this.radius = this.size * 0.5;
         this.toBeRemoved = false;
-        this.bounds = null == image ? new Main.Bounds(0, 0, 0, 0) : new Main.Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());
+        this.bounds = null == image ? new Bounds(0, 0, 0, 0) : new Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());
     }
 
 
@@ -78,4 +80,15 @@ abstract class Sprite {
     }
 
     public abstract void update();
+
+    public Bounds getBounds() {
+        if (this.bounds == null) {
+            this.bounds = new Bounds(0, 0, 0, 0);
+        }
+        return this.bounds;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
 }

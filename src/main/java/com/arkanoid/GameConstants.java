@@ -38,7 +38,7 @@ public class GameConstants {
     static final double BONUS_BLOCK_SPEED;
     static final double ENEMY_SPEED;
     static final Color SCORE_WHITE;
-    final static Main.Bounds[] BORDER_BOUNDS;
+    final static Bounds[] BORDER_BOUNDS;
 
     // Static initializer block
     static {
@@ -47,10 +47,10 @@ public class GameConstants {
         ENEMY_SPEED = Utils.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
         SCORE_WHITE = Color.WHITE;
 
-        BORDER_BOUNDS = new Main.Bounds[]{
-                new Main.Bounds(-BIG_VALUE + INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
-                new Main.Bounds(WIDTH - INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
-                new Main.Bounds(-BIG_VALUE, -BIG_VALUE + UPPER_INSET, 2 * BIG_VALUE, BIG_VALUE)
+        BORDER_BOUNDS = new Bounds[]{
+                new Bounds(-BIG_VALUE + INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
+                new Bounds(WIDTH - INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),
+                new Bounds(-BIG_VALUE, -BIG_VALUE + UPPER_INSET, 2 * BIG_VALUE, BIG_VALUE)
         };
     }
 

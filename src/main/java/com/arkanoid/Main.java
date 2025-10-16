@@ -54,9 +54,7 @@ public class Main extends Application {
 
     // Biến điều khiển game
     private boolean running;           // Game đang chạy?
-    public boolean isRunning() {
-        return running;
-    }
+
 
     private Instant gameStartTime;     // Thời điểm bắt đầu game
     private long levelStartTime;       // Thời điểm bắt đầu level
@@ -74,20 +72,9 @@ public class Main extends Application {
     private Canvas brdrCanvas;
     private GraphicsContext brdrCtx;
 
-    public Images getImages() {
-        return images;
-    }
 
     public GraphicsContext getBrdrCtx() {
         return brdrCtx;
-    }
-
-    public GraphicsContext getCtx() {
-        return ctx;
-    }
-
-    public GraphicsContext getBkgCtx() {
-        return bkgCtx;
     }
 
     // Các đối tượng game
@@ -101,11 +88,8 @@ public class Main extends Application {
 
     // Thống kê game
     private int noOfLifes = 3;        // Số mạng
-    private long score = 0;           // Điểm số
+    public long score = 0;           // Điểm số
     private long highscore;           // Điểm cao nhất
-    public long getHighscore() {
-        return highscore;
-    }
     private int level = 1;            // Level hiện tại
 
     private EnumDefinitions.PaddleState paddleState;
@@ -113,9 +97,9 @@ public class Main extends Application {
     // Trạng thái đặc biệt
     private boolean stickyPaddle = false;     // Bóng có dính vào paddle không?
     private boolean nextLevelDoorOpen = false;// Cửa qua level có mở không?
-    private boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
+    public boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
 
-    private int animateInc;
+    public int animateInc;
     private List<Blink> blinks;
     private double ballSpeed;
     private boolean readyLevelVisible;
@@ -125,12 +109,9 @@ public class Main extends Application {
     private double nextLevelDoorAlpha;
     private OpenDoor openDoor;
     private boolean showStartHint;
-    public boolean isShowStartHint() {
-        return showStartHint;
-    }
 
     private int silverBlockMaxHits;
-    private int blockCounter;
+    public int blockCounter;
 
     private List<Explosion> explosions;
     private Pos enemySpawnPosition;
@@ -138,6 +119,212 @@ public class Main extends Application {
     private double topRightDoorAlpha;
     private FIFO<Block> blockFifo;
     private EventHandler<MouseEvent> mouseHandler;
+
+
+    // ***************** Getter *****************************
+    public boolean isRunning() {
+        return running;
+    }
+
+    public GraphicsContext getCtx() {
+        return ctx;
+    }
+
+    public GraphicsContext getBkgCtx() {
+        return bkgCtx;
+    }
+
+    public Images getImages() {
+        return images;
+    }
+
+    public long getHighscore() {
+        return highscore;
+    }
+
+    public boolean isShowStartHint() {
+        return showStartHint;
+    }
+
+    public AutoClips getAutoClips() {
+        return autoClips;
+    }
+
+    public LoadImages getLoadImages() {
+        return loadImages;
+    }
+
+    public LoadSounds getLoadSounds() {
+        return loadSounds;
+    }
+
+    public DrawBackground getDrawBackground() {
+        return drawBackground;
+    }
+
+    public ScheduledExecutorService getExecutor() {
+        return executor;
+    }
+
+    public Instant getGameStartTime() {
+        return gameStartTime;
+    }
+
+    public long getLevelStartTime() {
+        return levelStartTime;
+    }
+
+    public AnimationTimer getTimer() {
+        return timer;
+    }
+
+    public long getLastTimerCall() {
+        return lastTimerCall;
+    }
+
+    public long getLastAnimCall() {
+        return lastAnimCall;
+    }
+
+    public long getLastBonusAnimCall() {
+        return lastBonusAnimCall;
+    }
+
+    public long getLastEnemyUpdateCall() {
+        return lastEnemyUpdateCall;
+    }
+
+    public long getLastOneSecondCheck() {
+        return lastOneSecondCheck;
+    }
+
+    public Canvas getBkgCanvas() {
+        return bkgCanvas;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
+    }
+
+    public Canvas getBrdrCanvas() {
+        return brdrCanvas;
+    }
+
+    public Paddle getPaddle() {
+        return paddle;
+    }
+
+    public List<Ball> getBalls() {
+        return balls;
+    }
+
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    public List<BonusBlock> getBonusBlocks() {
+        return bonusBlocks;
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
+    }
+
+    public List<Torpedo> getTorpedoes() {
+        return torpedoes;
+    }
+
+    public int getNoOfLifes() {
+        return noOfLifes;
+    }
+
+    public long getScore() {
+        return score;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public EnumDefinitions.PaddleState getPaddleState() {
+        return paddleState;
+    }
+
+    public boolean isStickyPaddle() {
+        return stickyPaddle;
+    }
+
+    public boolean isNextLevelDoorOpen() {
+        return nextLevelDoorOpen;
+    }
+
+    public boolean isMovingPaddleOut() {
+        return movingPaddleOut;
+    }
+
+    public int getAnimateInc() {
+        return animateInc;
+    }
+
+    public List<Blink> getBlinks() {
+        return blinks;
+    }
+
+    public double getBallSpeed() {
+        return ballSpeed;
+    }
+
+    public boolean isReadyLevelVisible() {
+        return readyLevelVisible;
+    }
+
+    public int getPaddleResetCounter() {
+        return paddleResetCounter;
+    }
+
+    public int getSpeedResetCounter() {
+        return speedResetCounter;
+    }
+
+    public int getNextLevelDoorCounter() {
+        return nextLevelDoorCounter;
+    }
+
+    public double getNextLevelDoorAlpha() {
+        return nextLevelDoorAlpha;
+    }
+
+    public OpenDoor getOpenDoor() {
+        return openDoor;
+    }
+
+    public int getSilverBlockMaxHits() {
+        return silverBlockMaxHits;
+    }
+
+    public int getBlockCounter() {
+        return blockCounter;
+    }
+
+    public List<Explosion> getExplosions() {
+        return explosions;
+    }
+
+    public Pos getEnemySpawnPosition() {
+        return enemySpawnPosition;
+    }
+
+    public double getTopLeftDoorAlpha() {
+        return topLeftDoorAlpha;
+    }
+
+    public double getTopRightDoorAlpha() {
+        return topRightDoorAlpha;
+    }
+
+    public FIFO<Block> getBlockFifo() {
+        return blockFifo;
+    }
 
 
     // ******************** Methods *******************************************
@@ -328,7 +515,7 @@ public class Main extends Application {
 
 
         // Initialize paddles
-        paddle = new Paddle();
+        paddle = new Paddle(this);
 
         // Initialize level
         balls = new CopyOnWriteArrayList<>();
@@ -409,7 +596,7 @@ public class Main extends Application {
 
     // ******************** Helper methods ************************************
     private void loadImages(Images images, Main main) {
-      loadImages.loadImages(images, main);
+        loadImages.loadImages(images, main);
     }
 
     private void loadSounds(AutoClips autoClips, Main main) {
@@ -858,119 +1045,7 @@ public class Main extends Application {
     }
 
 
-    private class Paddle extends AnimatedSprite {
-
-        // ******************** Constructors **************************************
-        public Paddle() {
-            super(GameConstants.WIDTH * 0.5 - paddleState.width * 0.5, GameConstants.HEIGHT - GameConstants.PADDLE_OFFSET_Y, 0, 0, 8, 8, 1.0);
-            init();
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        protected void init() {
-            this.width = paddleState.width;
-            this.height = paddleState.height;
-            this.size = height;
-            this.radius = size * 0.5;
-            this.bounds.set(this.x, this.y, paddleState.width, this.height);
-        }
-
-        @Override
-        public void respawn() {
-            this.x = GameConstants.WIDTH * 0.5;
-            this.bounds.set(this.x, this.y, paddleState.width, this.height);
-            this.vX = 0;
-            this.vY = 0;
-        }
-
-        @Override
-        public void update() {
-            x += vX;
-
-            if (x + paddleState.width > GameConstants.WIDTH - GameConstants.INSET) {
-                if (nextLevelDoorOpen && !movingPaddleOut) {
-                    movingPaddleOut = true;
-                }
-                x = GameConstants.WIDTH - GameConstants.INSET - paddleState.width;
-            }
-            if (x < GameConstants.INSET) {
-                x = GameConstants.INSET;
-            }
-            this.bounds.set(this.x, this.y, paddleState.width, this.height);
-
-            countX = animateInc;
-            if (countX == maxFrameX) {
-                countX = 0;
-                animateInc = 0;
-                countY++;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-        }
-    }
-
-    private class Blink extends AnimatedSprite {
-
-        // ******************** Constructors **************************************
-        public Blink(final double x, final double y) {
-            super(x, y, 0, 0, 8, 3, 1.0);
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            countX++;
-            if (countX == maxFrameX) {
-                countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
-                    toBeRemoved = true;
-                }
-                countX = 0;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-        }
-    }
-
-    private class BonusBlock extends AnimatedSprite {
-        public EnumDefinitions.BonusType bonusType;
-
-
-        // ******************** Constructors **************************************
-        public BonusBlock(final double x, final double y, final EnumDefinitions.BonusType bonusType) {
-            super(x, y, 0, GameConstants.BONUS_BLOCK_SPEED, 5, 4, 1.0);
-            this.bonusType = bonusType;
-            this.width = GameConstants.BLOCK_WIDTH;
-            this.height = GameConstants.BLOCK_HEIGHT;
-            this.bounds.set(x, y, width, height);
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            y += vY;
-            if (y > GameConstants.HEIGHT) {
-                toBeRemoved = true;
-            }
-            countX++;
-            if (countX == maxFrameX) {
-                countY++;
-                countX = 0;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-            this.bounds.set(this.x, this.y, this.width, this.height);
-        }
-    }
-
-    private class Ball extends Sprite {
+    public class Ball extends Sprite {
         public boolean active;
         public long bornTimestamp;
 
@@ -981,7 +1056,7 @@ public class Main extends Application {
         }
 
         public Ball(final Image image, final double x, final double y, final double vX, final boolean active) {
-            super(image, paddle.bounds.centerX, paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1, 0, -ballSpeed);
+            super(image, getPaddle().bounds.centerX, getPaddle().bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1, 0, -getBallSpeed());
             this.vX = vX;
             this.active = active;
             this.bornTimestamp = Instant.now().getEpochSecond();
@@ -998,8 +1073,8 @@ public class Main extends Application {
         @Override
         public void update() {
             if (!active) {
-                this.x = paddle.bounds.centerX;
-                this.y = paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
+                this.x = getPaddle().bounds.centerX;
+                this.y = getPaddle().bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
             } else { // We need to check if the ball hits a block
                 double x0 = x;       // (x0, y0) = initial coordinates, (x1, y1) = final coordinates in case there is no hit
                 double y0 = y;
@@ -1012,8 +1087,8 @@ public class Main extends Application {
                     double fy0 = y0;
                     double fx1 = x1;
                     double fy1 = y1;
-                    BallHit ballHit = Stream.concat(blocks.stream().map(b -> b.bounds),                              // Iterating over all block bounds
-                                    Stream.concat(Arrays.stream(GameConstants.BORDER_BOUNDS), Stream.of(paddle.bounds)))         // together with the borders and paddle bounds (processed identically)
+                    BallHit ballHit = Stream.concat(getBlocks().stream().map(b -> b.bounds),                              // Iterating over all block bounds
+                                    Stream.concat(Arrays.stream(GameConstants.BORDER_BOUNDS), Stream.of(getPaddle().bounds)))         // together with the borders and paddle bounds (processed identically)
                             .map(bounds -> bounds.computeBallHit(fx0, fy0, fx1, fy1, radius))        // computing a possible ball hit with the bounds (returns null if no hits)
                             .filter(Objects::nonNull)                                                // removing non-hits
                             // If that trajectory (x0, y0) -> (x1, y1) hits several blocks, we keep the first hit block
@@ -1038,8 +1113,8 @@ public class Main extends Application {
                     x1 = ballHit.correctedX;
                     y1 = ballHit.correctedY;
                     // But before looping, we manage some special case when hitting the paddle or the blocks
-                    if (ballHit.hitBounds == paddle.bounds) {
-                        Bounds pb = paddle.bounds;
+                    if (ballHit.hitBounds == getPaddle().bounds) {
+                        Bounds pb = getPaddle().bounds;
                         if (stickyPaddle) {
                             this.x = pb.centerX;
                             this.y = pb.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
@@ -1047,7 +1122,7 @@ public class Main extends Application {
                             break;
                         } else {
                             // Influence vX of ball if vX of paddle != 0
-                            if (paddle.vX != 0) {
+                            if (getPaddle().vX != 0) {
                                 double speedXY = Math.sqrt(vX * vX + vY * vY);
                                 double posX = (x1 - pb.centerX) / (pb.width * 0.5);
                                 double speedX = speedXY * posX * GameConstants.BALL_VX_INFLUENCE;
@@ -1084,7 +1159,7 @@ public class Main extends Application {
                         playSound(autoClips.ballPaddleSnd);
                     }
                     // We retrieve the block hit by the ball for the hit sound, block blink & score management:
-                    Block block = blocks.stream().filter(b -> b.bounds == ballHit.hitBounds).findFirst().orElse(null);
+                    Block block = getBlocks().stream().filter(b -> b.bounds == ballHit.hitBounds).findFirst().orElse(null);
                     if (block != null) { // Can be null if the ball hit something else (paddle or border)
                         switch (block.blockType) {
                             case GOLD -> {
@@ -1177,49 +1252,7 @@ public class Main extends Application {
         }
     }
 
-    private class Torpedo extends Sprite {
-
-        // ******************** Constructors **************************************
-        public Torpedo(final Image image, final double x, final double y) {
-            super(image, x, y - image.getHeight(), 0, GameConstants.TORPEDO_SPEED);
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            y -= vY;
-            this.bounds.set(this.x - this.width * 0.5, this.y - this.height * 0.5, this.width, this.height);
-            if (bounds.minY < GameConstants.UPPER_INSET) {
-                toBeRemoved = true;
-            }
-        }
-    }
-
-    private class OpenDoor extends AnimatedSprite {
-
-        // ******************** Constructors **************************************
-        public OpenDoor(final double x, final double y) {
-            super(x, y, 0, 0, 3, 0, 1.0);
-            this.bounds.set(x, y, width, height);
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            countX++;
-            if (countX == maxFrameX) {
-                countY++;
-                countX = 0;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-        }
-    }
-
-    private class Enemy extends AnimatedSprite {
+    public class Enemy extends AnimatedSprite {
         public EnumDefinitions.EnemyType enemyType;
         private double initialVx;
 
@@ -1302,168 +1335,6 @@ public class Main extends Application {
                     countY = 0;
                 }
             }
-        }
-    }
-
-    private class Explosion extends AnimatedSprite {
-
-        // ******************** Constructors **************************************
-        public Explosion(final double x, final double y, final double vX, final double vY, final double scale) {
-            super(x, y, vX, vY, 4, 4, scale);
-        }
-
-
-        // ******************** Methods *******************************************
-        @Override
-        public void update() {
-            x += vX;
-            y += vY;
-
-            countX++;
-            if (countX == maxFrameX) {
-                countY++;
-                if (countX == maxFrameX && countY == maxFrameY) {
-                    toBeRemoved = true;
-                }
-                countX = 0;
-                if (countY == maxFrameY) {
-                    countY = 0;
-                }
-            }
-        }
-    }
-
-    public static class Bounds {
-        public double x;
-        public double y;
-        public double width;
-        public double height;
-        public double minX;
-        public double minY;
-        public double maxX;
-        public double maxY;
-        public double centerX;
-        public double centerY;
-
-
-        // ******************** Constructors **************************************
-        public Bounds() {
-            this(0, 0, 0, 0);
-        }
-
-        public Bounds(final double width, final double height) {
-            this(0, 0, width, height);
-        }
-
-        public Bounds(final double x, final double y, final double width, final double height) {
-            set(x, y, width, height);
-        }
-
-
-        // ******************** Methods *******************************************
-        public void set(final Bounds bounds) {
-            set(bounds.x, bounds.y, bounds.width, bounds.height);
-        }
-
-        public void set(final double x, final double y, final double width, final double height) {
-            this.x = x;
-            this.y = y;
-            this.width = width;
-            this.height = height;
-            this.minX = x;
-            this.minY = y;
-            this.maxX = x + width;
-            this.maxY = y + height;
-            this.centerX = x + width * 0.5;
-            this.centerY = y + height * 0.5;
-        }
-
-        public boolean contains(final double x, final double y) {
-            return x >= minX && x <= maxX && y >= minY && y <= maxY;
-        }
-
-        public boolean intersects(final Bounds other) {
-            return other.minX <= maxX && minX <= other.maxX && other.minY <= maxY && minY <= other.maxY;
-        }
-
-        private BallHit computeBallHit(double x0, double y0, double x1, double y1, double r) {
-            // Increased +r bounds to simplify computation and focus only on ball center
-            double minXr = minX - r, minYr = minY - r, maxXr = maxX + r, maxYr = maxY + r;
-            double yHit = 0, xHit = 0;
-            boolean hit = false, inverseVy = false, inverseVx = false;
-            // Did the ball hit the bottom border?
-            if (y0 >= maxYr && y1 <= maxYr) { // Means that the ball crossed the bottom line (while moving up)
-                xHit = Utils.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
-                hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
-                if (hit) {
-                    yHit = maxYr;
-                    inverseVy = true;
-                }
-            }
-            // If not, did it hit the top border?
-            if (!hit && y0 <= minYr && y1 >= minYr) { // Means that the ball crossed the top line (while moving down)
-                xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
-                hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
-                if (hit) {
-                    yHit = minYr;
-                    inverseVy = true;
-                }
-            }
-            // If not, did it hit the left border?
-            if (!hit && x0 <= minXr && x1 >= minXr) { // Means that the ball crossed the left line (while moving to right)
-                yHit = Utils.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
-                hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
-                if (hit) {
-                    xHit = minXr;
-                    inverseVx = true;
-                }
-            }
-            // If not, did it hit the right border?
-            if (!hit && x0 >= maxXr && x1 <= maxXr) { // Means that the ball crossed the right line (while moving to left)
-                yHit = Utils.computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
-                hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
-                if (hit) {
-                    xHit = maxXr;
-                    inverseVx = true;
-                }
-            }
-            // If not, is the ball inside the bounds? (this may happen with the paddle moving quickly)
-            if (!hit && contains(x1, y1)) {
-                hit = true;
-                xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
-                yHit = minYr;
-                //x0 = x1 = xHit;
-                //y0 = y1 = yHit;
-                inverseVy = true;
-            }
-            if (!hit)
-                return null;
-            BallHit ballHit = new BallHit(this);
-            ballHit.xHit = xHit;
-            ballHit.yHit = yHit;
-            ballHit.inverseVx = inverseVx;
-            ballHit.inverseVy = inverseVy;
-            ballHit.beforeHitDistance = Utils.distance(x0, y0, xHit, yHit);
-            double afterHitDistance = Utils.distance(xHit, yHit, x1, y1);
-            ballHit.correctedX = inverseVx ? xHit - (x1 - xHit) * afterHitDistance : x1;
-            ballHit.correctedY = inverseVy ? yHit - (y1 - yHit) * afterHitDistance : y1;
-            return ballHit;
-        }
-    }
-
-    private static class BallHit {
-        private final Bounds hitBounds;
-        private double beforeHitDistance;
-        private double xHit;
-        private double yHit;
-        private double correctedX;
-        private double correctedY;
-        private boolean inverseVx;
-        private boolean inverseVy;
-
-
-        public BallHit(Bounds hitBounds) {
-            this.hitBounds = hitBounds;
         }
     }
 
