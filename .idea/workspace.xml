@@ -4,46 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="tinh chỉnh">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/AutoClips.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/DrawBackground.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/EnumDefinitions.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/GameConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Images.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/LoadImages.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.14.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+    <list default="true" id="13790e6f-0827-47d3-b349-eef902661cde" name="Changes" comment="Debuff">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$2.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$AnimatedSprite.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$AnimatedSprite.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Ball.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Ball.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$BallHit.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$BallHit.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Blink.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Blink.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Block.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Block.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$BonusBlock.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$BonusBlock.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$BonusType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Bounds.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Bounds.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Enemy.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Enemy.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$EnemyType.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Explosion.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Explosion.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$OpenDoor.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$OpenDoor.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Paddle.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Paddle.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$PaddleState.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Sprite.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Sprite.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Torpedo.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main$Torpedo.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/PropertyManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/arkanoid/PropertyManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Launcher.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Launcher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/PropertyManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/PropertyManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/build/reports/problems/problems-report.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -132,7 +95,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "SHELLCHECK.PATH": "C:\\Users\\admin\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.2\\plugins\\Shell Script\\shellcheck.exe",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "nghia__dev",
+    "git-widget-placeholder": "Merging nghia__dev",
     "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "D:/Game",
@@ -228,15 +191,35 @@
       <option name="project" value="LOCAL" />
       <updated>1760323631248</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Debuff">
+      <option name="closed" value="true" />
+      <created>1760598995294</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1760598995294</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="tinh chỉnh" />
-    <option name="LAST_COMMIT_MESSAGE" value="tinh chỉnh" />
+    <MESSAGE value="Debuff" />
+    <option name="LAST_COMMIT_MESSAGE" value="Debuff" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
