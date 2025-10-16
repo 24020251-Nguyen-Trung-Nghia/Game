@@ -19,22 +19,22 @@ public enum PropertyManager {
     // ******************** Constructors **************************************
     PropertyManager() {
         properties = new Properties();
-        // Load properties
+        // 1. Tạo file path
         final String jdkMonPropertiesFilePath = new StringBuilder(Constants.HOME_FOLDER).append(Constants.PROPERTIES_FILE_NAME).toString();
         //System.out.println("Loading properties from " + jdkMonPropertiesFilePath + ".");
 
-        // Create properties file if not exists
+        // 2. Tạo file nếu chưa tồn tại
         Path path = Paths.get(jdkMonPropertiesFilePath);
         if (!Files.exists(path)) { createProperties(properties); }
 
-        // Load properties file
+        // 3. Load properties từ file
         try (FileInputStream jdkMonPropertiesFile = new FileInputStream(jdkMonPropertiesFilePath)) {
             properties.load(jdkMonPropertiesFile);
         } catch (IOException ex) {
             System.out.println("Error reading properties file. " + ex);
         }
 
-        // If properties empty, fill with default values
+        // 4. Tạo default values nếu properties rỗng
         if (properties.isEmpty()) {
             createProperties(properties);
         }
@@ -47,6 +47,7 @@ public enum PropertyManager {
     public Object get(final String KEY) { return properties.getOrDefault(KEY, ""); }
     public void set(final String KEY, final String VALUE) {
         properties.setProperty(KEY, VALUE);
+        // Set chỉ thay đổi cấu trúc của properties trong chương trình chạy chứ không thay đổi thực chất file lưu => cần store.
         storeProperties();
     }
 
@@ -73,6 +74,8 @@ public enum PropertyManager {
     public boolean getBoolean(final String key, final boolean defaultValue) { return Boolean.parseBoolean(properties.getOrDefault(key, Boolean.toString(defaultValue)).toString()); }
     public void setBoolean(final String key, final boolean value) { properties.setProperty(key, Boolean.toString(value)); }
 
+
+    // Kiểm tra xem có một key nào đó không
     public boolean hasKey(final String key) { return properties.containsKey(key); }
 
 

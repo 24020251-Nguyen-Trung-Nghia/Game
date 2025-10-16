@@ -17,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
@@ -27,226 +26,165 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+/**
+ * Main (Application)
+ * ├── Game State Management
+ * ├── Rendering System (3 Canvas layers)
+ * ├── Physics Engine (Collision Detection)
+ * ├── Audio System
+ * ├── Input Handling
+ * └── Entity System (Sprites)
+ */
 
 public class Main extends Application {
-    private enum PaddleState {
-        STANDARD(80, 22),
-        WIDE(120, 22),
-        LASER(80, 22);
+    private final Images images = new Images();
+    private final AutoClips autoClips = new AutoClips();
+    private final LoadImages loadImages = new LoadImages();
+    private final DrawBackground drawBackground = new DrawBackground(this);
 
-        protected final double width;
-        protected final double height;
 
-        PaddleState(final double width, final double height) {
-            this.width  = width;
-            this.height = height;
-        }
-    }
-    private enum BonusType {
-        BONUS_C,  // Catch Ball      (lime)
-        BONUS_D,  // 3-Balls         (cyan)
-        BONUS_F,  // Wide            (dark blue)
-        BONUS_L,  // Laser           (red)
-        BONUS_S,  // Slow            (dark yellow)
-        BONUS_B,  // Next Level      (magenta)
-        BONUS_P;  // Additional life (gray)
-    }
-    private enum EnemyType {
-        MOLECULE;
-    }
-
-    private static final Random      RND                  = new Random();
-    private static final double      WIDTH                = 560;
-    private static final double      HEIGHT               = 740;
-    private static final double      INSET                = 22;
-    private static final double      UPPER_INSET          = 85;
-    private static final double      PADDLE_OFFSET_Y      = 68;
-    private static final double      PADDLE_SPEED         = 8;
-    private static final double      TORPEDO_SPEED        = 12;
-    private static final double      BALL_SPEED           = clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
-    private static final double      BONUS_BLOCK_SPEED    = clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
-    private static final double      ENEMY_SPEED          = clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
-    private static final double      BLOCK_WIDTH          = 38;
-    private static final double      BLOCK_HEIGHT         = 20;
-    private static final double      BLOCK_STEP_X         = 40;
-    private static final double      BLOCK_STEP_Y         = 22;
-    private static final double      BONUS_BLOCK_WIDTH    = 38;
-    private static final double      BONUS_BLOCK_HEIGHT   = 18;
-    private static final double      ENEMY_WIDTH          = 32;
-    private static final double      ENEMY_HEIGHT         = 32;
-    private static final double      EXPLOSION_WIDTH      = 32;
-    private static final double      EXPLOSION_HEIGHT     = 32;
-    private static final double      BALL_VX_INFLUENCE    = 0.75;
-    private static final Font        SCORE_FONT           = Fonts.emulogic(20);
-    private static final Color       HIGH_SCORE_RED       = Color.rgb(229, 2, 1);
-    private static final Color       SCORE_WHITE          = Color.WHITE;
-    private static final Color       TEXT_GRAY            = Color.rgb(216, 216, 216);
-    private static final int         BONUS_BLOCK_INTERVAL = 20;
-    private final static double      BIG_VALUE            = 100_000; // Big enough to ensure the ball won't cross the borders
-    private final static Bounds[]    BORDER_BOUNDS        = {
-                                                                new Bounds(-BIG_VALUE + INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE), // left border bounds
-                                                                new Bounds(WIDTH - INSET * 0.8, -BIG_VALUE, BIG_VALUE, 2 * BIG_VALUE),      // right border bounds
-                                                                new Bounds(-BIG_VALUE, -BIG_VALUE + UPPER_INSET, 2 * BIG_VALUE, BIG_VALUE)  // top border bounds
-                                                            };
-
+    // ************ GAME STATE VARIABLES ************************
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    private Instant                  gameStartTime;
-    private long                     levelStartTime;
-    private boolean                  running;
-    private AnimationTimer           timer;
-    private long                     lastTimerCall;
-    private long                     lastAnimCall;
-    private long                     lastBonusAnimCall;
-    private long                     lastEnemyUpdateCall;
-    private long                     lastOneSecondCheck;
-    private Canvas                   bkgCanvas;
-    private GraphicsContext          bkgCtx;
-    private Canvas                   canvas;
-    private GraphicsContext          ctx;
-    private Canvas                   brdrCanvas;
-    private GraphicsContext          brdrCtx;
-    private Image                    logoImg;
-    private Image                    copyrightImg;
-    private Image                    bkgPatternImg1;
-    private Image                    bkgPatternImg2;
-    private Image                    bkgPatternImg3;
-    private Image                    bkgPatternImg4;
-    private ImagePattern             bkgPatternFill1;
-    private ImagePattern             bkgPatternFill2;
-    private ImagePattern             bkgPatternFill3;
-    private ImagePattern             bkgPatternFill4;
-    private ImagePattern             borderPatternFill;
-    private Image                    borderVerticalImg;
-    private Image                    borderPartVerticalImg;
-    private Image                    topDoorImg;
-    private Image                    ulCornerImg;
-    private Image                    urCornerImg;
-    private Image                    pipeImg;
-    private ImagePattern             pipePatternFill;
-    private Image                    paddleMiniImg;
-    private Image                    paddleStdShadowImg;
-    private Image                    paddleWideShadowImg;
-    private Image                    paddleGunShadowImg;
-    private Image                    paddleMapStdImg;
-    private Image                    paddleMapWideImg;
-    private Image                    paddleMapGunImg;
-    private Image                    blinkMapImg;
-    private Image                    ballImg;
-    private Image                    ballShadowImg;
-    private Image                    torpedoImg;
-    private Image                    goldBlockImg;
-    private Image                    grayBlockImg;
-    private Image                    whiteBlockImg;
-    private Image                    orangeBlockImg;
-    private Image                    cyanBlockImg;
-    private Image                    limeBlockImg;
-    private Image                    redBlockImg;
-    private Image                    blueBlockImg;
-    private Image                    magentaBlockImg;
-    private Image                    yellowBlockImg;
-    private Image                    bonusBlockCMapImg;
-    private Image                    bonusBlockFMapImg;
-    private Image                    bonusBlockDMapImg;
-    private Image                    bonusBlockSMapImg;
-    private Image                    bonusBlockLMapImg;
-    private Image                    bonusBlockBMapImg;
-    private Image                    bonusBlockPMapImg;
-    private Image                    openDoorMapImg;
-    private Image                    moleculeMapImg;
-    private Image                    blockShadowImg;
-    private Image                    bonusBlockShadowImg;
-    private Image                    explosionMapImg;
-    private AudioClip                gameStartSnd;
-    private AudioClip                startLevelSnd;
-    private AudioClip                ballPaddleSnd;
-    private AudioClip                ballBlockSnd;
-    private AudioClip                ballHardBlockSnd;
-    private AudioClip                laserSnd;
-    private AudioClip                explosionSnd;
-    private AudioClip                gameOverSnd;
-    private Paddle                   paddle;
-    private List<Ball>               balls;
-    private List<Block>              blocks;
-    private List<BonusBlock>         bonusBlocks;
-    private List<Torpedo>            torpedoes;
-    private int                      noOfLifes;
-    private long                     score;
-    private PaddleState              paddleState;
-    private long                     highscore;
-    private int                      level;
-    private int                      animateInc;
-    private List<Blink>              blinks;
-    private double                   ballSpeed;
-    private boolean                  readyLevelVisible;
-    private int                      paddleResetCounter;
-    private int                      speedResetCounter;
-    private int                      nextLevelDoorCounter;
-    private boolean                  nextLevelDoorOpen;
-    private double                   nextLevelDoorAlpha;
-    private boolean                  movingPaddleOut;
-    private OpenDoor                 openDoor;
-    private boolean                  showStartHint;
-    private int                      silverBlockMaxHits;
-    private int                      blockCounter;
-    private boolean                  stickyPaddle;
-    private List<Enemy>              enemies;
-    private List<Explosion>          explosions;
-    private Pos                      enemySpawnPosition;
-    private double                   topLeftDoorAlpha;
-    private double                   topRightDoorAlpha;
-    private FIFO<Block>              blockFifo;
+    // Biến điều khiển game
+    private boolean running;           // Game đang chạy?
+    public boolean isRunning() {
+        return running;
+    }
+
+    private Instant gameStartTime;     // Thời điểm bắt đầu game
+    private long levelStartTime;       // Thời điểm bắt đầu level
+
+    private AnimationTimer timer;
+    private long lastTimerCall;
+    private long lastAnimCall;
+    private long lastBonusAnimCall;
+    private long lastEnemyUpdateCall;
+    private long lastOneSecondCheck;
+    private Canvas bkgCanvas;
+    private GraphicsContext bkgCtx;
+    private Canvas canvas;
+    private GraphicsContext ctx;
+    private Canvas brdrCanvas;
+    private GraphicsContext brdrCtx;
+
+    public Images getImages() {
+        return images;
+    }
+
+    public GraphicsContext getBrdrCtx() {
+        return brdrCtx;
+    }
+
+    public GraphicsContext getCtx() {
+        return ctx;
+    }
+
+    public GraphicsContext getBkgCtx() {
+        return bkgCtx;
+    }
+
+    // Các đối tượng game
+    private Paddle paddle;                    // Paddle (ván đỡ)
+    private List<Ball> balls;                // Danh sách bóng
+    private List<Block> blocks;              // Danh sách block
+    private List<BonusBlock> bonusBlocks;    // Danh sách power-up
+    private List<Enemy> enemies;             // Danh sách kẻ địch
+
+    private List<Torpedo> torpedoes;
+
+    // Thống kê game
+    private int noOfLifes = 3;        // Số mạng
+    private long score = 0;           // Điểm số
+    private long highscore;           // Điểm cao nhất
+    public long getHighscore() {
+        return highscore;
+    }
+    private int level = 1;            // Level hiện tại
+
+    private EnumDefinitions.PaddleState paddleState;
+
+    // Trạng thái đặc biệt
+    private boolean stickyPaddle = false;     // Bóng có dính vào paddle không?
+    private boolean nextLevelDoorOpen = false;// Cửa qua level có mở không?
+    private boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
+
+    private int animateInc;
+    private List<Blink> blinks;
+    private double ballSpeed;
+    private boolean readyLevelVisible;
+    private int paddleResetCounter;
+    private int speedResetCounter;
+    private int nextLevelDoorCounter;
+    private double nextLevelDoorAlpha;
+    private OpenDoor openDoor;
+    private boolean showStartHint;
+    public boolean isShowStartHint() {
+        return showStartHint;
+    }
+
+    private int silverBlockMaxHits;
+    private int blockCounter;
+
+    private List<Explosion> explosions;
+    private Pos enemySpawnPosition;
+    private double topLeftDoorAlpha;
+    private double topRightDoorAlpha;
+    private FIFO<Block> blockFifo;
     private EventHandler<MouseEvent> mouseHandler;
 
 
     // ******************** Methods *******************************************
-    @Override public void init() {
-        running                  = false;
-        paddleState              = PaddleState.STANDARD;
-        highscore                = PropertyManager.INSTANCE.getLong(Constants.HIGHSCORE_KEY, 0);
-        level                    = 1;
-        blinks                   = new ArrayList<>();
-        ballSpeed                = BALL_SPEED;
-        readyLevelVisible        = false;
-        paddleResetCounter       = 0;
-        speedResetCounter        = 0;
-        nextLevelDoorCounter     = 0;
-        nextLevelDoorOpen        = false;
-        nextLevelDoorAlpha       = 1.0;
-        movingPaddleOut          = false;
-        openDoor                 = new OpenDoor(WIDTH - 20, UPPER_INSET + 565);
-        showStartHint            = false;
-        silverBlockMaxHits       = 2;
-        blockCounter             = 0;
-        stickyPaddle             = false;
-        enemySpawnPosition       = Pos.CENTER;
-        topLeftDoorAlpha         = 1.0;
-        topRightDoorAlpha        = 1.0;
-        blockFifo                = new FIFO<>(9);
+    @Override
+    public void init() {
+        running = false;
+        paddleState = EnumDefinitions.PaddleState.STANDARD;
+        highscore = PropertyManager.INSTANCE.getLong(Constants.HIGHSCORE_KEY, 0);
+        level = 1;
+        blinks = new ArrayList<>();
+        ballSpeed = GameConstants.BALL_SPEED;
+        readyLevelVisible = false;
+        paddleResetCounter = 0;
+        speedResetCounter = 0;
+        nextLevelDoorCounter = 0;
+        nextLevelDoorOpen = false;
+        nextLevelDoorAlpha = 1.0;
+        movingPaddleOut = false;
+        openDoor = new OpenDoor(GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + 565);
+        showStartHint = false;
+        silverBlockMaxHits = 2;
+        blockCounter = 0;
+        stickyPaddle = false;
+        enemySpawnPosition = Pos.CENTER;
+        topLeftDoorAlpha = 1.0;
+        topRightDoorAlpha = 1.0;
+        blockFifo = new FIFO<>(9);
 
-        lastOneSecondCheck       = System.nanoTime();
-        lastTimerCall            = System.nanoTime();
-        lastAnimCall             = System.nanoTime();
-        lastBonusAnimCall        = System.nanoTime();
-        lastEnemyUpdateCall      = System.nanoTime();
-        timer                    = new AnimationTimer() {
-            @Override public void handle(final long now) {
+        // ***************** Game Loop ******************************************
+        lastOneSecondCheck = System.nanoTime();
+        lastTimerCall = System.nanoTime();
+        lastAnimCall = System.nanoTime();
+        lastBonusAnimCall = System.nanoTime();
+        lastEnemyUpdateCall = System.nanoTime();
+
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(final long now) {
                 if (running) {
                     // 1 second check
                     if (now > lastOneSecondCheck + 1_000_000_000) {
                         // After 15 seconds in the level enemies will be spawned every 10 seconds if less 5 enemies in the game
                         long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
                         if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
-                            enemySpawnPosition = RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
-                            switch(enemySpawnPosition) {
-                                case TOP_LEFT  -> topLeftDoorAlpha  = 0.99;
+                            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
+                            switch (enemySpawnPosition) {
+                                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
                                 case TOP_RIGHT -> topRightDoorAlpha = 0.99;
                             }
                         }
@@ -254,20 +192,20 @@ public class Main extends Application {
                         if (paddleResetCounter > 0) {
                             paddleResetCounter--;
                             if (paddleResetCounter == 0) {
-                                paddleState = PaddleState.STANDARD;
+                                paddleState = EnumDefinitions.PaddleState.STANDARD;
                             }
                         }
                         if (speedResetCounter > 0) {
                             speedResetCounter--;
                             if (speedResetCounter == 0) {
-                                ballSpeed = BALL_SPEED;
+                                ballSpeed = GameConstants.BALL_SPEED;
                             }
                         }
                         if (nextLevelDoorCounter > 0) {
                             nextLevelDoorCounter--;
                             if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
                                 nextLevelDoorAlpha = 1.0;
-                                nextLevelDoorOpen  = false;
+                                nextLevelDoorOpen = false;
                                 drawBorder();
                             }
                         }
@@ -316,7 +254,9 @@ public class Main extends Application {
                     if (now > lastTimerCall) {
                         hitTests();
                         updateAndDraw();
-                        if (nextLevelDoorOpen) { drawBorder(); }
+                        if (nextLevelDoorOpen) {
+                            drawBorder();
+                        }
                         lastTimerCall = now;
                     }
 
@@ -324,9 +264,11 @@ public class Main extends Application {
                         paddle.x += 1;
                         paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
                         updateAndDraw();
-                        if (paddle.x > WIDTH) {
+                        if (paddle.x > GameConstants.WIDTH) {
                             level++;
-                            if (level > Constants.LEVEL_MAP.size()) { level = 1; }
+                            if (level > Constants.LEVEL_MAP.size()) {
+                                level = 1;
+                            }
                             score += 10_000;
                             startLevel(level);
                         }
@@ -340,81 +282,92 @@ public class Main extends Application {
             }
         };
 
-        // Setup canvas nodes
-        bkgCanvas  = new Canvas(WIDTH, HEIGHT);
-        bkgCtx     = bkgCanvas.getGraphicsContext2D();
+        ////////// Setup canvas nodes //////////
+        // Layer 1: Background
+        bkgCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
+        bkgCtx = bkgCanvas.getGraphicsContext2D();
 
-        canvas     = new Canvas(WIDTH, HEIGHT);
-        ctx        = canvas.getGraphicsContext2D();
+        // Layer 2: Game objects
+        canvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
+        ctx = canvas.getGraphicsContext2D();
 
-        brdrCanvas = new Canvas(WIDTH, HEIGHT);
-        brdrCtx    = brdrCanvas.getGraphicsContext2D();
+        // Layer 3: Border/UI
+        brdrCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
+        brdrCtx = brdrCanvas.getGraphicsContext2D();
         brdrCanvas.setMouseTransparent(true);
 
+
+        //////////// Sử lý chuột /////////////
         // Attach mouse dragging to paddle
         mouseHandler = e -> {
             EventType<MouseEvent> type = (EventType<MouseEvent>) e.getEventType();
             if (MouseEvent.MOUSE_DRAGGED.equals(type)) {
                 double x = e.getSceneX() - paddleState.width * 0.5;
-                if (x + paddleState.width > WIDTH - INSET) {
-                    if (nextLevelDoorOpen && !movingPaddleOut) { movingPaddleOut = true; }
-                    x = WIDTH - INSET - paddleState.width;
+                if (x + paddleState.width > GameConstants.WIDTH - GameConstants.INSET) {
+                    if (nextLevelDoorOpen && !movingPaddleOut) {
+                        movingPaddleOut = true;
+                    }
+                    x = GameConstants.WIDTH - GameConstants.INSET - paddleState.width;
                 }
-                if (x < INSET) { x = INSET; }
+                if (x < GameConstants.INSET) {
+                    x = GameConstants.INSET;
+                }
                 paddle.x = x;
                 paddle.bounds.set(x, paddle.y, paddleState.width, paddle.height);
             }
         };
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
 
+
         // Load all images
-        loadImages();
+        loadImages.loadImages(images, this);
 
         // Load all sounds
-        loadSounds();
+        loadSounds(autoClips, this);
 
-        bkgPatternFill1   = new ImagePattern(bkgPatternImg1, 0, 0, 68, 117, false);
-        bkgPatternFill2   = new ImagePattern(bkgPatternImg2, 0, 0, 64, 64, false);
-        bkgPatternFill3   = new ImagePattern(bkgPatternImg3, 0, 0, 64, 64, false);
-        bkgPatternFill4   = new ImagePattern(bkgPatternImg4, 0, 0, 64, 64, false);
-        borderPatternFill = new ImagePattern(borderVerticalImg, 0, 0, 20, 113, false);
-        pipePatternFill   = new ImagePattern(pipeImg, 0, 0, 5, 17, false);
 
 
         // Initialize paddles
         paddle = new Paddle();
 
         // Initialize level
-        balls        = new CopyOnWriteArrayList<>();
-        blocks       = new CopyOnWriteArrayList<>();
-        bonusBlocks  = new CopyOnWriteArrayList<>();
-        enemies      = new CopyOnWriteArrayList<>();
-        explosions   = new CopyOnWriteArrayList<>();
-        torpedoes    = new CopyOnWriteArrayList<>();
-        noOfLifes    = 3;
-        score        = 0;
+        balls = new CopyOnWriteArrayList<>();
+        blocks = new CopyOnWriteArrayList<>();
+        bonusBlocks = new CopyOnWriteArrayList<>();
+        enemies = new CopyOnWriteArrayList<>();
+        explosions = new CopyOnWriteArrayList<>();
+        torpedoes = new CopyOnWriteArrayList<>();
+        noOfLifes = 3;
+        score = 0;
     }
 
-    @Override public void start(final Stage stage) {
+
+    // ****************** Keyboard Controls *****************************
+    @Override
+    public void start(final Stage stage) {
         gameStartTime = Instant.now();
 
-        final StackPane pane  = new StackPane(bkgCanvas, canvas, brdrCanvas);
-        final Scene     scene = new Scene(pane, WIDTH, HEIGHT);
+        final StackPane pane = new StackPane(bkgCanvas, canvas, brdrCanvas);
+        final Scene scene = new Scene(pane, GameConstants.WIDTH, GameConstants.HEIGHT);
 
         scene.setOnKeyPressed(e -> {
             if (running) {
-                if (movingPaddleOut) { return; }
+                if (movingPaddleOut) {
+                    return;
+                }
                 switch (e.getCode()) {
-                    case RIGHT,D  -> movePaddleRight();
-                    case LEFT, A  -> movePaddleLeft();
-                    case SPACE    -> {
+                    case RIGHT, D -> movePaddleRight();
+                    case LEFT, A -> movePaddleLeft();
+                    case SPACE -> {
                         final long activeBalls = balls.stream().filter(ball -> ball.active).count();
                         if (activeBalls > 0) {
-                            if (PaddleState.LASER == paddleState) { fire(paddle.bounds.centerX); }
+                            if (EnumDefinitions.PaddleState.LASER == paddleState) {
+                                fire(paddle.bounds.centerX);
+                            }
                         } else {
-                            stickyPaddle       = false;
+                            stickyPaddle = false;
                             balls.forEach(ball -> {
-                                ball.active        = true;
+                                ball.active = true;
                                 ball.bornTimestamp = Instant.now().getEpochSecond();
                             });
                         }
@@ -429,9 +382,9 @@ public class Main extends Application {
             }
         });
         scene.setOnKeyReleased(e -> {
-            switch(e.getCode()) {
+            switch (e.getCode()) {
                 case RIGHT -> stopPaddle();
-                case LEFT  -> stopPaddle();
+                case LEFT -> stopPaddle();
             }
         });
 
@@ -440,97 +393,64 @@ public class Main extends Application {
         stage.show();
         stage.setResizable(false);
 
-        playSound(gameStartSnd);
+        playSound(autoClips.gameStartSnd);
 
         startScreen();
 
         timer.start();
     }
 
-    @Override public void stop() {
+    @Override
+    public void stop() {
         Platform.exit();
         System.exit(0);
     }
 
 
     // ******************** Helper methods ************************************
-    private void loadImages() {
-        logoImg               = new Image(getClass().getResourceAsStream("arkanoid_logo.png"), 460, 118, true, false);
-        copyrightImg          = new Image(getClass().getResourceAsStream("copyright.png"), 458, 115, true, false);
-        bkgPatternImg1        = new Image(getClass().getResourceAsStream("backgroundPattern_1.png"), 68, 117, true, false);
-        bkgPatternImg2        = new Image(getClass().getResourceAsStream("backgroundPattern_2.png"), 64, 64, true, false);
-        bkgPatternImg3        = new Image(getClass().getResourceAsStream("backgroundPattern_3.png"), 64, 64, true, false);
-        bkgPatternImg4        = new Image(getClass().getResourceAsStream("backgroundPattern_4.png"), 64, 64, true, false);
-        borderVerticalImg     = new Image(getClass().getResourceAsStream("borderVertical.png"), 20, 113, true, false);
-        borderPartVerticalImg = new Image(getClass().getResourceAsStream("borderPartVertical.png"), 20, 71, true, false);
-        topDoorImg            = new Image(getClass().getResourceAsStream("topDoor.png"), 64, 23, true, false);
-        ulCornerImg           = new Image(getClass().getResourceAsStream("upperLeftCorner.png"), 15, 20, true, false);
-        urCornerImg           = new Image(getClass().getResourceAsStream("upperRightCorner.png"), 15, 20, true, false);
-        pipeImg               = new Image(getClass().getResourceAsStream("pipe.png"), 5, 17, true, false);
-        paddleMapStdImg       = new Image(getClass().getResourceAsStream("paddlemap_std.png"), 640, 176, false, false);
-        paddleMapWideImg      = new Image(getClass().getResourceAsStream("paddlemap_wide.png"), 960, 176, false, false);
-        paddleMapGunImg       = new Image(getClass().getResourceAsStream("paddlemap_gun.png"), 640, 176, false, false);
-        blinkMapImg           = new Image(getClass().getResourceAsStream("blink_map.png"), 304, 60, false, false);
-        paddleMiniImg         = new Image(getClass().getResourceAsStream("paddle_std.png"), 40, 11, true, false);
-        paddleStdShadowImg    = new Image(getClass().getResourceAsStream("paddle_std_shadow.png"), 80, 22, true, false);
-        paddleWideShadowImg   = new Image(getClass().getResourceAsStream("paddle_wide_shadow.png"), 121, 22, true, false);
-        paddleGunShadowImg    = new Image(getClass().getResourceAsStream("paddle_gun_shadow.png"), 80, 22, true, false);
-        ballImg               = new Image(getClass().getResourceAsStream("ball.png"), 12, 12, true, false);
-        ballShadowImg         = new Image(getClass().getResourceAsStream("ball_shadow.png"), 12, 12, true, false);
-        torpedoImg            = new Image(getClass().getResourceAsStream("torpedo.png"), 41, 23, true, false);
-        goldBlockImg          = new Image(getClass().getResourceAsStream("goldBlock.png"), 38, 20, true, false);
-        grayBlockImg          = new Image(getClass().getResourceAsStream("grayBlock.png"), 38, 20, true, false);
-        whiteBlockImg         = new Image(getClass().getResourceAsStream("whiteBlock.png"), 38, 20, true, false);
-        orangeBlockImg        = new Image(getClass().getResourceAsStream("orangeBlock.png"), 38, 20, true, false);
-        cyanBlockImg          = new Image(getClass().getResourceAsStream("cyanBlock.png"), 38, 20, true, false);
-        limeBlockImg          = new Image(getClass().getResourceAsStream("limeBlock.png"), 38, 20, true, false);
-        redBlockImg           = new Image(getClass().getResourceAsStream("redBlock.png"), 38, 20, true, false);
-        blueBlockImg          = new Image(getClass().getResourceAsStream("blueBlock.png"), 38, 20, true, false);
-        magentaBlockImg       = new Image(getClass().getResourceAsStream("magentaBlock.png"), 38, 20, true, false);
-        yellowBlockImg        = new Image(getClass().getResourceAsStream("yellowBlock.png"), 38, 20, true, false);
-        blockShadowImg        = new Image(getClass().getResourceAsStream("block_shadow.png"), 38, 20, true, false);
-        bonusBlockCMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_c.png"), 190, 72, true, false);
-        bonusBlockFMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_f.png"), 190, 72, true, false);
-        bonusBlockDMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_d.png"), 190, 72, true, false);
-        bonusBlockSMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_s.png"), 190, 72, true, false);
-        bonusBlockLMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_l.png"), 190, 72, true, false);
-        bonusBlockBMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_b.png"), 190, 72, true, false);
-        bonusBlockPMapImg     = new Image(getClass().getResourceAsStream("block_map_bonus_p.png"), 190, 72, true, false);
-        openDoorMapImg        = new Image(getClass().getResourceAsStream("open_door_map.png"), 120, 71, true, false);
-        moleculeMapImg        = new Image(getClass().getResourceAsStream("molecule_map.png"), 256, 96, true, false);
-        explosionMapImg       = new Image(getClass().getResourceAsStream("explosion_map.png"), 128, 128, true, false);
-        bonusBlockShadowImg   = new Image(getClass().getResourceAsStream("bonus_block_shadow.png"), 38, 18, true, false);
+    private void loadImages(Images images, Main main) {
+      loadImages.loadImages(images, main);
     }
 
-    private void loadSounds() {
-        gameStartSnd     = new AudioClip(getClass().getResource("game_start.wav").toExternalForm());
-        startLevelSnd    = new AudioClip(getClass().getResource("level_ready.wav").toExternalForm());
-        ballPaddleSnd    = new AudioClip(getClass().getResource("ball_paddle.wav").toExternalForm());
-        ballBlockSnd     = new AudioClip(getClass().getResource("ball_block.wav").toExternalForm());
-        ballHardBlockSnd = new AudioClip(getClass().getResource("ball_hard_block.wav").toExternalForm());
-        laserSnd         = new AudioClip(getClass().getResource("gun.wav").toExternalForm());
-        explosionSnd     = new AudioClip(getClass().getResource("explosion.wav").toExternalForm());
-        gameOverSnd      = new AudioClip(getClass().getResource("game_over.wav").toExternalForm());
+    private void loadSounds(AutoClips autoClips, Main main) {
+        autoClips.gameStartSnd = new AudioClip(main.getClass().getResource("game_start.wav").toExternalForm());
+        autoClips.startLevelSnd = new AudioClip(main.getClass().getResource("level_ready.wav").toExternalForm());
+        autoClips.ballPaddleSnd = new AudioClip(main.getClass().getResource("ball_paddle.wav").toExternalForm());
+        autoClips.ballBlockSnd = new AudioClip(main.getClass().getResource("ball_block.wav").toExternalForm());
+        autoClips.ballHardBlockSnd = new AudioClip(main.getClass().getResource("ball_hard_block.wav").toExternalForm());
+        autoClips.laserSnd = new AudioClip(main.getClass().getResource("gun.wav").toExternalForm());
+        autoClips.explosionSnd = new AudioClip(main.getClass().getResource("explosion.wav").toExternalForm());
+        autoClips.gameOverSnd = new AudioClip(main.getClass().getResource("game_over.wav").toExternalForm());
     }
 
-    private static double clamp(final double min, final double max, final double value) {
-        if (value < min) { return min; }
-        if (value > max) { return max; }
+    public static double clamp(final double min, final double max, final double value) {
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
         return value;
     }
 
     private static int clamp(final int min, final int max, final int value) {
-        if (value < min) { return min; }
-        if (value > max) { return max; }
+        if (value < min) {
+            return min;
+        }
+        if (value > max) {
+            return max;
+        }
         return value;
     }
 
     private static double computeLineIntersectionX(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
         return computeLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4, true);
     }
+
     private static double computeLineIntersectionY(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4) {
         return computeLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4, false);
     }
+
     private static double computeLineIntersection(final double x1, final double y1, final double x2, final double y2, final double x3, final double y3, final double x4, final double y4, final boolean x) {
         final double a1 = y2 - y1;
         final double b1 = x1 - x2;
@@ -551,72 +471,90 @@ public class Main extends Application {
 
 
     // ******************** Game control **************************************
-    private void movePaddleRight() { paddle.vX = PADDLE_SPEED; }
+    private void movePaddleRight() {
+        paddle.vX = GameConstants.PADDLE_SPEED;
+    }
 
-    private void movePaddleLeft() { paddle.vX = -PADDLE_SPEED; }
+    private void movePaddleLeft() {
+        paddle.vX = -GameConstants.PADDLE_SPEED;
+    }
 
-    private void stopPaddle() { paddle.vX = 0; }
+    private void stopPaddle() {
+        paddle.vX = 0;
+    }
 
     private void fire(final double x) {
-        if (torpedoes.size() > 0) { return; }
-        torpedoes.add(new Torpedo(torpedoImg, x, HEIGHT - 50));
-        playSound(laserSnd);
+        if (torpedoes.size() > 0) {
+            return;
+        }
+        torpedoes.add(new Torpedo(images.torpedoImg, x, GameConstants.HEIGHT - 50));
+        playSound(autoClips.laserSnd);
     }
 
 
     // Play audio clips
-    private void playSound(final AudioClip audioClip) { audioClip.play(); }
+    private void playSound(final AudioClip audioClip) {
+        audioClip.play();
+    }
 
 
     // Spawn enemy
     private void spawnEnemy(final Pos position) {
         switch (position) {
-            case TOP_LEFT  -> enemies.add(new Enemy(100 + topDoorImg.getWidth() * 0.5 - ENEMY_WIDTH * 0.5, UPPER_INSET, EnemyType.MOLECULE));
-            case TOP_RIGHT -> enemies.add(new Enemy(WIDTH - 100 - topDoorImg.getWidth() * 0.5 - ENEMY_WIDTH * 0.5, UPPER_INSET, EnemyType.MOLECULE));
+            case TOP_LEFT ->
+                    enemies.add(new Enemy(100 + images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+            case TOP_RIGHT ->
+                    enemies.add(new Enemy(GameConstants.WIDTH - 100 - images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
         }
     }
 
 
     // Re-Spawn Ball
     private void spawnBall() {
-        if (balls.size() > 0) { return; }
-        balls.add(new Ball(ballImg, paddle.bounds.centerX, paddle.bounds.minY - ballImg.getHeight() * 0.5 - 1, (RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
+        if (balls.size() > 0) {
+            return;
+        }
+        balls.add(new Ball(images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
     }
 
 
     // Start Screen
     private void startScreen() {
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
-        drawBackground(1);
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+        drawBackground.drawBackground(1);
         drawBorder();
     }
 
 
     // Start Level
     private void startLevel(final int level) {
-        levelStartTime     = Instant.now().getEpochSecond();
-        blockCounter       = 0;
+        levelStartTime = Instant.now().getEpochSecond();
+        blockCounter = 0;
         nextLevelDoorAlpha = 1.0;
-        nextLevelDoorOpen  = false;
-        movingPaddleOut    = false;
-        paddle.countX      = 0;
-        paddle.countY      = 0;
-        animateInc         = 0;
-        paddle.x           = WIDTH * 0.5 - paddleState.width * 0.5;
+        nextLevelDoorOpen = false;
+        movingPaddleOut = false;
+        paddle.countX = 0;
+        paddle.countY = 0;
+        animateInc = 0;
+        paddle.x = GameConstants.WIDTH * 0.5 - paddleState.width * 0.5;
         paddle.bounds.minX = paddle.x - paddle.width * 0.5;
-        readyLevelVisible  = true;
-        playSound(startLevelSnd);
+        readyLevelVisible = true;
+        playSound(autoClips.startLevelSnd);
         setupBlocks(level);
         bonusBlocks.clear();
         balls.clear();
         enemies.clear();
         explosions.clear();
         spawnBall();
-        if (!running) { running = true; }
-        drawBackground(level);
+        if (!running) {
+            running = true;
+        }
+        drawBackground.drawBackground(level);
         drawBorder();
         updateAndDraw();
-        executor.schedule(() -> { readyLevelVisible = false; }, 2, TimeUnit.SECONDS);
+        executor.schedule(() -> {
+            readyLevelVisible = false;
+        }, 2, TimeUnit.SECONDS);
     }
 
 
@@ -624,7 +562,7 @@ public class Main extends Application {
     private void gameOver() {
         executor.schedule(() -> startScreen(), 5, TimeUnit.SECONDS);
 
-        playSound(gameOverSnd);
+        playSound(autoClips.gameOverSnd);
 
         running = false;
         balls.clear();
@@ -637,9 +575,9 @@ public class Main extends Application {
             highscore = score;
         }
         PropertyManager.INSTANCE.storeProperties();
-        score       = 0;
-        noOfLifes   = 3;
-        paddleState = PaddleState.STANDARD;
+        score = 0;
+        noOfLifes = 3;
+        paddleState = EnumDefinitions.PaddleState.STANDARD;
     }
 
 
@@ -648,24 +586,36 @@ public class Main extends Application {
         blocks.clear();
         BlockType[][] level2 = Constants.LEVEL_MAP.get(level);
         silverBlockMaxHits = level % 8 == 0 ? silverBlockMaxHits + 1 : silverBlockMaxHits;
-        for (int iy = 0 ; iy < level2.length ; iy++) {
-            for (int ix = 0 ; ix < level2[iy].length ; ix++) {
+        for (int iy = 0; iy < level2.length; iy++) {
+            for (int ix = 0; ix < level2[iy].length; ix++) {
                 Block block;
                 final BlockType blockType = level2[iy][ix];
                 switch (blockType) {
-                    case GOLD -> block = new Block(goldBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
-                    case GRAY -> block = new Block(grayBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 0, silverBlockMaxHits, blockType);
-                    case WHIT -> block = new Block(whiteBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 10, blockType.maxHits, blockType);
-                    case ORNG -> block = new Block(orangeBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 60, blockType.maxHits, blockType);
-                    case CYAN -> block = new Block(cyanBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 70, blockType.maxHits, blockType);
-                    case LIME -> block = new Block(limeBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 80, blockType.maxHits, blockType);
-                    case RUBY -> block = new Block(redBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 90, blockType.maxHits, blockType);
-                    case BLUE -> block = new Block(blueBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 100, blockType.maxHits, blockType);
-                    case MGNT -> block = new Block(magentaBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 110, blockType.maxHits, blockType);
-                    case YLLW -> block = new Block(yellowBlockImg, INSET + ix * BLOCK_STEP_X, INSET + 110 + iy * BLOCK_STEP_Y, 120, blockType.maxHits, blockType);
-                    default   -> block = null;
+                    case GOLD ->
+                            block = new Block(images.goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
+                    case GRAY ->
+                            block = new Block(images.grayBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, silverBlockMaxHits, blockType);
+                    case WHIT ->
+                            block = new Block(images.whiteBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 10, blockType.maxHits, blockType);
+                    case ORNG ->
+                            block = new Block(images.orangeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 60, blockType.maxHits, blockType);
+                    case CYAN ->
+                            block = new Block(images.cyanBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 70, blockType.maxHits, blockType);
+                    case LIME ->
+                            block = new Block(images.limeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 80, blockType.maxHits, blockType);
+                    case RUBY ->
+                            block = new Block(images.redBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 90, blockType.maxHits, blockType);
+                    case BLUE ->
+                            block = new Block(images.blueBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 100, blockType.maxHits, blockType);
+                    case MGNT ->
+                            block = new Block(images.magentaBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 110, blockType.maxHits, blockType);
+                    case YLLW ->
+                            block = new Block(images.yellowBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 120, blockType.maxHits, blockType);
+                    default -> block = null;
                 }
-                if (null == block) { continue; }
+                if (null == block) {
+                    continue;
+                }
                 blocks.add(block);
             }
         }
@@ -676,7 +626,7 @@ public class Main extends Application {
     private void hitTests() {
         // torpedo hits block or enemy
         for (Torpedo torpedo : torpedoes) {
-            if (PaddleState.LASER == paddleState) {
+            if (EnumDefinitions.PaddleState.LASER == paddleState) {
                 for (Block block : blocks) {
                     if (block.bounds.intersects(torpedo.bounds)) {
                         block.hits++;
@@ -690,10 +640,10 @@ public class Main extends Application {
                 }
                 for (Enemy enemy : enemies) {
                     if (enemy.bounds.intersects(torpedo.bounds)) {
-                        enemy.toBeRemoved   = true;
+                        enemy.toBeRemoved = true;
                         torpedo.toBeRemoved = true;
                         explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                        playSound(explosionSnd);
+                        playSound(autoClips.explosionSnd);
                         break;
                     }
                 }
@@ -705,7 +655,9 @@ public class Main extends Application {
             if (bonusBlock.bounds.intersects(paddle.bounds)) {
                 bonusBlock.toBeRemoved = true;
                 switch (bonusBlock.bonusType) {
-                    case BONUS_C -> { stickyPaddle = true; }
+                    case BONUS_C -> {
+                        stickyPaddle = true;
+                    }
                     case BONUS_D -> {
                         if (balls.size() == 1) {
                             Ball ball = balls.get(0);
@@ -713,27 +665,29 @@ public class Main extends Application {
                             double vY1 = (Math.cos(Math.toRadians(10)) * ball.vY);
                             double vX2 = (Math.sin(Math.toRadians(-10)) * ball.vX);
                             double vY2 = (Math.cos(Math.toRadians(-10)) * ball.vY);
-                            balls.add(new Ball(ballImg, ball.x, ball.y, vX1, vY1));
-                            balls.add(new Ball(ballImg, ball.x, ball.y, vX2, vY2));
+                            balls.add(new Ball(images.ballImg, ball.x, ball.y, vX1, vY1));
+                            balls.add(new Ball(images.ballImg, ball.x, ball.y, vX2, vY2));
                         }
                     }
                     case BONUS_F -> {
                         paddleResetCounter = 30;
-                        paddleState        = PaddleState.WIDE;
+                        paddleState = EnumDefinitions.PaddleState.WIDE;
                     }
                     case BONUS_L -> {
                         paddleResetCounter = 30;
-                        paddleState        = PaddleState.LASER;
+                        paddleState = EnumDefinitions.PaddleState.LASER;
                     }
                     case BONUS_S -> {
                         speedResetCounter = 30;
-                        ballSpeed         = BALL_SPEED * 0.5;
+                        ballSpeed = GameConstants.BALL_SPEED * 0.5;
                     }
                     case BONUS_B -> {
                         nextLevelDoorCounter = 5;
-                        nextLevelDoorOpen    = true;
+                        nextLevelDoorOpen = true;
                     }
-                    case BONUS_P -> { noOfLifes = clamp(2, 5, noOfLifes + 1); }
+                    case BONUS_P -> {
+                        noOfLifes = clamp(2, 5, noOfLifes + 1);
+                    }
                 }
             }
         }
@@ -742,48 +696,12 @@ public class Main extends Application {
 
     // ******************** Redraw ********************************************
     private void drawBackground(final int level) {
-        bkgCtx.clearRect(0, 0, WIDTH, HEIGHT);
-        bkgCtx.setFill(Color.BLACK);
-        bkgCtx.fillRect(0, 0, WIDTH, HEIGHT);
 
-        if (running) {
-            // Use background pattern related to level
-            if (level % 4 == 0) {
-                bkgCtx.setFill(bkgPatternFill4);
-            } else if (level % 3 == 0) {
-                bkgCtx.setFill(bkgPatternFill3);
-            } else if (level % 2 == 0) {
-                bkgCtx.setFill(bkgPatternFill2);
-            } else {
-                bkgCtx.setFill(bkgPatternFill1);
-            }
-            bkgCtx.fillRect(0, UPPER_INSET, WIDTH, HEIGHT);
-
-            // Draw shadow
-            bkgCtx.setFill(Color.rgb(0, 0, 0, 0.3));
-            bkgCtx.fillRect(0, UPPER_INSET, 40, HEIGHT);
-            bkgCtx.fillRect(0, UPPER_INSET, WIDTH, 20);
-        } else {
-            ctx.setFont(SCORE_FONT);
-            ctx.setTextBaseline(VPos.TOP);
-            ctx.setFill(HIGH_SCORE_RED);
-            ctx.setTextAlign(TextAlignment.CENTER);
-            ctx.fillText("HIGH SCORE", WIDTH * 0.5, 0);
-            ctx.setFill(SCORE_WHITE);
-            ctx.fillText(Long.toString(highscore), WIDTH * 0.5, 30);
-
-            if (showStartHint) {
-                ctx.fillText("Hit space to start", WIDTH * 0.5, HEIGHT * 0.6);
-            }
-
-            bkgCtx.drawImage(logoImg, (WIDTH - logoImg.getWidth()) * 0.5, HEIGHT * 0.25);
-
-            bkgCtx.drawImage(copyrightImg, (WIDTH - copyrightImg.getWidth()) * 0.5, HEIGHT * 0.75);
-        }
+        drawBackground.drawBackground(level);
     }
 
     private void updateAndDraw() {
-        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
 
         // Draw Torpedos
         for (Torpedo torpedo : torpedoes) {
@@ -796,22 +714,22 @@ public class Main extends Application {
         ctx.translate(10, 10);
 
         // Draw block shadows
-        blocks.forEach(block -> ctx.drawImage(blockShadowImg, block.x, block.y));
+        blocks.forEach(block -> ctx.drawImage(images.blockShadowImg, block.x, block.y));
 
         // Draw bonus block shadows
-        bonusBlocks.forEach(bonusBlock -> ctx.drawImage(bonusBlockShadowImg, bonusBlock.x, bonusBlock.y));
+        bonusBlocks.forEach(bonusBlock -> ctx.drawImage(images.bonusBlockShadowImg, bonusBlock.x, bonusBlock.y));
 
         // Draw paddle shadow
         if (noOfLifes > 0) {
             switch (paddleState) {
-                case STANDARD -> ctx.drawImage(paddleStdShadowImg, paddle.bounds.minX, paddle.bounds.minY);
-                case WIDE     -> ctx.drawImage(paddleWideShadowImg, paddle.bounds.minX, paddle.bounds.minY);
-                case LASER    -> ctx.drawImage(paddleGunShadowImg, paddle.bounds.minX, paddle.bounds.minY);
+                case STANDARD -> ctx.drawImage(images.paddleStdShadowImg, paddle.bounds.minX, paddle.bounds.minY);
+                case WIDE -> ctx.drawImage(images.paddleWideShadowImg, paddle.bounds.minX, paddle.bounds.minY);
+                case LASER -> ctx.drawImage(images.paddleGunShadowImg, paddle.bounds.minX, paddle.bounds.minY);
             }
         }
 
         // Draw ball shadow
-        balls.forEach(ball -> ctx.drawImage(ballShadowImg, ball.bounds.minX, ball.bounds.minY));
+        balls.forEach(ball -> ctx.drawImage(images.ballShadowImg, ball.bounds.minX, ball.bounds.minY));
         ctx.restore();
 
         // Draw blocks
@@ -819,34 +737,42 @@ public class Main extends Application {
 
         // Draw bonus blocks
         bonusBlocks.forEach(bonusBlock -> {
-            switch(bonusBlock.bonusType) {
-                case BONUS_C -> ctx.drawImage(bonusBlockCMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_F -> ctx.drawImage(bonusBlockFMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_D -> ctx.drawImage(bonusBlockDMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_L -> ctx.drawImage(bonusBlockLMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_S -> ctx.drawImage(bonusBlockSMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_B -> ctx.drawImage(bonusBlockBMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
-                case BONUS_P -> ctx.drawImage(bonusBlockPMapImg, bonusBlock.countX * BONUS_BLOCK_WIDTH, bonusBlock.countY * BONUS_BLOCK_HEIGHT, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, BONUS_BLOCK_WIDTH, BONUS_BLOCK_HEIGHT);
+            switch (bonusBlock.bonusType) {
+                case BONUS_C ->
+                        ctx.drawImage(images.bonusBlockCMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_F ->
+                        ctx.drawImage(images.bonusBlockFMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_D ->
+                        ctx.drawImage(images.bonusBlockDMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_L ->
+                        ctx.drawImage(images.bonusBlockLMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_S ->
+                        ctx.drawImage(images.bonusBlockSMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_B ->
+                        ctx.drawImage(images.bonusBlockBMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                case BONUS_P ->
+                        ctx.drawImage(images.bonusBlockPMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
             }
         });
 
         // Draw blinks
-        blinks.forEach(blink -> ctx.drawImage(blinkMapImg, blink.countX * BLOCK_WIDTH, blink.countY * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, blink.x, blink.y, BLOCK_WIDTH, BLOCK_HEIGHT));
+        blinks.forEach(blink -> ctx.drawImage(images.blinkMapImg, blink.countX * GameConstants.BLOCK_WIDTH, blink.countY * GameConstants.BLOCK_HEIGHT, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT, blink.x, blink.y, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT));
 
         // Draw enemies
         enemies.forEach(enemy -> {
-            switch(enemy.enemyType) {
-                case MOLECULE -> ctx.drawImage(moleculeMapImg, enemy.countX * ENEMY_WIDTH, enemy.countY * ENEMY_HEIGHT, ENEMY_WIDTH, ENEMY_HEIGHT, enemy.x, enemy.y, ENEMY_WIDTH, ENEMY_HEIGHT);
+            switch (enemy.enemyType) {
+                case MOLECULE ->
+                        ctx.drawImage(images.moleculeMapImg, enemy.countX * GameConstants.ENEMY_WIDTH, enemy.countY * GameConstants.ENEMY_HEIGHT, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT, enemy.x, enemy.y, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT);
             }
         });
 
         // Draw explosions
-        explosions.forEach(explosion -> ctx.drawImage(explosionMapImg, explosion.countX * EXPLOSION_WIDTH, explosion.countY * EXPLOSION_HEIGHT, EXPLOSION_WIDTH, EXPLOSION_HEIGHT, explosion.x, explosion.y, EXPLOSION_WIDTH, EXPLOSION_HEIGHT));
+        explosions.forEach(explosion -> ctx.drawImage(images.explosionMapImg, explosion.countX * GameConstants.EXPLOSION_WIDTH, explosion.countY * GameConstants.EXPLOSION_HEIGHT, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT, explosion.x, explosion.y, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT));
 
         // Draw ball(s)
         balls.forEach(ball -> {
             ball.update();
-            ctx.drawImage(ballImg, ball.bounds.x, ball.bounds.y);
+            ctx.drawImage(images.ballImg, ball.bounds.x, ball.bounds.y);
         });
 
         // Draw paddle
@@ -855,41 +781,44 @@ public class Main extends Application {
                 paddle.update();
             }
             switch (paddleState) {
-                case STANDARD -> ctx.drawImage(paddleMapStdImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
-                case WIDE     -> ctx.drawImage(paddleMapWideImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
-                case LASER    -> ctx.drawImage(paddleMapGunImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
+                case STANDARD ->
+                        ctx.drawImage(images.paddleMapStdImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
+                case WIDE ->
+                        ctx.drawImage(images.paddleMapWideImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
+                case LASER ->
+                        ctx.drawImage(images.paddleMapGunImg, paddle.countX * paddleState.width, paddle.countY * paddleState.height, paddleState.width, paddleState.height, paddle.x, paddle.y, paddleState.width, paddleState.height);
             }
         } else {
-            ctx.setFill(TEXT_GRAY);
+            ctx.setFill(GameConstants.TEXT_GRAY);
             ctx.setTextAlign(TextAlignment.CENTER);
-            ctx.fillText("GAME OVER", WIDTH * 0.5, HEIGHT * 0.75);
+            ctx.fillText("GAME OVER", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.75);
         }
 
         // Draw score
         ctx.setFill(Color.WHITE);
-        ctx.setFont(SCORE_FONT);
+        ctx.setFont(GameConstants.SCORE_FONT);
         ctx.setTextAlign(TextAlignment.RIGHT);
         ctx.setTextBaseline(VPos.TOP);
         ctx.fillText(Long.toString(score), 140, 30);
 
-        ctx.setFill(HIGH_SCORE_RED);
+        ctx.setFill(GameConstants.HIGH_SCORE_RED);
         ctx.setTextAlign(TextAlignment.CENTER);
-        ctx.fillText("HIGH SCORE", WIDTH * 0.5, 0);
-        ctx.setFill(SCORE_WHITE);
-        ctx.fillText(Long.toString(score > highscore ? score : highscore), WIDTH * 0.5, 30);
+        ctx.fillText("HIGH SCORE", GameConstants.WIDTH * 0.5, 0);
+        ctx.setFill(GameConstants.SCORE_WHITE);
+        ctx.fillText(Long.toString(score > highscore ? score : highscore), GameConstants.WIDTH * 0.5, 30);
 
         // Draw no of lifes
-        for (int i = 0 ; i < noOfLifes ; i++) {
-            ctx.drawImage(paddleMiniImg, INSET + 2 + 42 * i, HEIGHT - 30);
+        for (int i = 0; i < noOfLifes; i++) {
+            ctx.drawImage(images.paddleMiniImg, GameConstants.INSET + 2 + 42 * i, GameConstants.HEIGHT - 30);
         }
 
         // Draw ready level label
         if (readyLevelVisible) {
-            ctx.setFill(TEXT_GRAY);
-            ctx.setFont(SCORE_FONT);
+            ctx.setFill(GameConstants.TEXT_GRAY);
+            ctx.setFont(GameConstants.SCORE_FONT);
             ctx.setTextAlign(TextAlignment.CENTER);
-            ctx.fillText("ROUND " + level, WIDTH * 0.5, HEIGHT * 0.65);
-            ctx.fillText("READY", WIDTH * 0.5, HEIGHT * 0.65 + 2 * SCORE_FONT.getSize());
+            ctx.fillText("ROUND " + level, GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.65);
+            ctx.fillText("READY", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.65 + 2 * GameConstants.SCORE_FONT.getSize());
         }
 
         // Remove sprites
@@ -904,7 +833,9 @@ public class Main extends Application {
         // Respawn ball and check for game over
         if (!movingPaddleOut && balls.isEmpty() && noOfLifes > 0) {
             noOfLifes -= 1;
-            if (noOfLifes == 0) { gameOver(); }
+            if (noOfLifes == 0) {
+                gameOver();
+            }
             spawnBall();
         }
 
@@ -914,40 +845,42 @@ public class Main extends Application {
         // Check for level completeness
         if (blocks.isEmpty() || blocks.stream().filter(block -> block.maxHits > -1).count() == 0) {
             level++;
-            if (level > Constants.LEVEL_MAP.size()) { level = 1; }
+            if (level > Constants.LEVEL_MAP.size()) {
+                level = 1;
+            }
             startLevel(level);
         }
     }
 
     private void drawBorder() {
-        brdrCtx.clearRect(0, 0, WIDTH, HEIGHT);
+        brdrCtx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
         if (running) {
             // Draw top border
-            brdrCtx.setFill(pipePatternFill);
+            brdrCtx.setFill(images.pipePatternFill);
             brdrCtx.fillRect(17, 68, 83, 17);
-            brdrCtx.fillRect(100 + topDoorImg.getWidth(), 68, WIDTH - 200 - 2 * topDoorImg.getWidth(), 17);
-            brdrCtx.fillRect(WIDTH - 100, 68, 83, 17);
+            brdrCtx.fillRect(100 + images.topDoorImg.getWidth(), 68, GameConstants.WIDTH - 200 - 2 * images.topDoorImg.getWidth(), 17);
+            brdrCtx.fillRect(GameConstants.WIDTH - 100, 68, 83, 17);
 
             // Draw vertical border
-            brdrCtx.setFill(borderPatternFill);
-            brdrCtx.fillRect(0, UPPER_INSET, 20, HEIGHT - UPPER_INSET);
+            brdrCtx.setFill(images.borderPatternFill);
+            brdrCtx.fillRect(0, GameConstants.UPPER_INSET, 20, GameConstants.HEIGHT - GameConstants.UPPER_INSET);
             if (nextLevelDoorOpen) {
-                brdrCtx.fillRect(WIDTH - 20, UPPER_INSET, 20, 563 );
-                brdrCtx.fillRect(WIDTH - 20, UPPER_INSET + 565 + borderPartVerticalImg.getHeight(), 20, 100);
+                brdrCtx.fillRect(GameConstants.WIDTH - 20, GameConstants.UPPER_INSET, 20, 563);
+                brdrCtx.fillRect(GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + 565 + images.borderPartVerticalImg.getHeight(), 20, 100);
             } else {
-                brdrCtx.fillRect(WIDTH - 20, UPPER_INSET, 20, HEIGHT);
+                brdrCtx.fillRect(GameConstants.WIDTH - 20, GameConstants.UPPER_INSET, 20, GameConstants.HEIGHT);
             }
 
             // Draw border corners
-            brdrCtx.drawImage(ulCornerImg, 2.5, 67.5);
-            brdrCtx.drawImage(urCornerImg, WIDTH - urCornerImg.getWidth() - 2.5, 67.5);
+            brdrCtx.drawImage(images.ulCornerImg, 2.5, 67.5);
+            brdrCtx.drawImage(images.urCornerImg, GameConstants.WIDTH - images.urCornerImg.getWidth() - 2.5, 67.5);
 
             // Draw next level door
             if (nextLevelDoorOpen) {
-                for (int i = 0 ; i < 6 ; i++) {
-                    brdrCtx.drawImage(borderPartVerticalImg, 0, UPPER_INSET + i * 113);
+                for (int i = 0; i < 6; i++) {
+                    brdrCtx.drawImage(images.borderPartVerticalImg, 0, GameConstants.UPPER_INSET + i * 113);
                     if (i < 5) {
-                        brdrCtx.drawImage(borderPartVerticalImg, WIDTH - 20, UPPER_INSET + i * 113);
+                        brdrCtx.drawImage(images.borderPartVerticalImg, GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + i * 113);
                     }
                 }
                 if (nextLevelDoorAlpha > 0.01) {
@@ -955,114 +888,137 @@ public class Main extends Application {
                 }
                 brdrCtx.save();
                 brdrCtx.setGlobalAlpha(nextLevelDoorAlpha);
-                brdrCtx.drawImage(borderPartVerticalImg, WIDTH - 20, UPPER_INSET + 565);
+                brdrCtx.drawImage(images.borderPartVerticalImg, GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + 565);
                 brdrCtx.restore();
 
                 openDoor.update();
-                ctx.drawImage(openDoorMapImg, openDoor.countX * 20, 0, 20, 71, WIDTH - 20, UPPER_INSET + 565, 20, 71);
+                ctx.drawImage(images.openDoorMapImg, openDoor.countX * 20, 0, 20, 71, GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + 565, 20, 71);
             } else {
                 for (int i = 0; i < 6; i++) {
-                    brdrCtx.drawImage(borderPartVerticalImg, 0, UPPER_INSET + i * 113);
-                    brdrCtx.drawImage(borderPartVerticalImg, WIDTH - 20, UPPER_INSET + i * 113);
+                    brdrCtx.drawImage(images.borderPartVerticalImg, 0, GameConstants.UPPER_INSET + i * 113);
+                    brdrCtx.drawImage(images.borderPartVerticalImg, GameConstants.WIDTH - 20, GameConstants.UPPER_INSET + i * 113);
                 }
             }
 
             // Draw upper doors
             brdrCtx.save();
             brdrCtx.setGlobalAlpha(topLeftDoorAlpha);
-            brdrCtx.drawImage(topDoorImg, 100, 65);
+            brdrCtx.drawImage(images.topDoorImg, 100, 65);
             brdrCtx.setGlobalAlpha(topRightDoorAlpha);
-            brdrCtx.drawImage(topDoorImg, WIDTH - 100 - topDoorImg.getWidth(), 65);
+            brdrCtx.drawImage(images.topDoorImg, GameConstants.WIDTH - 100 - images.topDoorImg.getWidth(), 65);
             brdrCtx.restore();
         }
     }
 
 
     // ******************** Inner Classes *************************************
+    /*
+    Sprite (abstract) - Lớp cơ sở cho tất cả đối tượng
+    ├── AnimatedSprite (abstract) - Đối tượng có animation
+    │   ├── Paddle - Ván đỡ
+    │   ├── Blink - Hiệu ứng nhấp nháy khi phá block
+    │   ├── BonusBlock - Vật phẩm đặc biệt
+    │   ├── Enemy - Kẻ địch
+    │   ├── Explosion - Hiệu ứng nổ
+    │   └── OpenDoor - Cửa qua level
+    ├── Ball - Bóng
+    ├── Block - Gạch
+    └── Torpedo - Đạn laser
+    */
     private abstract class Sprite {
-        public Image     image;
-        public Bounds    bounds;
-        public double    x; // Center of Sprite in x-direction
-        public double    y; // Center of Sprite in y-direction
-        public double    r;
-        public double    vX;
-        public double    vY;
-        public double    vR;
-        public double    width;
-        public double    height;
-        public double    size;
-        public double    radius;
-        public boolean   toBeRemoved;
+        public Image image;
+        public Bounds bounds;
+        public double x; // Center of Sprite in x-direction
+        public double y; // Center of Sprite in y-direction
+        public double r;
+        public double vX;
+        public double vY;
+        public double vR;
+        public double width;
+        public double height;
+        public double size;
+        public double radius;
+        public boolean toBeRemoved;
 
 
         // ******************** Constructors **************************************
         public Sprite() {
             this(null, 0, 0, 0, 0, 0, 0);
         }
+
         public Sprite(final Image image) {
             this(image, 0, 0, 0, 0, 0, 0);
         }
+
         public Sprite(final Image image, final double x, final double y) {
             this(image, x, y, 0, 0, 0, 0);
         }
+
         public Sprite(final Image image, final double x, final double y, final double vX, final double vY) {
             this(image, x, y, 0, vX, vY, 0);
         }
+
         public Sprite(final Image image, final double x, final double y, final double r, final double vX, final double vY) {
             this(image, x, y, r, vX, vY, 0);
         }
+
         public Sprite(final Image image, final double x, final double y, final double r, final double vX, final double vY, final double vR) {
-            this.image       = image;
-            this.x           = x;
-            this.y           = y;
-            this.r           = r;
-            this.vX          = vX;
-            this.vY          = vY;
-            this.vR          = vR;
-            this.width       = null == image ? 0 : image.getWidth();
-            this.height      = null == image ? 0 : image.getHeight();
-            this.size        = this.width > this.height ? width : height;
-            this.radius      = this.size * 0.5;
+            this.image = image;
+            this.x = x;
+            this.y = y;
+            this.r = r;
+            this.vX = vX;
+            this.vY = vY;
+            this.vR = vR;
+            this.width = null == image ? 0 : image.getWidth();
+            this.height = null == image ? 0 : image.getHeight();
+            this.size = this.width > this.height ? width : height;
+            this.radius = this.size * 0.5;
             this.toBeRemoved = false;
-            this.bounds      = null == image ? new Bounds(0, 0, 0, 0) : new Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());
+            this.bounds = null == image ? new Bounds(0, 0, 0, 0) : new Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());
         }
 
 
         // ******************** Methods *******************************************
-        protected void init() {}
+        protected void init() {
+        }
 
-        public void respawn() {}
+        public void respawn() {
+        }
 
         public abstract void update();
     }
 
     private abstract class AnimatedSprite extends Sprite {
-        protected final int    maxFrameX;
-        protected final int    maxFrameY;
-        protected       double scale;
-        protected       int    countX;
-        protected       int    countY;
+        protected final int maxFrameX;
+        protected final int maxFrameY;
+        protected double scale;
+        protected int countX;
+        protected int countY;
 
 
         // ******************** Constructors **************************************
         public AnimatedSprite(final int maxFrameX, final int maxFrameY, final double scale) {
             this(0, 0, 0, 0, 0, 0, maxFrameX, maxFrameY, scale);
         }
+
         public AnimatedSprite(final double x, final double y, final double vX, final double vY, final int maxFrameX, final int maxFrameY, final double scale) {
             this(x, y, 0, vX, vY, 0, maxFrameX, maxFrameY, scale);
         }
+
         public AnimatedSprite(final double x, final double y, final double r, final double vX, final double vY, final double vR, final int maxFrameX, final int maxFrameY, final double scale) {
             super(null, x, y, r, vX, vY, vR);
             this.maxFrameX = maxFrameX;
             this.maxFrameY = maxFrameY;
-            this.scale     = scale;
-            this.countX    = 0;
-            this.countY    = 0;
+            this.scale = scale;
+            this.countX = 0;
+            this.countY = 0;
         }
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             x += vX;
             y += vY;
 
@@ -1084,42 +1040,47 @@ public class Main extends Application {
 
         // ******************** Constructors **************************************
         public Paddle() {
-            super(WIDTH * 0.5 - paddleState.width * 0.5, HEIGHT - PADDLE_OFFSET_Y, 0, 0, 8, 8, 1.0);
+            super(GameConstants.WIDTH * 0.5 - paddleState.width * 0.5, GameConstants.HEIGHT - GameConstants.PADDLE_OFFSET_Y, 0, 0, 8, 8, 1.0);
             init();
         }
 
 
         // ******************** Methods *******************************************
-        @Override protected void init() {
-            this.width  = paddleState.width;
+        @Override
+        protected void init() {
+            this.width = paddleState.width;
             this.height = paddleState.height;
-            this.size   = height;
+            this.size = height;
             this.radius = size * 0.5;
             this.bounds.set(this.x, this.y, paddleState.width, this.height);
         }
 
-        @Override public void respawn() {
-            this.x  = WIDTH * 0.5;
+        @Override
+        public void respawn() {
+            this.x = GameConstants.WIDTH * 0.5;
             this.bounds.set(this.x, this.y, paddleState.width, this.height);
             this.vX = 0;
             this.vY = 0;
         }
 
-        @Override public void update() {
+        @Override
+        public void update() {
             x += vX;
 
-            if (x + paddleState.width > WIDTH - INSET) {
-                if (nextLevelDoorOpen && !movingPaddleOut) { movingPaddleOut = true; }
-                x = WIDTH - INSET - paddleState.width;
+            if (x + paddleState.width > GameConstants.WIDTH - GameConstants.INSET) {
+                if (nextLevelDoorOpen && !movingPaddleOut) {
+                    movingPaddleOut = true;
+                }
+                x = GameConstants.WIDTH - GameConstants.INSET - paddleState.width;
             }
-            if (x < INSET) {
-                x = INSET;
+            if (x < GameConstants.INSET) {
+                x = GameConstants.INSET;
             }
             this.bounds.set(this.x, this.y, paddleState.width, this.height);
 
             countX = animateInc;
             if (countX == maxFrameX) {
-                countX     = 0;
+                countX = 0;
                 animateInc = 0;
                 countY++;
                 if (countY == maxFrameY) {
@@ -1138,7 +1099,8 @@ public class Main extends Application {
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
@@ -1154,31 +1116,32 @@ public class Main extends Application {
     }
 
     private class Block extends Sprite {
-        public       int       value;
-        public       int       hits;
-        public final int       maxHits;
+        public int value;
+        public int hits;
+        public final int maxHits;
         public final BlockType blockType;
 
 
         // ******************** Constructors **************************************
         public Block(final Image image, final double x, final double y, final int value, final int maxHits, final BlockType blockType) {
             super(image);
-            this.x           = x;
-            this.y           = y;
-            this.value       = value;
-            this.maxHits     = maxHits;
-            this.blockType   = blockType;
-            this.hits        = 0;
-            this.width       = BLOCK_WIDTH;
-            this.height      = BLOCK_HEIGHT;
+            this.x = x;
+            this.y = y;
+            this.value = value;
+            this.maxHits = maxHits;
+            this.blockType = blockType;
+            this.hits = 0;
+            this.width = GameConstants.BLOCK_WIDTH;
+            this.height = GameConstants.BLOCK_HEIGHT;
             this.bounds.set(x, y, width, height);
             init();
         }
 
 
         // ******************** Methods *******************************************
-        @Override protected void init() {
-            size   = width > height ? width : height;
+        @Override
+        protected void init() {
+            size = width > height ? width : height;
             radius = size * 0.5;
 
             // Velocity
@@ -1186,36 +1149,42 @@ public class Main extends Application {
             vY = 0;
         }
 
-        @Override public void update() { }
+        @Override
+        public void update() {
+        }
 
-        @Override public String toString() { return new StringBuilder().append(blockType).append("(").append(x).append(",").append(y).append(")").toString(); }
+        @Override
+        public String toString() {
+            return new StringBuilder().append(blockType).append("(").append(x).append(",").append(y).append(")").toString();
+        }
 
         public boolean equals(final Block other) {
             return this.blockType == other.blockType &&
-                   this.x         == other.x &&
-                   this.y         == other.y &&
-                   this.value     == other.value;
+                    this.x == other.x &&
+                    this.y == other.y &&
+                    this.value == other.value;
         }
     }
 
     private class BonusBlock extends AnimatedSprite {
-        public BonusType bonusType;
+        public EnumDefinitions.BonusType bonusType;
 
 
         // ******************** Constructors **************************************
-        public BonusBlock(final double x, final double y, final BonusType bonusType) {
-            super(x, y, 0, BONUS_BLOCK_SPEED, 5, 4, 1.0);
-            this.bonusType   = bonusType;
-            this.width       = BLOCK_WIDTH;
-            this.height      = BLOCK_HEIGHT;
+        public BonusBlock(final double x, final double y, final EnumDefinitions.BonusType bonusType) {
+            super(x, y, 0, GameConstants.BONUS_BLOCK_SPEED, 5, 4, 1.0);
+            this.bonusType = bonusType;
+            this.width = GameConstants.BLOCK_WIDTH;
+            this.height = GameConstants.BLOCK_HEIGHT;
             this.bounds.set(x, y, width, height);
         }
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             y += vY;
-            if (y > HEIGHT) {
+            if (y > GameConstants.HEIGHT) {
                 toBeRemoved = true;
             }
             countX++;
@@ -1232,31 +1201,34 @@ public class Main extends Application {
 
     private class Ball extends Sprite {
         public boolean active;
-        public long    bornTimestamp;
+        public long bornTimestamp;
 
 
         // ******************** Constructors **************************************
         public Ball(final Image image, final double x, final double y, final double vX) {
             this(image, x, y, vX, false);
         }
+
         public Ball(final Image image, final double x, final double y, final double vX, final boolean active) {
-            super(image, paddle.bounds.centerX, paddle.bounds.minY - image.getHeight() * 0.5 - BALL_SPEED - 1, 0, -ballSpeed);
-            this.vX            = vX;
-            this.active        = active;
+            super(image, paddle.bounds.centerX, paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1, 0, -ballSpeed);
+            this.vX = vX;
+            this.active = active;
             this.bornTimestamp = Instant.now().getEpochSecond();
         }
+
         private Ball(final Image image, final double x, final double y, final double vX, final double vY) {
             super(image, x, y, vX, vY);
-            this.active        = true;
+            this.active = true;
             this.bornTimestamp = Instant.now().getEpochSecond();
         }
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             if (!active) {
                 this.x = paddle.bounds.centerX;
-                this.y = paddle.bounds.minY - image.getHeight() * 0.5 - BALL_SPEED - 1;
+                this.y = paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
             } else { // We need to check if the ball hits a block
                 double x0 = x;       // (x0, y0) = initial coordinates, (x1, y1) = final coordinates in case there is no hit
                 double y0 = y;
@@ -1270,12 +1242,12 @@ public class Main extends Application {
                     double fx1 = x1;
                     double fy1 = y1;
                     BallHit ballHit = Stream.concat(blocks.stream().map(b -> b.bounds),                              // Iterating over all block bounds
-                                      Stream.concat(Arrays.stream(BORDER_BOUNDS), Stream.of(paddle.bounds)))         // together with the borders and paddle bounds (processed identically)
-                                            .map(bounds -> bounds.computeBallHit(fx0, fy0, fx1, fy1, radius))        // computing a possible ball hit with the bounds (returns null if no hits)
-                                            .filter(Objects::nonNull)                                                // removing non-hits
-                                            // If that trajectory (x0, y0) -> (x1, y1) hits several blocks, we keep the first hit block
-                                            .min(Comparator.comparingDouble(ballHit1 -> ballHit1.beforeHitDistance)) // first hit = min hit distance (x0, y0) -> (xHit, yHit)
-                                            .orElse(null);                                                     // returning null if no hit
+                                    Stream.concat(Arrays.stream(GameConstants.BORDER_BOUNDS), Stream.of(paddle.bounds)))         // together with the borders and paddle bounds (processed identically)
+                            .map(bounds -> bounds.computeBallHit(fx0, fy0, fx1, fy1, radius))        // computing a possible ball hit with the bounds (returns null if no hits)
+                            .filter(Objects::nonNull)                                                // removing non-hits
+                            // If that trajectory (x0, y0) -> (x1, y1) hits several blocks, we keep the first hit block
+                            .min(Comparator.comparingDouble(ballHit1 -> ballHit1.beforeHitDistance)) // first hit = min hit distance (x0, y0) -> (xHit, yHit)
+                            .orElse(null);                                                     // returning null if no hit
                     if (ballHit == null) { // If there is no hit, (x1, y1) doesn't need correction
                         this.x = x1;
                         this.y = y1;
@@ -1283,8 +1255,12 @@ public class Main extends Application {
                     }
                     // We have a ball hit when reaching this code.
                     // => inverting vX or Vy if needed
-                    if (ballHit.inverseVx) { vX = -vX; }
-                    if (ballHit.inverseVy) { vY = -vY; }
+                    if (ballHit.inverseVx) {
+                        vX = -vX;
+                    }
+                    if (ballHit.inverseVy) {
+                        vY = -vY;
+                    }
                     // Preparing the next loop iteration by updating (x0, y0) -> (x1, y1) to (xHit, yHit) -> (correctedX, correctedY)
                     x0 = ballHit.xHit;
                     y0 = ballHit.yHit;
@@ -1294,18 +1270,18 @@ public class Main extends Application {
                     if (ballHit.hitBounds == paddle.bounds) {
                         Bounds pb = paddle.bounds;
                         if (stickyPaddle) {
-                            this.x      = pb.centerX;
-                            this.y      = pb.minY - image.getHeight() * 0.5 - BALL_SPEED - 1;
+                            this.x = pb.centerX;
+                            this.y = pb.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
                             this.active = false;
                             break;
                         } else {
                             // Influence vX of ball if vX of paddle != 0
                             if (paddle.vX != 0) {
                                 double speedXY = Math.sqrt(vX * vX + vY * vY);
-                                double posX    = (x1 - pb.centerX) / (pb.width * 0.5);
-                                double speedX  = speedXY * posX * BALL_VX_INFLUENCE;
+                                double posX = (x1 - pb.centerX) / (pb.width * 0.5);
+                                double speedX = speedXY * posX * GameConstants.BALL_VX_INFLUENCE;
                                 vX = speedX;
-                                vY = - Math.sqrt(speedXY * speedXY - speedX * speedX);
+                                vY = -Math.sqrt(speedXY * speedXY - speedX * speedX);
                                 // Recalculating (x1, y1) from this new speed
                                 x1 = x0 + vX;
                                 y1 = y0 + vY;
@@ -1319,12 +1295,14 @@ public class Main extends Application {
                                     double minRad = Math.PI / 180 * 35;                               // To avoid the speed to be too horizontal
                                     double maxRad = Math.PI / 180 * 75;                               // Better to keep the hit speed
                                     // Low angle correction => minRad
-                                    if (Double.isNaN(cornerAngleRad) || cornerAngleRad < minRad) { cornerAngleRad = minRad; }
+                                    if (Double.isNaN(cornerAngleRad) || cornerAngleRad < minRad) {
+                                        cornerAngleRad = minRad;
+                                    }
                                     // Keeping the hit speed if to closed to 90U+00b0
                                     if (cornerAngleRad < maxRad) {
                                         // Applying the new speed angle
-                                        vY = BALL_SPEED * Math.sin(cornerAngleRad) * (y0 > pb.centerY ? 1 : -1); // Not inverting vY if the hit is too low (-> user will lose the ball, sorry)
-                                        vX = BALL_SPEED * Math.cos(cornerAngleRad) * (hitLeftCorner ? -1 : 1);
+                                        vY = GameConstants.BALL_SPEED * Math.sin(cornerAngleRad) * (y0 > pb.centerY ? 1 : -1); // Not inverting vY if the hit is too low (-> user will lose the ball, sorry)
+                                        vX = GameConstants.BALL_SPEED * Math.cos(cornerAngleRad) * (hitLeftCorner ? -1 : 1);
                                         // Recalculating (x1, y1) from this new speed
                                         x1 = x0 + vX;
                                         y1 = y0 + vY;
@@ -1332,14 +1310,14 @@ public class Main extends Application {
                                 }
                             }
                         }
-                        playSound(ballPaddleSnd);
+                        playSound(autoClips.ballPaddleSnd);
                     }
                     // We retrieve the block hit by the ball for the hit sound, block blink & score management:
                     Block block = blocks.stream().filter(b -> b.bounds == ballHit.hitBounds).findFirst().orElse(null);
                     if (block != null) { // Can be null if the ball hit something else (paddle or border)
                         switch (block.blockType) {
                             case GOLD -> {
-                                playSound(ballHardBlockSnd);
+                                playSound(autoClips.ballHardBlockSnd);
                                 blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                             }
                             case GRAY -> {
@@ -1348,9 +1326,9 @@ public class Main extends Application {
                                     score += level * 50;
                                     blockCounter += 1;
                                     block.toBeRemoved = true;
-                                    playSound(ballBlockSnd);
+                                    playSound(autoClips.ballBlockSnd);
                                 } else {
-                                    playSound(ballHardBlockSnd);
+                                    playSound(autoClips.ballHardBlockSnd);
                                     blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                                 }
                             }
@@ -1360,9 +1338,9 @@ public class Main extends Application {
                                     score += block.value;
                                     blockCounter += 1;
                                     block.toBeRemoved = true;
-                                    playSound(ballBlockSnd);
-                                    if (blockCounter % BONUS_BLOCK_INTERVAL == 0) {
-                                        bonusBlocks.add(new BonusBlock(block.x, block.y, BonusType.values()[RND.nextInt(BonusType.values().length)]));
+                                    playSound(autoClips.ballBlockSnd);
+                                    if (blockCounter % GameConstants.BONUS_BLOCK_INTERVAL == 0) {
+                                        bonusBlocks.add(new BonusBlock(block.x, block.y, EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
                                     }
                                 }
                             }
@@ -1372,15 +1350,15 @@ public class Main extends Application {
                         final List<Block> items = blockFifo.getItems();
                         if (items.size() == 9) {
                             if (items.get(0).equals(items.get(6)) &&
-                                items.get(1).equals(items.get(5)) &&
-                                items.get(1).equals(items.get(7)) &&
-                                items.get(2).equals(items.get(4)) &&
-                                items.get(2).equals(items.get(8))) {
+                                    items.get(1).equals(items.get(5)) &&
+                                    items.get(1).equals(items.get(7)) &&
+                                    items.get(2).equals(items.get(4)) &&
+                                    items.get(2).equals(items.get(8))) {
                                 this.vX += 0.1;
                             } else if (items.get(0).equals(items.get(8)) &&
-                                       items.get(1).equals(items.get(7)) &&
-                                       items.get(2).equals(items.get(6)) &&
-                                       items.get(3).equals(items.get(5))) {
+                                    items.get(1).equals(items.get(7)) &&
+                                    items.get(2).equals(items.get(6)) &&
+                                    items.get(3).equals(items.get(5))) {
                                 this.vX += 0.1;
                             }
                         }
@@ -1396,7 +1374,7 @@ public class Main extends Application {
                 if (ballHitsEnemy) {
                     enemy.toBeRemoved = true;
                     explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                    playSound(explosionSnd);
+                    playSound(autoClips.explosionSnd);
                     if (bounds.centerX > enemy.bounds.minX && bounds.centerX < enemy.bounds.maxX) {
                         // Top or Bottom hit
                         vY = -vY;
@@ -1418,9 +1396,11 @@ public class Main extends Application {
                 }
             }
 
-            if (Double.compare(vX, 0) == 0) { vX = 0.5; }
+            if (Double.compare(vX, 0) == 0) {
+                vX = 0.5;
+            }
 
-            if (this.bounds.maxY > HEIGHT) {
+            if (this.bounds.maxY > GameConstants.HEIGHT) {
                 this.toBeRemoved = true;
             }
         }
@@ -1430,15 +1410,16 @@ public class Main extends Application {
 
         // ******************** Constructors **************************************
         public Torpedo(final Image image, final double x, final double y) {
-            super(image, x, y - image.getHeight(), 0, TORPEDO_SPEED);
+            super(image, x, y - image.getHeight(), 0, GameConstants.TORPEDO_SPEED);
         }
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             y -= vY;
             this.bounds.set(this.x - this.width * 0.5, this.y - this.height * 0.5, this.width, this.height);
-            if (bounds.minY < UPPER_INSET) {
+            if (bounds.minY < GameConstants.UPPER_INSET) {
                 toBeRemoved = true;
             }
         }
@@ -1454,7 +1435,8 @@ public class Main extends Application {
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             countX++;
             if (countX == maxFrameX) {
                 countY++;
@@ -1467,38 +1449,39 @@ public class Main extends Application {
     }
 
     private class Enemy extends AnimatedSprite {
-        public EnemyType enemyType;
+        public EnumDefinitions.EnemyType enemyType;
         private double initialVx;
 
 
         // ******************** Constructors **************************************
-        public Enemy(final double x, final double y, final EnemyType enemyType) {
-            super(x, y, 0, ENEMY_SPEED, 8, 3, 1.0);
-            this.initialVx   = RND.nextDouble() * ENEMY_SPEED;
-            this.vX          = RND.nextBoolean() ? initialVx : -initialVx;
-            this.enemyType   = enemyType;
-            this.width       = ENEMY_WIDTH;
-            this.height      = ENEMY_HEIGHT;
-            this.radius      = Math.sqrt(ENEMY_HEIGHT * ENEMY_HEIGHT * 0.25 + ENEMY_WIDTH * ENEMY_WIDTH * 0.25);
+        public Enemy(final double x, final double y, final EnumDefinitions.EnemyType enemyType) {
+            super(x, y, 0, GameConstants.ENEMY_SPEED, 8, 3, 1.0);
+            this.initialVx = GameConstants.RND.nextDouble() * GameConstants.ENEMY_SPEED;
+            this.vX = GameConstants.RND.nextBoolean() ? initialVx : -initialVx;
+            this.enemyType = enemyType;
+            this.width = GameConstants.ENEMY_WIDTH;
+            this.height = GameConstants.ENEMY_HEIGHT;
+            this.radius = Math.sqrt(GameConstants.ENEMY_HEIGHT * GameConstants.ENEMY_HEIGHT * 0.25 + GameConstants.ENEMY_WIDTH * GameConstants.ENEMY_WIDTH * 0.25);
             this.bounds.set(this.x - this.width * 0.5, this.y - this.height * 0.5, this.width, this.height);
         }
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             x += vX;
             y += vY;
 
-            if (bounds.maxX > WIDTH - INSET) {
-                this.x  = WIDTH - INSET - this.width;
+            if (bounds.maxX > GameConstants.WIDTH - GameConstants.INSET) {
+                this.x = GameConstants.WIDTH - GameConstants.INSET - this.width;
                 this.vX = -initialVx;
             }
-            if (bounds.minX < INSET) {
-                this.x  = INSET;
+            if (bounds.minX < GameConstants.INSET) {
+                this.x = GameConstants.INSET;
                 this.vX = Math.abs(initialVx);
             }
-            if (bounds.minY < UPPER_INSET) {
-                this.y  = UPPER_INSET;
+            if (bounds.minY < GameConstants.UPPER_INSET) {
+                this.y = GameConstants.UPPER_INSET;
                 this.vY = 3.0;
             }
 
@@ -1533,10 +1516,12 @@ public class Main extends Application {
             if (bounds.intersects(paddle.bounds)) {
                 this.toBeRemoved = true;
                 explosions.add(new Explosion(this.x, this.y, this.vX, this.vY, 1.0));
-                playSound(explosionSnd);
+                playSound(autoClips.explosionSnd);
             }
 
-            if (y > HEIGHT) { toBeRemoved = true; }
+            if (y > GameConstants.HEIGHT) {
+                toBeRemoved = true;
+            }
 
             countX++;
             if (countX == maxFrameX) {
@@ -1558,7 +1543,8 @@ public class Main extends Application {
 
 
         // ******************** Methods *******************************************
-        @Override public void update() {
+        @Override
+        public void update() {
             x += vX;
             y += vY;
 
@@ -1576,7 +1562,7 @@ public class Main extends Application {
         }
     }
 
-    private static class Bounds {
+    public static class Bounds {
         public double x;
         public double y;
         public double width;
@@ -1593,9 +1579,11 @@ public class Main extends Application {
         public Bounds() {
             this(0, 0, 0, 0);
         }
+
         public Bounds(final double width, final double height) {
             this(0, 0, width, height);
         }
+
         public Bounds(final double x, final double y, final double width, final double height) {
             set(x, y, width, height);
         }
@@ -1605,15 +1593,16 @@ public class Main extends Application {
         public void set(final Bounds bounds) {
             set(bounds.x, bounds.y, bounds.width, bounds.height);
         }
+
         public void set(final double x, final double y, final double width, final double height) {
-            this.x       = x;
-            this.y       = y;
-            this.width   = width;
-            this.height  = height;
-            this.minX    = x;
-            this.minY    = y;
-            this.maxX    = x + width;
-            this.maxY    = y + height;
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            this.minX = x;
+            this.minY = y;
+            this.maxX = x + width;
+            this.maxY = y + height;
             this.centerX = x + width * 0.5;
             this.centerY = y + height * 0.5;
         }
@@ -1692,14 +1681,14 @@ public class Main extends Application {
     }
 
     private static class BallHit {
-        private final Bounds  hitBounds;
-        private       double  beforeHitDistance;
-        private       double  xHit;
-        private       double  yHit;
-        private       double  correctedX;
-        private       double  correctedY;
-        private       boolean inverseVx;
-        private       boolean inverseVy;
+        private final Bounds hitBounds;
+        private double beforeHitDistance;
+        private double xHit;
+        private double yHit;
+        private double correctedX;
+        private double correctedY;
+        private boolean inverseVx;
+        private boolean inverseVy;
 
 
         public BallHit(Bounds hitBounds) {
