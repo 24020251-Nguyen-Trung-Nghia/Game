@@ -609,28 +609,28 @@ public class Main extends Application {
                     }
 
                     // Animate bonus blocks and top doors
-//                    if (now > lastBonusAnimCall + 50_000_000) {
-//                        // Update bonus blocks
-//                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
-//
-//                        // Fade out top doors
-//                        if (topLeftDoorAlpha < 1) {
-//                            topLeftDoorAlpha -= 0.1;
-//                            if (topLeftDoorAlpha <= 0) {
-//                                spawnEnemy(Pos.TOP_LEFT);
-//                                topLeftDoorAlpha = 1;
-//                            }
-//                            drawBorder.drawBorder();
-//                        } else if (topRightDoorAlpha < 1) {
-//                            topRightDoorAlpha -= 0.1;
-//                            if (topRightDoorAlpha <= 0) {
-//                                spawnEnemy(Pos.TOP_RIGHT);
-//                                topRightDoorAlpha = 1;
-//                            }
-//                            drawBorder.drawBorder();
-//                        }
-//                        lastBonusAnimCall = now;
-//                    }
+                    if (now > lastBonusAnimCall + 50_000_000) {
+                        // Update bonus blocks
+                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
+
+                        // Fade out top doors
+                        if (topLeftDoorAlpha < 1) {
+                            topLeftDoorAlpha -= 0.1;
+                            if (topLeftDoorAlpha <= 0) {
+                                spawnEnemy(Pos.TOP_LEFT);
+                                topLeftDoorAlpha = 1;
+                            }
+                            drawBorder.drawBorder();
+                        } else if (topRightDoorAlpha < 1) {
+                            topRightDoorAlpha -= 0.1;
+                            if (topRightDoorAlpha <= 0) {
+                                spawnEnemy(Pos.TOP_RIGHT);
+                                topRightDoorAlpha = 1;
+                            }
+                            drawBorder.drawBorder();
+                        }
+                        lastBonusAnimCall = now;
+                    }
 
                     // Animate enemies
 //                    if (now > lastEnemyUpdateCall + 100_000_000) {
