@@ -561,13 +561,13 @@ public class Main extends Application {
         topRightDoorAlpha = 1.0;
         blockFifo = new FIFO<>(9);
 
-        // ***************** Game Loop ******************************************
         lastOneSecondCheck = System.nanoTime();
         lastTimerCall = System.nanoTime();
         lastAnimCall = System.nanoTime();
         lastBonusAnimCall = System.nanoTime();
         lastEnemyUpdateCall = System.nanoTime();
 
+        // ***************** Game Loop ******************************************
         timer = new AnimationTimer() {
             @Override
             public void handle(final long now) {
@@ -609,35 +609,35 @@ public class Main extends Application {
                     }
 
                     // Animate bonus blocks and top doors
-                    if (now > lastBonusAnimCall + 50_000_000) {
-                        // Update bonus blocks
-                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
-
-                        // Fade out top doors
-                        if (topLeftDoorAlpha < 1) {
-                            topLeftDoorAlpha -= 0.1;
-                            if (topLeftDoorAlpha <= 0) {
-                                spawnEnemy(Pos.TOP_LEFT);
-                                topLeftDoorAlpha = 1;
-                            }
-                            drawBorder.drawBorder();
-                        } else if (topRightDoorAlpha < 1) {
-                            topRightDoorAlpha -= 0.1;
-                            if (topRightDoorAlpha <= 0) {
-                                spawnEnemy(Pos.TOP_RIGHT);
-                                topRightDoorAlpha = 1;
-                            }
-                            drawBorder.drawBorder();
-                        }
-                        lastBonusAnimCall = now;
-                    }
+//                    if (now > lastBonusAnimCall + 50_000_000) {
+//                        // Update bonus blocks
+//                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
+//
+//                        // Fade out top doors
+//                        if (topLeftDoorAlpha < 1) {
+//                            topLeftDoorAlpha -= 0.1;
+//                            if (topLeftDoorAlpha <= 0) {
+//                                spawnEnemy(Pos.TOP_LEFT);
+//                                topLeftDoorAlpha = 1;
+//                            }
+//                            drawBorder.drawBorder();
+//                        } else if (topRightDoorAlpha < 1) {
+//                            topRightDoorAlpha -= 0.1;
+//                            if (topRightDoorAlpha <= 0) {
+//                                spawnEnemy(Pos.TOP_RIGHT);
+//                                topRightDoorAlpha = 1;
+//                            }
+//                            drawBorder.drawBorder();
+//                        }
+//                        lastBonusAnimCall = now;
+//                    }
 
                     // Animate enemies
-                    if (now > lastEnemyUpdateCall + 100_000_000) {
-                        enemies.forEach(enemy -> enemy.update());
-                        explosions.forEach(explosion -> explosion.update());
-                        lastEnemyUpdateCall = now;
-                    }
+//                    if (now > lastEnemyUpdateCall + 100_000_000) {
+//                        enemies.forEach(enemy -> enemy.update());
+//                        explosions.forEach(explosion -> explosion.update());
+//                        lastEnemyUpdateCall = now;
+//                    }
 
                     // Animation of paddle glow
                     if (now > lastAnimCall + 5_000_000) {
@@ -836,7 +836,7 @@ public class Main extends Application {
 
     // Play audio clips
     public void playSound(final AudioClip audioClip) {
-        audioClip.play();
+        //audioClip.play();
     }
 
 
