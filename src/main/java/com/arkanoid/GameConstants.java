@@ -39,6 +39,7 @@ public class GameConstants {
     static final double ENEMY_SPEED;
     static final Color SCORE_WHITE;
     final static Bounds[] BORDER_BOUNDS;
+    public static final Font UI_FONT = Font.font("Arial", 24);
 
     // Static initializer block
     static {
