@@ -11,23 +11,24 @@ public class GameOver {
 
     // Game Over
     void gameOver() {
-        main.getExecutor().schedule(() -> main.startScreen(), 5, TimeUnit.SECONDS);
+        main.executor.schedule(() -> main.startScreen(), 5, TimeUnit.SECONDS);
 
         main.playSound(main.getAutoClips().gameOverSnd);
 
-        main.setRunning(false);
-        main.getBalls().clear();
-        main.getTorpedoes().clear();
+
+        main.running = false;
+        main.balls.clear();
+        main.torpedoes.clear();
 
         main.updateAndDraw();
 
-        if (main.getScore() > main.getHighscore()) {
-            PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, main.getScore());
-            main.setHighscore(main.getScore());
+        if (main.score > main.highscore) {
+            PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, main.score);
+            main.highscore = main.score;
         }
         PropertyManager.INSTANCE.storeProperties();
-        main.setScore(0);
-        main.setNoOfLifes(3);
-        main.setPaddleState(EnumDefinitions.PaddleState.STANDARD);
+        main.score = 0;
+        main.noOfLifes = 3;
+        main.paddleState = EnumDefinitions.PaddleState.STANDARD;
     }
 }

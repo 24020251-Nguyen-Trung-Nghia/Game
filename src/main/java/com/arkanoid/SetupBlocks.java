@@ -9,9 +9,9 @@ public class SetupBlocks {
 
     // Setup blocks for given level
     void setupBlocks(final int level) {
-        main.getBlocks().clear();
+        main.blocks.clear();
         Constants.BlockType[][] level2 = Constants.LEVEL_MAP.get(level);
-        main.setSilverBlockMaxHits(level % 8 == 0 ? main.getSilverBlockMaxHits() + 1 : main.getSilverBlockMaxHits());
+        main.silverBlockMaxHits = (level % 8 == 0 ? main.silverBlockMaxHits + 1 : main.silverBlockMaxHits);
         for (int iy = 0; iy < level2.length; iy++) {
             for (int ix = 0; ix < level2[iy].length; ix++) {
                 Block block;
@@ -20,7 +20,7 @@ public class SetupBlocks {
                     case GOLD ->
                             block = new Block(main.getImages().goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
                     case GRAY ->
-                            block = new Block(main.getImages().grayBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, main.getSilverBlockMaxHits(), blockType);
+                            block = new Block(main.getImages().grayBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, main.silverBlockMaxHits, blockType);
                     case WHIT ->
                             block = new Block(main.getImages().whiteBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 10, blockType.maxHits, blockType);
                     case ORNG ->
@@ -42,7 +42,7 @@ public class SetupBlocks {
                 if (null == block) {
                     continue;
                 }
-                main.getBlocks().add(block);
+                main.blocks.add(block);
             }
         }
     }

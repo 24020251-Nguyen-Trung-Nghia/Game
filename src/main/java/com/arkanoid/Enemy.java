@@ -41,7 +41,7 @@ public class Enemy extends AnimatedSprite {
         getBounds().set(this.x, this.y, this.width, this.height);
 
         // Kiểm tra va chạm enemy với blocks - sử dụng getter
-        for (Block block : main.getBlocks()) {
+        for (Block block : main.blocks) {
             boolean enemyHitsBlock = getBounds().intersects(block.getBounds());
             if (enemyHitsBlock) {
                 if (getBounds().centerX > block.getBounds().minX && getBounds().centerX < block.getBounds().maxX) {
@@ -66,9 +66,9 @@ public class Enemy extends AnimatedSprite {
         }
 
         // Kiểm tra va chạm enemy với paddle - sử dụng getter
-        if (getBounds().intersects(main.getPaddle().getBounds())) {
+        if (getBounds().intersects(main.paddle.getBounds())) {
             this.toBeRemoved = true;
-            main.getExplosions().add(new Explosion(this.x, this.y, this.vX, this.vY, 1.0));
+            main.explosions.add(new Explosion(this.x, this.y, this.vX, this.vY, 1.0));
             main.playSound(main.getAutoClips().explosionSnd);
         }
 

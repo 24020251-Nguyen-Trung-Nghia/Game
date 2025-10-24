@@ -44,122 +44,8 @@ public class Main extends Application {
     private final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
     private final DrawBorder drawBorder = new DrawBorder(this);
 
-
-    // ************ GAME STATE VARIABLES ************************
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-    // Biến điều khiển game
-    private boolean running;           // Game đang chạy?
-
-
-    private Instant gameStartTime;     // Thời điểm bắt đầu game
-    private long levelStartTime;       // Thời điểm bắt đầu level
-
-    private AnimationTimer timer;
-    private long lastTimerCall;
-    private long lastAnimCall;
-    private long lastBonusAnimCall;
-    private long lastEnemyUpdateCall;
-    private long lastOneSecondCheck;
-    private Canvas bkgCanvas;
-    private GraphicsContext bkgCtx;
-    private Canvas canvas;
-    private GraphicsContext ctx;
-    private Canvas brdrCanvas;
-    private GraphicsContext brdrCtx;
-
-
-    public GraphicsContext getBrdrCtx() {
-        return brdrCtx;
-    }
-
-    // Các đối tượng game
-    private Paddle paddle;                    // Paddle (ván đỡ)
-    private List<Ball> balls;                // Danh sách bóng
-    private List<Block> blocks;              // Danh sách block
-    private List<BonusBlock> bonusBlocks;    // Danh sách power-up
-    private List<Enemy> enemies;             // Danh sách kẻ địch
-
-    private List<Torpedo> torpedoes;
-
-    // Thống kê game
-    private int noOfLifes = 3;        // Số mạng
-    public long score = 0;           // Điểm số
-    private long highscore;           // Điểm cao nhất
-    private int level = 1;            // Level hiện tại
-
-    private EnumDefinitions.PaddleState paddleState;
-
-    // Trạng thái đặc biệt
-    private boolean stickyPaddle = false;     // Bóng có dính vào paddle không?
-    private boolean nextLevelDoorOpen = false;// Cửa qua level có mở không?
-    public boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
-
-    public int animateInc;
-    private List<Blink> blinks;
-    private double ballSpeed;
-    private boolean readyLevelVisible;
-    private int paddleResetCounter;
-    private int speedResetCounter;
-    private int nextLevelDoorCounter;
-    private double nextLevelDoorAlpha;
-    private OpenDoor openDoor;
-    private boolean showStartHint;
-
-    private int silverBlockMaxHits;
-    public int blockCounter;
-
-    private List<Explosion> explosions;
-    private Pos enemySpawnPosition;
-    private double topLeftDoorAlpha;
-    private double topRightDoorAlpha;
-    private FIFO<Block> blockFifo;
-    private EventHandler<MouseEvent> mouseHandler;
-
-
-    // ***************** Getter *****************************
-    public HitTest getHitTest() {
-        return hitTest;
-    }
-
-    public SetupBlocks getSetupBlocks() {
-        return setupBlocks;
-    }
-
-    public GameOver getGameOver() {
-        return gameOver;
-    }
-
-    public StartLevel getStartLevel() {
-        return startLevel;
-    }
-
-    public EventHandler<MouseEvent> getMouseHandler() {
-        return mouseHandler;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-
-    public GraphicsContext getCtx() {
-        return ctx;
-    }
-
-    public GraphicsContext getBkgCtx() {
-        return bkgCtx;
-    }
-
     public Images getImages() {
         return images;
-    }
-
-    public long getHighscore() {
-        return highscore;
-    }
-
-    public boolean isShowStartHint() {
-        return showStartHint;
     }
 
     public AutoClips getAutoClips() {
@@ -178,361 +64,97 @@ public class Main extends Application {
         return drawBackground;
     }
 
-    public ScheduledExecutorService getExecutor() {
-        return executor;
+    public HitTest getHitTest() {
+        return hitTest;
     }
 
-    public Instant getGameStartTime() {
-        return gameStartTime;
+    public SetupBlocks getSetupBlocks() {
+        return setupBlocks;
     }
 
-    public long getLevelStartTime() {
-        return levelStartTime;
+    public GameOver getGameOver() {
+        return gameOver;
     }
 
-    public AnimationTimer getTimer() {
-        return timer;
+    public StartLevel getStartLevel() {
+        return startLevel;
     }
 
-    public long getLastTimerCall() {
-        return lastTimerCall;
+    public UpdateAndDraw getUpdateAndDraw() {
+        return updateAndDraw;
     }
 
-    public long getLastAnimCall() {
-        return lastAnimCall;
+    public DrawBorder getDrawBorder() {
+        return drawBorder;
     }
 
-    public long getLastBonusAnimCall() {
-        return lastBonusAnimCall;
-    }
-
-    public long getLastEnemyUpdateCall() {
-        return lastEnemyUpdateCall;
-    }
-
-    public long getLastOneSecondCheck() {
-        return lastOneSecondCheck;
-    }
-
-    public Canvas getBkgCanvas() {
-        return bkgCanvas;
-    }
-
-    public Canvas getCanvas() {
-        return canvas;
-    }
-
-    public Canvas getBrdrCanvas() {
-        return brdrCanvas;
-    }
-
-    public Paddle getPaddle() {
-        return paddle;
-    }
-
-    public List<Ball> getBalls() {
-        return balls;
-    }
-
-    public List<Block> getBlocks() {
-        return blocks;
-    }
-
-    public List<BonusBlock> getBonusBlocks() {
-        return bonusBlocks;
-    }
-
-    public List<Enemy> getEnemies() {
-        return enemies;
-    }
-
-    public List<Torpedo> getTorpedoes() {
-        return torpedoes;
-    }
-
-    public int getNoOfLifes() {
-        return noOfLifes;
-    }
-
-    public long getScore() {
-        return score;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public EnumDefinitions.PaddleState getPaddleState() {
-        return paddleState;
-    }
-
-    public boolean isStickyPaddle() {
-        return stickyPaddle;
-    }
-
-    public boolean isNextLevelDoorOpen() {
-        return nextLevelDoorOpen;
-    }
-
-    public boolean isMovingPaddleOut() {
-        return movingPaddleOut;
-    }
-
-    public int getAnimateInc() {
-        return animateInc;
-    }
-
-    public List<Blink> getBlinks() {
-        return blinks;
-    }
-
-    public double getBallSpeed() {
-        return ballSpeed;
-    }
-
-    public boolean isReadyLevelVisible() {
-        return readyLevelVisible;
-    }
-
-    public int getPaddleResetCounter() {
-        return paddleResetCounter;
-    }
-
-    public int getSpeedResetCounter() {
-        return speedResetCounter;
-    }
-
-    public int getNextLevelDoorCounter() {
-        return nextLevelDoorCounter;
-    }
-
-    public double getNextLevelDoorAlpha() {
-        return nextLevelDoorAlpha;
-    }
-
-    public OpenDoor getOpenDoor() {
-        return openDoor;
-    }
-
-    public int getSilverBlockMaxHits() {
-        return silverBlockMaxHits;
-    }
-
-    public int getBlockCounter() {
-        return blockCounter;
-    }
-
-    public List<Explosion> getExplosions() {
-        return explosions;
-    }
-
-    public Pos getEnemySpawnPosition() {
-        return enemySpawnPosition;
-    }
-
-    public double getTopLeftDoorAlpha() {
-        return topLeftDoorAlpha;
-    }
-
-    public double getTopRightDoorAlpha() {
-        return topRightDoorAlpha;
-    }
-
-    public FIFO<Block> getBlockFifo() {
-        return blockFifo;
-    }
-
-    public void setExecutor(ScheduledExecutorService executor) {
-        this.executor = executor;
-    }
-
-    public void setRunning(boolean running) {
-        this.running = running;
-    }
-
-    public void setGameStartTime(Instant gameStartTime) {
-        this.gameStartTime = gameStartTime;
-    }
 
-    public void setLevelStartTime(long levelStartTime) {
-        this.levelStartTime = levelStartTime;
-    }
-
-    public void setTimer(AnimationTimer timer) {
-        this.timer = timer;
-    }
-
-    public void setLastTimerCall(long lastTimerCall) {
-        this.lastTimerCall = lastTimerCall;
-    }
-
-    public void setLastAnimCall(long lastAnimCall) {
-        this.lastAnimCall = lastAnimCall;
-    }
-
-    public void setLastBonusAnimCall(long lastBonusAnimCall) {
-        this.lastBonusAnimCall = lastBonusAnimCall;
-    }
-
-    public void setLastEnemyUpdateCall(long lastEnemyUpdateCall) {
-        this.lastEnemyUpdateCall = lastEnemyUpdateCall;
-    }
-
-    public void setLastOneSecondCheck(long lastOneSecondCheck) {
-        this.lastOneSecondCheck = lastOneSecondCheck;
-    }
-
-    public void setBkgCanvas(Canvas bkgCanvas) {
-        this.bkgCanvas = bkgCanvas;
-    }
-
-    public void setBkgCtx(GraphicsContext bkgCtx) {
-        this.bkgCtx = bkgCtx;
-    }
-
-    public void setCanvas(Canvas canvas) {
-        this.canvas = canvas;
-    }
-
-    public void setCtx(GraphicsContext ctx) {
-        this.ctx = ctx;
-    }
-
-    public void setBrdrCanvas(Canvas brdrCanvas) {
-        this.brdrCanvas = brdrCanvas;
-    }
-
-    public void setBrdrCtx(GraphicsContext brdrCtx) {
-        this.brdrCtx = brdrCtx;
-    }
-
-    public void setPaddle(Paddle paddle) {
-        this.paddle = paddle;
-    }
-
-    public void setBalls(List<Ball> balls) {
-        this.balls = balls;
-    }
-
-    public void setBlocks(List<Block> blocks) {
-        this.blocks = blocks;
-    }
-
-    public void setBonusBlocks(List<BonusBlock> bonusBlocks) {
-        this.bonusBlocks = bonusBlocks;
-    }
-
-    public void setEnemies(List<Enemy> enemies) {
-        this.enemies = enemies;
-    }
-
-    public void setTorpedoes(List<Torpedo> torpedoes) {
-        this.torpedoes = torpedoes;
-    }
-
-    public void setNoOfLifes(int noOfLifes) {
-        this.noOfLifes = noOfLifes;
-    }
-
-    public void setScore(long score) {
-        this.score = score;
-    }
-
-    public void setHighscore(long highscore) {
-        this.highscore = highscore;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setPaddleState(EnumDefinitions.PaddleState paddleState) {
-        this.paddleState = paddleState;
-    }
-
-    public void setStickyPaddle(boolean stickyPaddle) {
-        this.stickyPaddle = stickyPaddle;
-    }
-
-    public void setNextLevelDoorOpen(boolean nextLevelDoorOpen) {
-        this.nextLevelDoorOpen = nextLevelDoorOpen;
-    }
-
-    public void setMovingPaddleOut(boolean movingPaddleOut) {
-        this.movingPaddleOut = movingPaddleOut;
-    }
-
-    public void setAnimateInc(int animateInc) {
-        this.animateInc = animateInc;
-    }
-
-    public void setBlinks(List<Blink> blinks) {
-        this.blinks = blinks;
-    }
 
-    public void setBallSpeed(double ballSpeed) {
-        this.ballSpeed = ballSpeed;
-    }
-
-    public void setReadyLevelVisible(boolean readyLevelVisible) {
-        this.readyLevelVisible = readyLevelVisible;
-    }
-
-    public void setPaddleResetCounter(int paddleResetCounter) {
-        this.paddleResetCounter = paddleResetCounter;
-    }
-
-    public void setSpeedResetCounter(int speedResetCounter) {
-        this.speedResetCounter = speedResetCounter;
-    }
+    // ************ GAME STATE VARIABLES ************************
+    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-    public void setNextLevelDoorCounter(int nextLevelDoorCounter) {
-        this.nextLevelDoorCounter = nextLevelDoorCounter;
-    }
+    // Biến điều khiển game
+    public boolean running;           // Game đang chạy?
 
-    public void setNextLevelDoorAlpha(double nextLevelDoorAlpha) {
-        this.nextLevelDoorAlpha = nextLevelDoorAlpha;
-    }
+    public Instant gameStartTime;     // Thời điểm bắt đầu game
+    public long levelStartTime;       // Thời điểm bắt đầu level
 
-    public void setOpenDoor(OpenDoor openDoor) {
-        this.openDoor = openDoor;
-    }
+    public AnimationTimer timer;
+    public long lastTimerCall;
+    public long lastAnimCall;
+    public long lastBonusAnimCall;
+    public long lastEnemyUpdateCall;
+    public long lastOneSecondCheck;
+    public Canvas bkgCanvas;
+    public GraphicsContext bkgCtx;
+    public Canvas canvas;
+    public GraphicsContext ctx;
+    public Canvas brdrCanvas;
+    public GraphicsContext brdrCtx;
 
-    public void setShowStartHint(boolean showStartHint) {
-        this.showStartHint = showStartHint;
-    }
 
-    public void setSilverBlockMaxHits(int silverBlockMaxHits) {
-        this.silverBlockMaxHits = silverBlockMaxHits;
-    }
+    // Các đối tượng game
+    public Paddle paddle;                    // Paddle (ván đỡ)
+    public List<Ball> balls;                // Danh sách bóng
+    public List<Block> blocks;              // Danh sách block
+    public List<BonusBlock> bonusBlocks;    // Danh sách power-up
+    public List<Enemy> enemies;             // Danh sách kẻ địch
 
-    public void setBlockCounter(int blockCounter) {
-        this.blockCounter = blockCounter;
-    }
+    public List<Torpedo> torpedoes;
 
-    public void setExplosions(List<Explosion> explosions) {
-        this.explosions = explosions;
-    }
+    // Thống kê game
+    public int noOfLifes = 3;        // Số mạng
+    public long score = 0;           // Điểm số
+    public long highscore;           // Điểm cao nhất
+    public int level = 1;            // Level hiện tại
 
-    public void setEnemySpawnPosition(Pos enemySpawnPosition) {
-        this.enemySpawnPosition = enemySpawnPosition;
-    }
+    public EnumDefinitions.PaddleState paddleState;
 
-    public void setTopLeftDoorAlpha(double topLeftDoorAlpha) {
-        this.topLeftDoorAlpha = topLeftDoorAlpha;
-    }
+    // Trạng thái đặc biệt
+    public boolean stickyPaddle = false;     // Bóng có dính vào paddle không?
+    public boolean nextLevelDoorOpen = false;// Cửa qua level có mở không?
+    public boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
 
-    public void setTopRightDoorAlpha(double topRightDoorAlpha) {
-        this.topRightDoorAlpha = topRightDoorAlpha;
-    }
+    public int animateInc;
+    public List<Blink> blinks;
+    public double ballSpeed;
+    public boolean readyLevelVisible;
+    public int paddleResetCounter;
+    public int speedResetCounter;
+    public int nextLevelDoorCounter;
+    public double nextLevelDoorAlpha;
+    public OpenDoor openDoor;
+    public boolean showStartHint;
 
-    public void setBlockFifo(FIFO<Block> blockFifo) {
-        this.blockFifo = blockFifo;
-    }
+    public int silverBlockMaxHits;
+    public int blockCounter;
 
-    public void setMouseHandler(EventHandler<MouseEvent> mouseHandler) {
-        this.mouseHandler = mouseHandler;
-    }
+    public List<Explosion> explosions;
+    public Pos enemySpawnPosition;
+    public double topLeftDoorAlpha;
+    public double topRightDoorAlpha;
+    public FIFO<Block> blockFifo;
+    public EventHandler<MouseEvent> mouseHandler;
 
 
     // ******************** Methods *******************************************
@@ -568,6 +190,7 @@ public class Main extends Application {
         lastEnemyUpdateCall = System.nanoTime();
 
         // ***************** Game Loop ******************************************
+        // Định nghĩa timer
         timer = new AnimationTimer() {
             @Override
             public void handle(final long now) {
@@ -633,11 +256,11 @@ public class Main extends Application {
 //                    }
 
                     // Animate enemies
-//                    if (now > lastEnemyUpdateCall + 100_000_000) {
-//                        enemies.forEach(enemy -> enemy.update());
-//                        explosions.forEach(explosion -> explosion.update());
-//                        lastEnemyUpdateCall = now;
-//                    }
+                    if (now > lastEnemyUpdateCall + 100_000_000) {
+                        enemies.forEach(enemy -> enemy.update());
+                        explosions.forEach(explosion -> explosion.update());
+                        lastEnemyUpdateCall = now;
+                    }
 
                     // Animation of paddle glow
                     if (now > lastAnimCall + 5_000_000) {
@@ -789,7 +412,6 @@ public class Main extends Application {
         stage.setResizable(false);
 
         playSound(autoClips.gameStartSnd);
-
         startScreen();
 
         timer.start();
@@ -836,7 +458,7 @@ public class Main extends Application {
 
     // Play audio clips
     public void playSound(final AudioClip audioClip) {
-        //audioClip.play();
+        audioClip.play();
     }
 
 

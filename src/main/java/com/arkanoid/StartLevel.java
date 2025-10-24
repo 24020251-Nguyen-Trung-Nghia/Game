@@ -12,32 +12,32 @@ public class StartLevel {
 
     // Start Level
     void startLevel(final int level) {
-        main.setLevelStartTime(Instant.now().getEpochSecond());
-        main.setBlockCounter(0);
-        main.setNextLevelDoorAlpha(1.0);
-        main.setNextLevelDoorOpen(false);
-        main.setMovingPaddleOut(false);
-        main.getPaddle().countX = 0;
-        main.getPaddle().countY = 0;
-        main.setAnimateInc(0);
-        main.getPaddle().x = GameConstants.WIDTH * 0.5 - main.getPaddleState().width * 0.5;
-        main.getPaddle().bounds.minX = main.getPaddle().x - main.getPaddle().width * 0.5;
-        main.setReadyLevelVisible(true);
+        main.levelStartTime = Instant.now().getEpochSecond();
+        main.blockCounter = 0;
+        main.nextLevelDoorAlpha = 1.0;
+        main.nextLevelDoorOpen = false;
+        main.movingPaddleOut = false;
+        main.paddle.countX = 0;
+        main.paddle.countY = 0;
+        main.animateInc  = 0 ;
+        main.paddle.x = GameConstants.WIDTH * 0.5 - main.paddleState.width * 0.5;
+        main.paddle.bounds.minX = main.paddle.x+ main.paddle.width * 0.5;
+        main.readyLevelVisible = true;
         main.playSound(main.getAutoClips().startLevelSnd);
         main.getSetupBlocks().setupBlocks(level);
-        main.getBonusBlocks().clear();
-        main.getBalls().clear();
-        main.getEnemies().clear();
-        main.getExplosions().clear();
+        main.bonusBlocks.clear();
+        main.balls.clear();
+        main.enemies.clear();
+        main.explosions.clear();
         main.spawnBall();
-        if (!main.isRunning()) {
-            main.setRunning(true);
+        if (!main.running) {
+            main.running = true;
         }
         main.getDrawBackground().drawBackground(level);
         main.drawBorder();
         main.updateAndDraw();
-        main.getExecutor().schedule(() -> {
-            main.setReadyLevelVisible(false);
+        main.executor.schedule(() -> {
+            main.readyLevelVisible = false;
         }, 2, TimeUnit.SECONDS);
     }
 }
