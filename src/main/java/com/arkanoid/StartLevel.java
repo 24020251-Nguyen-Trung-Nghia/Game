@@ -23,8 +23,8 @@ public class StartLevel {
         main.paddle.x = GameConstants.WIDTH * 0.5 - main.paddleState.width * 0.5;
         main.paddle.bounds.minX = main.paddle.x+ main.paddle.width * 0.5;
         main.readyLevelVisible = true;
-        main.playSound(main.getAutoClips().startLevelSnd);
-        main.getSetupBlocks().setupBlocks(level);
+        main.playSound(main.autoClips.startLevelSnd);
+        main.setupBlocks.setupBlocks(level);
         main.bonusBlocks.clear();
         main.balls.clear();
         main.enemies.clear();
@@ -33,9 +33,9 @@ public class StartLevel {
         if (!main.running) {
             main.running = true;
         }
-        main.getDrawBackground().drawBackground(level);
-        main.drawBorder();
-        main.updateAndDraw();
+        main.drawBackground.drawBackground(level);
+        main.drawBorder.drawBorder();
+        main.updateAndDraw.updateAndDraw();
         main.executor.schedule(() -> {
             main.readyLevelVisible = false;
         }, 2, TimeUnit.SECONDS);

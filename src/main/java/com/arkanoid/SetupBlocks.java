@@ -18,25 +18,25 @@ public class SetupBlocks {
                 final Constants.BlockType blockType = level2[iy][ix];
                 switch (blockType) {
                     case GOLD ->
-                            block = new Block(main.getImages().goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
+                            block = new Block(main.images.goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
                     case GRAY ->
-                            block = new Block(main.getImages().grayBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, main.silverBlockMaxHits, blockType);
+                            block = new Block(main.images.grayBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, main.silverBlockMaxHits, blockType);
                     case WHIT ->
-                            block = new Block(main.getImages().whiteBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 10, blockType.maxHits, blockType);
+                            block = new Block(main.images.whiteBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 10, blockType.maxHits, blockType);
                     case ORNG ->
-                            block = new Block(main.getImages().orangeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 60, blockType.maxHits, blockType);
+                            block = new Block(main.images.orangeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 60, blockType.maxHits, blockType);
                     case CYAN ->
-                            block = new Block(main.getImages().cyanBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 70, blockType.maxHits, blockType);
+                            block = new Block(main.images.cyanBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 70, blockType.maxHits, blockType);
                     case LIME ->
-                            block = new Block(main.getImages().limeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 80, blockType.maxHits, blockType);
+                            block = new Block(main.images.limeBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 80, blockType.maxHits, blockType);
                     case RUBY ->
-                            block = new Block(main.getImages().redBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 90, blockType.maxHits, blockType);
+                            block = new Block(main.images.redBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 90, blockType.maxHits, blockType);
                     case BLUE ->
-                            block = new Block(main.getImages().blueBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 100, blockType.maxHits, blockType);
+                            block = new Block(main.images.blueBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 100, blockType.maxHits, blockType);
                     case MGNT ->
-                            block = new Block(main.getImages().magentaBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 110, blockType.maxHits, blockType);
+                            block = new Block(main.images.magentaBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 110, blockType.maxHits, blockType);
                     case YLLW ->
-                            block = new Block(main.getImages().yellowBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 120, blockType.maxHits, blockType);
+                            block = new Block(main.images.yellowBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 120, blockType.maxHits, blockType);
                     default -> block = null;
                 }
                 if (null == block) {

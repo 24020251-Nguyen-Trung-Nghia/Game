@@ -1,5 +1,7 @@
 package com.arkanoid;
 
+import com.arkanoid.core.Blink;
+import com.arkanoid.core.OpenDoor;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -9,11 +11,16 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,90 +28,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-/**
- * Main (Application)
- * ├── Game State Management
- * ├── Rendering System (3 Canvas layers)
- * ├── Physics Engine (Collision Detection)
- * ├── Audio System
- * ├── Input Handling
- * └── Entity System (Sprites)
- */
 
 public class Main extends Application {
-    private final Images images = new Images();
-    private final AutoClips autoClips = new AutoClips();
-    private final LoadImages loadImages = new LoadImages();
-    private final LoadSounds loadSounds = new LoadSounds();
-    private final DrawBackground drawBackground = new DrawBackground(this);
-    private final HitTest hitTest = new HitTest(this);
-    private final SetupBlocks setupBlocks = new SetupBlocks(this);
-    private final GameOver gameOver = new GameOver(this);
-    private final StartLevel startLevel = new StartLevel(this);
-    private final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
-    private final DrawBorder drawBorder = new DrawBorder(this);
+    // ==================== SINGLETON INSTANCES ====================
+    public final Images images = Images.getInstance();
+    public final AutoClips autoClips = AutoClips.getInstance();
+    public final DrawBackground drawBackground = new DrawBackground(this);
+    public final HitTest hitTest = new HitTest(this);
+    public final SetupBlocks setupBlocks = new SetupBlocks(this);
+    public final GameOver gameOver = new GameOver(this);
+    public StartLevel startLevel = new StartLevel(this);
+    public final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
+    public final DrawBorder drawBorder = new DrawBorder(this);
 
-    public Images getImages() {
-        return images;
-    }
+    // ==================== GAME OBJECTS ====================
+    public Paddle paddle;
+    public List<Ball> balls;
+    public List<Block> blocks;
+    public List<BonusBlock> bonusBlocks;
+    public List<Enemy> enemies;
+    public List<Blink> blinks;
+    public List<Torpedo> torpedoes;
+    public List<Explosion> explosions;
+    public FIFO<Block> blockFifo;
+    public OpenDoor openDoor;
 
-    public AutoClips getAutoClips() {
-        return autoClips;
-    }
-
-    public LoadImages getLoadImages() {
-        return loadImages;
-    }
-
-    public LoadSounds getLoadSounds() {
-        return loadSounds;
-    }
-
-    public DrawBackground getDrawBackground() {
-        return drawBackground;
-    }
-
-    public HitTest getHitTest() {
-        return hitTest;
-    }
-
-    public SetupBlocks getSetupBlocks() {
-        return setupBlocks;
-    }
-
-    public GameOver getGameOver() {
-        return gameOver;
-    }
-
-    public StartLevel getStartLevel() {
-        return startLevel;
-    }
-
-    public UpdateAndDraw getUpdateAndDraw() {
-        return updateAndDraw;
-    }
-
-    public DrawBorder getDrawBorder() {
-        return drawBorder;
-    }
-
-
-
-    // ************ GAME STATE VARIABLES ************************
-    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-    // Biến điều khiển game
-    public boolean running;           // Game đang chạy?
-
-    public Instant gameStartTime;     // Thời điểm bắt đầu game
-    public long levelStartTime;       // Thời điểm bắt đầu level
-
-    public AnimationTimer timer;
-    public long lastTimerCall;
-    public long lastAnimCall;
-    public long lastBonusAnimCall;
-    public long lastEnemyUpdateCall;
-    public long lastOneSecondCheck;
+    // ==================== CANVAS LAYERS ====================
     public Canvas bkgCanvas;
     public GraphicsContext bkgCtx;
     public Canvas canvas;
@@ -112,54 +61,74 @@ public class Main extends Application {
     public Canvas brdrCanvas;
     public GraphicsContext brdrCtx;
 
+    // ==================== INPUT HANDLING ====================
+    public EventHandler<MouseEvent> mouseHandler;
+    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    public AnimationTimer timer;
 
-    // Các đối tượng game
-    public Paddle paddle;                    // Paddle (ván đỡ)
-    public List<Ball> balls;                // Danh sách bóng
-    public List<Block> blocks;              // Danh sách block
-    public List<BonusBlock> bonusBlocks;    // Danh sách power-up
-    public List<Enemy> enemies;             // Danh sách kẻ địch
-
-    public List<Torpedo> torpedoes;
-
-    // Thống kê game
-    public int noOfLifes = 3;        // Số mạng
-    public long score = 0;           // Điểm số
-    public long highscore;           // Điểm cao nhất
-    public int level = 1;            // Level hiện tại
-
+    // ==================== GAME STATE VARIABLES ====================
+    public boolean running;
+    public boolean movingLeft = false;
+    public boolean movingRight = false;
+    public int noOfLifes = 3;
+    public long score = 0;
+    public long highscore;
+    public int level = 1;
+    public Instant gameStartTime;
+    public long levelStartTime;
+    public long lastTimerCall;
+    public long lastAnimCall;
+    public long lastBonusAnimCall;
+    public long lastEnemyUpdateCall;
+    public long lastOneSecondCheck;
     public EnumDefinitions.PaddleState paddleState;
-
-    // Trạng thái đặc biệt
-    public boolean stickyPaddle = false;     // Bóng có dính vào paddle không?
-    public boolean nextLevelDoorOpen = false;// Cửa qua level có mở không?
-    public boolean movingPaddleOut = false;  // Paddle đang đi ra cửa?
-
+    public boolean stickyPaddle = false;
+    public boolean nextLevelDoorOpen = false;
+    public boolean movingPaddleOut = false;
     public int animateInc;
-    public List<Blink> blinks;
     public double ballSpeed;
     public boolean readyLevelVisible;
     public int paddleResetCounter;
     public int speedResetCounter;
     public int nextLevelDoorCounter;
     public double nextLevelDoorAlpha;
-    public OpenDoor openDoor;
     public boolean showStartHint;
-
     public int silverBlockMaxHits;
     public int blockCounter;
-
-    public List<Explosion> explosions;
     public Pos enemySpawnPosition;
     public double topLeftDoorAlpha;
     public double topRightDoorAlpha;
-    public FIFO<Block> blockFifo;
-    public EventHandler<MouseEvent> mouseHandler;
 
+    // ==================== UI STATE VARIABLES ====================
+    public enum GameState {
+        START_MENU,
+        LOGIN_SCREEN,
+        PLAYING,
+        PAUSE_MENU,
+        SAVE_CREDENTIALS
+    }
 
-    // ******************** Methods *******************************************
+    public GameState gameState = GameState.START_MENU;
+    public int menuIndex = 0;
+    public int loginMenuIndex = 0;
+    public int pauseIndex = 0;
+    public String inputUsername = "";
+    public String inputPassword = "";
+    public boolean enteringUsername = false;
+    public boolean enteringPassword = false;
+    public boolean loginFailed = false;
+    public static final Path PLAYER_FILE = Path.of("Game\\players.txt");
+
     @Override
     public void init() {
+        initializeGame();
+        setupCanvas();
+        setupEventHandlers();
+        loadResources();
+        initializeGameObjects();
+    }
+
+    private void initializeGame() {
         running = false;
         paddleState = EnumDefinitions.PaddleState.STANDARD;
         highscore = PropertyManager.INSTANCE.getLong(Constants.HIGHSCORE_KEY, 0);
@@ -188,135 +157,24 @@ public class Main extends Application {
         lastAnimCall = System.nanoTime();
         lastBonusAnimCall = System.nanoTime();
         lastEnemyUpdateCall = System.nanoTime();
+    }
 
-        // ***************** Game Loop ******************************************
-        // Định nghĩa timer
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(final long now) {
-                if (running) {
-                    // 1 second check
-                    if (now > lastOneSecondCheck + 1_000_000_000) {
-                        // After 15 seconds in the level enemies will be spawned every 10 seconds if less 5 enemies in the game
-                        long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
-                        if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
-                            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
-                            switch (enemySpawnPosition) {
-                                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
-                                case TOP_RIGHT -> topRightDoorAlpha = 0.99;
-                            }
-                        }
-
-                        if (paddleResetCounter > 0) {
-                            paddleResetCounter--;
-                            if (paddleResetCounter == 0) {
-                                paddleState = EnumDefinitions.PaddleState.STANDARD;
-                            }
-                        }
-                        if (speedResetCounter > 0) {
-                            speedResetCounter--;
-                            if (speedResetCounter == 0) {
-                                ballSpeed = GameConstants.BALL_SPEED;
-                            }
-                        }
-                        if (nextLevelDoorCounter > 0) {
-                            nextLevelDoorCounter--;
-                            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
-                                nextLevelDoorAlpha = 1.0;
-                                nextLevelDoorOpen = false;
-                                drawBorder.drawBorder();
-                            }
-                        }
-
-                        lastOneSecondCheck = now;
-                    }
-
-                    // Animate bonus blocks and top doors
-//                    if (now > lastBonusAnimCall + 50_000_000) {
-//                        // Update bonus blocks
-//                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
-//
-//                        // Fade out top doors
-//                        if (topLeftDoorAlpha < 1) {
-//                            topLeftDoorAlpha -= 0.1;
-//                            if (topLeftDoorAlpha <= 0) {
-//                                spawnEnemy(Pos.TOP_LEFT);
-//                                topLeftDoorAlpha = 1;
-//                            }
-//                            drawBorder.drawBorder();
-//                        } else if (topRightDoorAlpha < 1) {
-//                            topRightDoorAlpha -= 0.1;
-//                            if (topRightDoorAlpha <= 0) {
-//                                spawnEnemy(Pos.TOP_RIGHT);
-//                                topRightDoorAlpha = 1;
-//                            }
-//                            drawBorder.drawBorder();
-//                        }
-//                        lastBonusAnimCall = now;
-//                    }
-
-                    // Animate enemies
-                    if (now > lastEnemyUpdateCall + 100_000_000) {
-                        enemies.forEach(enemy -> enemy.update());
-                        explosions.forEach(explosion -> explosion.update());
-                        lastEnemyUpdateCall = now;
-                    }
-
-                    // Animation of paddle glow
-                    if (now > lastAnimCall + 5_000_000) {
-                        animateInc++;
-                        lastAnimCall = now;
-                    }
-
-                    // Main loop
-                    if (now > lastTimerCall) {
-                        hitTest.hitTests();
-                        updateAndDraw.updateAndDraw();
-                        if (nextLevelDoorOpen) {
-                            drawBorder.drawBorder();
-                        }
-                        lastTimerCall = now;
-                    }
-
-                    if (movingPaddleOut) {
-                        paddle.x += 1;
-                        paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
-                        updateAndDraw.updateAndDraw();
-                        if (paddle.x > GameConstants.WIDTH) {
-                            level++;
-                            if (level > Constants.LEVEL_MAP.size()) {
-                                level = 1;
-                            }
-                            score += 10_000;
-                            startLevel.startLevel(level);
-                        }
-                    }
-                } else {
-                    if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-                        showStartHint = true;
-                        startScreen();
-                    }
-                }
-            }
-        };
-
-        ////////// Setup canvas nodes //////////
-        // Layer 1: Background
+    private void setupCanvas() {
         bkgCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         bkgCtx = bkgCanvas.getGraphicsContext2D();
-
-        // Layer 2: Game objects
         canvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         ctx = canvas.getGraphicsContext2D();
-
-        // Layer 3: Border/UI
         brdrCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         brdrCtx = brdrCanvas.getGraphicsContext2D();
         brdrCanvas.setMouseTransparent(true);
+    }
 
+    private void setupEventHandlers() {
+        setupMouseHandler();
+        setupGameLoop();
+    }
 
-        //////////// Sử lý chuột /////////////
-        // Attach mouse dragging to paddle
+    private void setupMouseHandler() {
         mouseHandler = e -> {
             EventType<MouseEvent> type = (EventType<MouseEvent>) e.getEventType();
             if (MouseEvent.MOUSE_DRAGGED.equals(type)) {
@@ -335,20 +193,158 @@ public class Main extends Application {
             }
         };
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
+    }
 
+    private void setupGameLoop() {
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(final long now) {
+                if (running && gameState == GameState.PLAYING) {
+                    updateGameState(now);
+                } else {
+                    handleIdleState();
+                }
+            }
+        };
+    }
 
-        // Load all images
-        loadImages.loadImages(images, this);
+    private void updateGameState(long now) {
+        updateOneSecondChecks(now);
+        updateAnimations(now);
+        updateGameLogic(now);
+    }
 
-        // Load all sounds
-        loadSounds(autoClips, this);
+    private void updateOneSecondChecks(long now) {
+        if (now > lastOneSecondCheck + 1_000_000_000) {
+            handleOneSecondUpdates();
+            lastOneSecondCheck = now;
+        }
+    }
 
+    private void handleOneSecondUpdates() {
+        long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
+        if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
+            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
+            switch (enemySpawnPosition) {
+                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
+                case TOP_RIGHT -> topRightDoorAlpha = 0.99;
+            }
+        }
 
+        updateCounters();
+    }
 
-        // Initialize paddles
+    private void updateCounters() {
+        if (paddleResetCounter > 0) {
+            paddleResetCounter--;
+            if (paddleResetCounter == 0) {
+                paddleState = EnumDefinitions.PaddleState.STANDARD;
+            }
+        }
+        if (speedResetCounter > 0) {
+            speedResetCounter--;
+            if (speedResetCounter == 0) {
+                ballSpeed = GameConstants.BALL_SPEED;
+            }
+        }
+        if (nextLevelDoorCounter > 0) {
+            nextLevelDoorCounter--;
+            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
+                nextLevelDoorAlpha = 1.0;
+                nextLevelDoorOpen = false;
+                drawBorder.drawBorder();
+            }
+        }
+    }
+
+    private void updateAnimations(long now) {
+        if (now > lastBonusAnimCall + 50_000_000) {
+            bonusBlocks.forEach(BonusBlock::update);
+            updateTopDoorAnimations();
+            lastBonusAnimCall = now;
+        }
+
+        if (now > lastEnemyUpdateCall + 100_000_000) {
+            enemies.forEach(Enemy::update);
+            explosions.forEach(Explosion::update);
+            lastEnemyUpdateCall = now;
+        }
+
+        if (now > lastAnimCall + 5_000_000) {
+            animateInc++;
+            lastAnimCall = now;
+        }
+    }
+
+    private void updateTopDoorAnimations() {
+        if (topLeftDoorAlpha < 1) {
+            topLeftDoorAlpha -= 0.1;
+            if (topLeftDoorAlpha <= 0) {
+                spawnEnemy(Pos.TOP_LEFT);
+                topLeftDoorAlpha = 1;
+            }
+            drawBorder.drawBorder();
+        } else if (topRightDoorAlpha < 1) {
+            topRightDoorAlpha -= 0.1;
+            if (topRightDoorAlpha <= 0) {
+                spawnEnemy(Pos.TOP_RIGHT);
+                topRightDoorAlpha = 1;
+            }
+            drawBorder.drawBorder();
+        }
+    }
+
+    private void updateGameLogic(long now) {
+        if (now > lastTimerCall) {
+            hitTest.hitTests();
+            handlePaddleMovement();
+            updateAndDraw.updateAndDraw();
+            if (nextLevelDoorOpen) {
+                drawBorder.drawBorder();
+            }
+            lastTimerCall = now;
+        }
+
+        if (movingPaddleOut) {
+            handlePaddleExit();
+        }
+    }
+
+    private void handlePaddleMovement() {
+        if (movingLeft) movePaddleLeft();
+        else if (movingRight) movePaddleRight();
+        else stopPaddle();
+    }
+
+    private void handlePaddleExit() {
+        paddle.x += 1;
+        paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
+        updateAndDraw.updateAndDraw();
+        if (paddle.x > GameConstants.WIDTH) {
+            level++;
+            if (level > Constants.LEVEL_MAP.size()) {
+                level = 1;
+            }
+            score += 10_000;
+            startLevel.startLevel(level);
+        }
+    }
+
+    private void handleIdleState() {
+        if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+            showStartHint = true;
+            startScreen();
+        }
+    }
+
+    private void loadResources() {
+        Images.loadImages(this);
+        AutoClips.loadSounds(this);
+        ensurePlayerFileExists();
+    }
+
+    private void initializeGameObjects() {
         paddle = new Paddle(this);
-
-        // Initialize level
         balls = new CopyOnWriteArrayList<>();
         blocks = new CopyOnWriteArrayList<>();
         bonusBlocks = new CopyOnWriteArrayList<>();
@@ -359,8 +355,7 @@ public class Main extends Application {
         score = 0;
     }
 
-
-    // ****************** Keyboard Controls *****************************
+    // ==================== KEYBOARD INPUT HANDLING ====================
     @Override
     public void start(final Stage stage) {
         gameStartTime = Instant.now();
@@ -368,53 +363,22 @@ public class Main extends Application {
         final StackPane pane = new StackPane(bkgCanvas, canvas, brdrCanvas);
         final Scene scene = new Scene(pane, GameConstants.WIDTH, GameConstants.HEIGHT);
 
-        scene.setOnKeyPressed(e -> {
-            if (running) {
-                if (movingPaddleOut) {
-                    return;
-                }
-                switch (e.getCode()) {
-                    case RIGHT, D -> movePaddleRight();
-                    case LEFT, A -> movePaddleLeft();
-                    case SPACE -> {
-                        final long activeBalls = balls.stream().filter(ball -> ball.active).count();
-                        if (activeBalls > 0) {
-                            if (EnumDefinitions.PaddleState.LASER == paddleState) {
-                                fire(paddle.bounds.centerX);
-                            }
-                        } else {
-                            stickyPaddle = false;
-                            balls.forEach(ball -> {
-                                ball.active = true;
-                                ball.bornTimestamp = Instant.now().getEpochSecond();
-                            });
-                        }
-                    }
-                }
-            } else {
-                // Block for the first 8 seconds to give it some time to play the game start song
-                if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-                    level = 1;
-                    startLevel.startLevel(level);
-                }
-            }
-        });
-        scene.setOnKeyReleased(e -> {
-            switch (e.getCode()) {
-                case RIGHT -> stopPaddle();
-                case LEFT -> stopPaddle();
-            }
-        });
+        scene.setOnKeyPressed(this::handleKeyPressed);
+        scene.setOnKeyReleased(this::handleKeyReleased);
+        scene.setOnKeyTyped(this::handleKeyTyped);
 
         stage.setTitle("Arkanoid");
         stage.setScene(scene);
         stage.show();
         stage.setResizable(false);
 
-        playSound(autoClips.gameStartSnd);
-        startScreen();
-
-        timer.start();
+        if (gameState.equals(GameState.START_MENU)) {
+            renderStartMenu();
+            playSound(autoClips.gameStartSnd);
+        }
+        else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+            startLevel.startLevel(level);
+        }
     }
 
     @Override
@@ -423,18 +387,345 @@ public class Main extends Application {
         System.exit(0);
     }
 
-
-    // ******************** Helper methods ************************************
-    private void loadImages(Images images, Main main) {
-        loadImages.loadImages(images, main);
+    private void handleKeyPressed(KeyEvent e) {
+        KeyCode code = e.getCode();
+        if (gameState == GameState.START_MENU) {
+            handleStartMenuInput(code);
+        } else if (gameState == GameState.LOGIN_SCREEN) {
+            handleLoginScreenInput(code);
+        } else if (gameState == GameState.PLAYING) {
+            handlePlayingInput(code);
+        } else if (gameState == GameState.PAUSE_MENU) {
+            handlePauseMenuInput(code);
+        } else if (gameState == GameState.SAVE_CREDENTIALS) {
+            handleSaveCredentialsInput(code);
+        }
     }
 
-    private void loadSounds(AutoClips autoClips, Main main) {
-        loadSounds.loadSounds(autoClips, main);
+    private void handleKeyReleased(KeyEvent e) {
+        KeyCode code = e.getCode();
+        if (gameState == GameState.PLAYING) {
+            switch (code) {
+                case RIGHT, D -> movingRight = false;
+                case LEFT, A -> movingLeft = false;
+            }
+        }
     }
 
+    private void handleKeyTyped(KeyEvent e) {
+        String ch = e.getCharacter();
+        if (gameState == GameState.LOGIN_SCREEN) {
+            if (enteringUsername) {
+                if ("\b".equals(ch)) {
+                    if (!inputUsername.isEmpty())
+                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputUsername += ch;
+                }
+                renderLoginScreen();
+            } else if (enteringPassword) {
+                if ("\b".equals(ch)) {
+                    if (!inputPassword.isEmpty())
+                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputPassword += ch;
+                }
+                renderLoginScreen();
+            }
+        } else if (gameState == GameState.SAVE_CREDENTIALS) {
+            if (enteringUsername) {
+                if ("\b".equals(ch)) {
+                    if (!inputUsername.isEmpty())
+                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputUsername += ch;
+                }
+                renderSaveCredentials();
+            } else if (enteringPassword) {
+                if ("\b".equals(ch)) {
+                    if (!inputPassword.isEmpty())
+                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputPassword += ch;
+                }
+                renderSaveCredentials();
+            }
+        }
+    }
 
-    // ******************** Game control **************************************
+    // ==================== INPUT HANDLING METHODS ====================
+    private void handleStartMenuInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                menuIndex = (menuIndex - 1 + 2) % 2;
+                renderStartMenu();
+            }
+            case DOWN -> {
+                menuIndex = (menuIndex + 1) % 2;
+                renderStartMenu();
+            }
+            case SPACE, ENTER -> {
+                if (menuIndex == 0) {
+                    enterAsNewPlayer();
+                } else {
+                    gameState = GameState.LOGIN_SCREEN;
+                    inputUsername = "";
+                    inputPassword = "";
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    loginMenuIndex = 0;
+                    loginFailed = false;
+                    renderLoginScreen();
+                }
+            }
+        }
+    }
+
+    private void handleLoginScreenInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                loginMenuIndex = (loginMenuIndex - 1 + 3) % 3;
+                enteringUsername = loginMenuIndex == 0;
+                enteringPassword = loginMenuIndex == 1;
+                renderLoginScreen();
+            }
+            case DOWN -> {
+                loginMenuIndex = (loginMenuIndex + 1) % 3;
+                enteringUsername = loginMenuIndex == 0;
+                enteringPassword = loginMenuIndex == 1;
+                renderLoginScreen();
+            }
+            case SPACE -> {
+                if (loginMenuIndex == 2) {
+                    gameState = GameState.START_MENU;
+                    menuIndex = 0;
+                    renderStartMenu();
+                } else {
+                    if (loginMenuIndex == 0) enteringUsername = true;
+                    if (loginMenuIndex == 1) enteringPassword = true;
+                    renderLoginScreen();
+                }
+            }
+            case ENTER -> {
+                attemptLogin();
+            }
+            case ESCAPE -> {
+                gameState = GameState.START_MENU;
+                menuIndex = 0;
+                renderStartMenu();
+            }
+        }
+    }
+
+    private void handlePlayingInput(KeyCode code) {
+        if (code == KeyCode.ESCAPE) {
+            gameState = GameState.PAUSE_MENU;
+            pauseIndex = 0;
+            renderPauseMenu();
+            return;
+        }
+
+        if (running && !movingPaddleOut) {
+            switch (code) {
+                case RIGHT, D -> movingRight = true;
+                case LEFT, A -> movingLeft = true;
+                case SPACE -> {
+                    final long activeBalls = balls.stream().filter(ball -> ball.active).count();
+                    if (activeBalls > 0) {
+                        if (EnumDefinitions.PaddleState.LASER == paddleState) {
+                            fire(paddle.bounds.centerX);
+                        }
+                    } else {
+                        stickyPaddle = false;
+                        balls.forEach(ball -> {
+                            ball.active = true;
+                            ball.bornTimestamp = Instant.now().getEpochSecond();
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    private void handlePauseMenuInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                pauseIndex = (pauseIndex - 1 + 2) % 2;
+                renderPauseMenu();
+            }
+            case DOWN -> {
+                pauseIndex = (pauseIndex + 1) % 2;
+                renderPauseMenu();
+            }
+            case SPACE, ENTER -> {
+                if (pauseIndex == 1) {
+                    exitWithoutSave();
+                } else {
+                    gameState = GameState.SAVE_CREDENTIALS;
+                    inputUsername = "";
+                    inputPassword = "";
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    renderSaveCredentials();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PLAYING;
+                renderDuringGame();
+            }
+        }
+    }
+
+    private void handleSaveCredentialsInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                if (enteringPassword) {
+                    enteringPassword = false;
+                    enteringUsername = true;
+                }
+                renderSaveCredentials();
+            }
+            case DOWN -> {
+                if (enteringUsername) {
+                    enteringUsername = false;
+                    enteringPassword = true;
+                }
+                renderSaveCredentials();
+            }
+            case ENTER -> {
+                if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
+                    savePlayer(inputUsername.trim(), inputPassword.trim());
+                    exitAfterSave();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PAUSE_MENU;
+                renderPauseMenu();
+            }
+        }
+    }
+
+    // ==================== UI RENDERING METHODS ====================
+    private void renderStartMenu() {
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+        drawBackground.drawBackground(0);
+        ctx.setFont(GameConstants.UI_FONT);
+        ctx.setGlobalAlpha(1.0);
+        String s1 = "New Player";
+        String s2 = "Old Player";
+        double x = GameConstants.WIDTH / 2.0 - 100;
+        double y = 360;
+        ctx.fillText(s1, x, y);
+        ctx.fillText(s2, x, y + 40);
+        if (menuIndex == 0) {
+            ctx.fillText(">", x - 30, y);
+        } else {
+            ctx.fillText(">", x - 30, y + 40);
+        }
+        drawBorder.drawBorder();
+    }
+
+    private void renderLoginScreen() {
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+        drawBackground.drawBackground(0);
+        ctx.setFont(GameConstants.UI_FONT);
+        double x = GameConstants.WIDTH / 2.0 - 100;
+        double y = 360;
+        ctx.fillText("Username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
+        ctx.fillText("Password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
+        ctx.fillText("New Player (back)", x, y + 100);
+        if (loginMenuIndex == 0) ctx.fillText(">", x - 30, y);
+        if (loginMenuIndex == 1) ctx.fillText(">", x - 30, y + 40);
+        if (loginMenuIndex == 2) ctx.fillText(">", x - 30, y + 100);
+        if (loginFailed) {
+            ctx.fillText("Login failed. Try again.", x, y + 140);
+        }
+        drawBorder.drawBorder();
+    }
+
+    private void renderPauseMenu() {
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+        drawBackground.drawBackground(0);
+        ctx.setFont(GameConstants.UI_FONT);
+        double x = GameConstants.WIDTH / 2.0 - 100;
+        double y = 260;
+        ctx.fillText("Save", x, y);
+        ctx.fillText("Not Save", x, y + 40);
+        ctx.fillText(">", x - 20, y + pauseIndex * 40);
+        drawBorder.drawBorder();
+    }
+
+    private void renderSaveCredentials() {
+        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+        drawBackground.drawBackground(0);
+        ctx.setFont(GameConstants.UI_FONT);
+        double x = GameConstants.WIDTH / 2.0 - 100;
+        double y = 260;
+        ctx.fillText("Enter username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
+        ctx.fillText("Enter password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
+        ctx.fillText("Press Enter to save and exit", x, y + 100);
+        drawBorder.drawBorder();
+    }
+
+    private void renderDuringGame() {
+        drawBackground.drawBackground(level);
+        updateAndDraw.updateAndDraw();
+        drawBorder.drawBorder();
+    }
+
+    private String mask(String s) {
+        return "*".repeat(Math.max(0, s.length()));
+    }
+
+    // ==================== GAME CONTROL METHODS ====================
+    private void enterAsNewPlayer() {
+        running = true;
+        gameState = GameState.PLAYING;
+        level = 1;
+
+        if (timer != null) {
+            timer.start();
+        }
+        startLevel.startLevel(level);
+        renderDuringGame();
+        startScreen();
+    }
+
+    private void attemptLogin() {
+        if (checkLogin(inputUsername.trim(), inputPassword.trim())) {
+            running = true;
+            gameState = GameState.PLAYING;
+            level = 1;
+
+            if (timer != null) {
+                timer.start();
+            }
+            startLevel.startLevel(level);
+            renderDuringGame();
+            startScreen();
+        } else {
+            loginFailed = true;
+            inputPassword = "";
+            renderLoginScreen();
+        }
+    }
+
+    private void exitWithoutSave() {
+        stopAndExit();
+    }
+
+    private void exitAfterSave() {
+        stopAndExit();
+    }
+
+    private void stopAndExit() {
+        if (timer != null) timer.stop();
+        if (executor != null) executor.shutdownNow();
+        Platform.exit();
+        System.exit(0);
+    }
+
+    // ==================== GAME MECHANICS METHODS ====================
     private void movePaddleRight() {
         paddle.vX = GameConstants.PADDLE_SPEED;
     }
@@ -455,25 +746,24 @@ public class Main extends Application {
         playSound(autoClips.laserSnd);
     }
 
-
-    // Play audio clips
     public void playSound(final AudioClip audioClip) {
-        audioClip.play();
-    }
-
-
-    // Spawn enemy
-    private void spawnEnemy(final Pos position) {
-        switch (position) {
-            case TOP_LEFT ->
-                    enemies.add(new Enemy(this,100 + images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
-            case TOP_RIGHT ->
-                    enemies.add(new Enemy(this,GameConstants.WIDTH - 100 - images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+        if (audioClip == null) return;
+        try {
+            audioClip.play();
+        } catch (Exception ex) {
+            System.err.println("Audio play error: " + ex.getMessage());
         }
     }
 
+    private void spawnEnemy(final Pos position) {
+        switch (position) {
+            case TOP_LEFT ->
+                    enemies.add(new Enemy(this, 100 + images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+            case TOP_RIGHT ->
+                    enemies.add(new Enemy(this, GameConstants.WIDTH - 100 - images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+        }
+    }
 
-    // Re-Spawn Ball
     public void spawnBall() {
         if (balls.size() > 0) {
             return;
@@ -481,58 +771,54 @@ public class Main extends Application {
         balls.add(new Ball(this, images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
     }
 
-
-    // Start Screen
     public void startScreen() {
         ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
         drawBackground.drawBackground(1);
         drawBorder.drawBorder();
     }
 
-
-    // Start Level
-    private void startLevel(final int level) {
-        startLevel.startLevel(level);
+    // ==================== PLAYER MANAGEMENT ====================
+    private void ensurePlayerFileExists() {
+        try {
+            if (!Files.exists(PLAYER_FILE)) {
+                Files.createDirectories(PLAYER_FILE.getParent());
+                Files.createFile(PLAYER_FILE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-
-    // Game Over
-    private void gameOver() {
-
-        gameOver.gameOver();
+    private boolean checkLogin(String user, String pass) {
+        if (user == null || pass == null) return false;
+        try (BufferedReader br = new BufferedReader(new FileReader(PLAYER_FILE.toFile()))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(" ", 2);
+                if (parts.length == 2) {
+                    String u = parts[0];
+                    String p = parts[1];
+                    if (u.equals(user) && p.equals(pass)) return true;
+                }
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return false;
     }
 
-
-    // Setup blocks for given level
-    private void setupBlocks(final int level) {
-        setupBlocks.setupBlocks(level);
+    private void savePlayer(String user, String pass) {
+        if (user == null || pass == null || user.isBlank() || pass.isBlank()) return;
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(PLAYER_FILE.toFile(), true))) {
+            bw.write(user + " " + pass);
+            bw.newLine();
+            bw.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
-
-    // ******************** HitTests ******************************************
-    private void hitTests() {
-        // torpedo hits block or enemy
-
-        // paddle hits bonus blocks
-        hitTest.hitTests();
-    }
-
-
-    // ******************** Redraw ********************************************
-    public void drawBackground(final int level) {
-        drawBackground.drawBackground(level);
-    }
-
-    public void updateAndDraw() {
-        updateAndDraw.updateAndDraw();
-    }
-
-    public void drawBorder() {
-        drawBorder.drawBorder();
-    }
-
-
-    // ******************** Start *********************************************
+    // ==================== MAIN METHOD ====================
     public static void main(String[] args) {
         launch(args);
     }

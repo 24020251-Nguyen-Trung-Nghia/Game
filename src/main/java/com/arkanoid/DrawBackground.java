@@ -20,13 +20,13 @@ public class DrawBackground {
         if (main.running) {
             // Use background pattern related to level
             if (level % 4 == 0) {
-                main.bkgCtx.setFill(main.getImages().bkgPatternFill4);
+                main.bkgCtx.setFill(main.images.bkgPatternFill4);
             } else if (level % 3 == 0) {
-                main.bkgCtx.setFill(main.getImages().bkgPatternFill3);
+                main.bkgCtx.setFill(main.images.bkgPatternFill3);
             } else if (level % 2 == 0) {
-                main.bkgCtx.setFill(main.getImages().bkgPatternFill2);
+                main.bkgCtx.setFill(main.images.bkgPatternFill2);
             } else {
-                main.bkgCtx.setFill(main.getImages().bkgPatternFill1);
+                main.bkgCtx.setFill(main.images.bkgPatternFill1);
             }
             main.bkgCtx.fillRect(0, GameConstants.UPPER_INSET, GameConstants.WIDTH, GameConstants.HEIGHT);
 
@@ -47,9 +47,9 @@ public class DrawBackground {
                 main.ctx.fillText("Hit space to start", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.6);
             }
 
-            main.bkgCtx.drawImage(main.getImages().logoImg, (GameConstants.WIDTH - main.getImages().logoImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.25);
+            main.bkgCtx.drawImage(main.images.logoImg, (GameConstants.WIDTH - main.images.logoImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.25);
 
-            main.bkgCtx.drawImage(main.getImages().copyrightImg, (GameConstants.WIDTH - main.getImages().copyrightImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.75);
+            main.bkgCtx.drawImage(main.images.copyrightImg, (GameConstants.WIDTH - main.images.copyrightImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.75);
         }
     }
 }

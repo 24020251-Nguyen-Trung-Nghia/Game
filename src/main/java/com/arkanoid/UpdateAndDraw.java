@@ -1,5 +1,6 @@
 package com.arkanoid;
 
+import com.arkanoid.core.Blink;
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -25,22 +26,22 @@ public class UpdateAndDraw {
         main.ctx.translate(10, 10);
 
         // Draw block shadows
-        main.blocks.forEach(block -> main.ctx.drawImage(main.getImages().blockShadowImg, block.x, block.y));
+        main.blocks.forEach(block -> main.ctx.drawImage(main.images.blockShadowImg, block.x, block.y));
 
         // Draw bonus block shadows
-        main.bonusBlocks.forEach(bonusBlock -> main.ctx.drawImage(main.getImages().bonusBlockShadowImg, bonusBlock.x, bonusBlock.y));
+        main.bonusBlocks.forEach(bonusBlock -> main.ctx.drawImage(main.images.bonusBlockShadowImg, bonusBlock.x, bonusBlock.y));
 
         // Draw paddle shadow
         if (main.noOfLifes > 0) {
             switch (main.paddleState) {
-                case STANDARD -> main.ctx.drawImage(main.getImages().paddleStdShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
-                case WIDE -> main.ctx.drawImage(main.getImages().paddleWideShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
-                case LASER -> main.ctx.drawImage(main.getImages().paddleGunShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
+                case STANDARD -> main.ctx.drawImage(main.images.paddleStdShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
+                case WIDE -> main.ctx.drawImage(main.images.paddleWideShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
+                case LASER -> main.ctx.drawImage(main.images.paddleGunShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
             }
         }
 
         // Draw ball shadow
-        main.balls.forEach(ball -> main.ctx.drawImage(main.getImages().ballShadowImg, ball.bounds.minX, ball.bounds.minY));
+        main.balls.forEach(ball -> main.ctx.drawImage(main.images.ballShadowImg, ball.bounds.minX, ball.bounds.minY));
         main.ctx.restore();
 
         // Draw blocks
@@ -50,40 +51,40 @@ public class UpdateAndDraw {
         main.bonusBlocks.forEach(bonusBlock -> {
             switch (bonusBlock.bonusType) {
                 case BONUS_C ->
-                        main.ctx.drawImage(main.getImages().bonusBlockCMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockCMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_F ->
-                        main.ctx.drawImage(main.getImages().bonusBlockFMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockFMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_D ->
-                        main.ctx.drawImage(main.getImages().bonusBlockDMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockDMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_L ->
-                        main.ctx.drawImage(main.getImages().bonusBlockLMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockLMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_S ->
-                        main.ctx.drawImage(main.getImages().bonusBlockSMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockSMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_B ->
-                        main.ctx.drawImage(main.getImages().bonusBlockBMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockBMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
                 case BONUS_P ->
-                        main.ctx.drawImage(main.getImages().bonusBlockPMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
+                        main.ctx.drawImage(main.images.bonusBlockPMapImg, bonusBlock.countX * GameConstants.BONUS_BLOCK_WIDTH, bonusBlock.countY * GameConstants.BONUS_BLOCK_HEIGHT, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT, bonusBlock.x, bonusBlock.y, GameConstants.BONUS_BLOCK_WIDTH, GameConstants.BONUS_BLOCK_HEIGHT);
             }
         });
 
         // Draw blinks
-        main.blinks.forEach(blink -> main.ctx.drawImage(main.getImages().blinkMapImg, blink.countX * GameConstants.BLOCK_WIDTH, blink.countY * GameConstants.BLOCK_HEIGHT, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT, blink.x, blink.y, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT));
+        main.blinks.forEach(blink -> main.ctx.drawImage(main.images.blinkMapImg, blink.countX * GameConstants.BLOCK_WIDTH, blink.countY * GameConstants.BLOCK_HEIGHT, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT, blink.x, blink.y, GameConstants.BLOCK_WIDTH, GameConstants.BLOCK_HEIGHT));
 
         // Draw enemies
         main.enemies.forEach(enemy -> {
             switch (enemy.enemyType) {
                 case MOLECULE ->
-                        main.ctx.drawImage(main.getImages().moleculeMapImg, enemy.countX * GameConstants.ENEMY_WIDTH, enemy.countY * GameConstants.ENEMY_HEIGHT, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT, enemy.x, enemy.y, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT);
+                        main.ctx.drawImage(main.images.moleculeMapImg, enemy.countX * GameConstants.ENEMY_WIDTH, enemy.countY * GameConstants.ENEMY_HEIGHT, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT, enemy.x, enemy.y, GameConstants.ENEMY_WIDTH, GameConstants.ENEMY_HEIGHT);
             }
         });
 
         // Draw explosions
-        main.explosions.forEach(explosion -> main.ctx.drawImage(main.getImages().explosionMapImg, explosion.countX * GameConstants.EXPLOSION_WIDTH, explosion.countY * GameConstants.EXPLOSION_HEIGHT, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT, explosion.x, explosion.y, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT));
+        main.explosions.forEach(explosion -> main.ctx.drawImage(main.images.explosionMapImg, explosion.countX * GameConstants.EXPLOSION_WIDTH, explosion.countY * GameConstants.EXPLOSION_HEIGHT, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT, explosion.x, explosion.y, GameConstants.EXPLOSION_WIDTH, GameConstants.EXPLOSION_HEIGHT));
 
         // Draw ball(s)
         main.balls.forEach(ball -> {
             ball.update();
-            main.ctx.drawImage(main.getImages().ballImg, ball.bounds.x, ball.bounds.y);
+            main.ctx.drawImage(main.images.ballImg, ball.bounds.x, ball.bounds.y);
         });
 
         // Draw paddle
@@ -93,11 +94,11 @@ public class UpdateAndDraw {
             }
             switch (main.paddleState) {
                 case STANDARD ->
-                        main.ctx.drawImage(main.getImages().paddleMapStdImg, main.paddle.countX * main.paddle.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
+                        main.ctx.drawImage(main.images.paddleMapStdImg, main.paddle.countX * main.paddleState.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
                 case WIDE ->
-                        main.ctx.drawImage(main.getImages().paddleMapWideImg, main.paddle.countX * main.paddle.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
+                        main.ctx.drawImage(main.images.paddleMapWideImg, main.paddle.countX * main.paddleState.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
                 case LASER ->
-                        main.ctx.drawImage(main.getImages().paddleMapGunImg, main.paddle.countX * main.paddleState.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
+                        main.ctx.drawImage(main.images.paddleMapGunImg, main.paddle.countX * main.paddleState.width, main.paddle.countY * main.paddleState.height, main.paddleState.width, main.paddleState.height, main.paddle.x, main.paddle.y, main.paddleState.width, main.paddleState.height);
             }
         } else {
             main.ctx.setFill(GameConstants.TEXT_GRAY);
@@ -116,11 +117,11 @@ public class UpdateAndDraw {
         main.ctx.setTextAlign(TextAlignment.CENTER);
         main.ctx.fillText("HIGH SCORE", GameConstants.WIDTH * 0.5, 0);
         main.ctx.setFill(GameConstants.SCORE_WHITE);
-        main.ctx.fillText(Long.toString(main.score > main.highscore ? main.score : main.highscore), GameConstants.WIDTH * 0.5, 30);
+        main.ctx.fillText(Long.toString(Math.max(main.score, main.highscore)), GameConstants.WIDTH * 0.5, 30);
 
         // Draw no of lifes
         for (int i = 0; i < main.noOfLifes; i++) {
-            main.ctx.drawImage(main.getImages().paddleMiniImg, GameConstants.INSET + 2 + 42 * i, GameConstants.HEIGHT - 30);
+            main.ctx.drawImage(main.images.paddleMiniImg, GameConstants.INSET + 2 + 42 * i, GameConstants.HEIGHT - 30);
         }
 
         // Draw ready level label
@@ -145,21 +146,21 @@ public class UpdateAndDraw {
         if (!main.movingPaddleOut && main.balls.isEmpty() && main.noOfLifes > 0) {
             main.noOfLifes -=1;
             if (main.noOfLifes == 0) {
-                main.getGameOver().gameOver();
+                main.gameOver.gameOver();
             }
             main.spawnBall();
         }
 
         // Update blinks
-        main.blinks.forEach(blink -> blink.update());
+        main.blinks.forEach(Blink::update);
 
         // Check for level completeness
-        if (main.blocks.isEmpty() || main.blocks.stream().filter(block -> block.maxHits > -1).count() == 0) {
+        if (main.blocks.isEmpty() || main.blocks.stream().noneMatch(block -> block.maxHits > -1)) {
             main.level +=1;
             if (main.level > Constants.LEVEL_MAP.size()) {
                 main.level = 1; // Trở lại màn 1
             }
-            main.getStartLevel().startLevel(main.level);
+            main.startLevel.startLevel(main.level);
         }
     }
 }

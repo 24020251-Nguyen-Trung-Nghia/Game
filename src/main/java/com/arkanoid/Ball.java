@@ -1,5 +1,6 @@
 package com.arkanoid;
 
+import com.arkanoid.core.Blink;
 import javafx.scene.image.Image;
 
 import java.time.Instant;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Ball extends Sprite {
-    private final Main main;
+    private final Main GameStateManager;
     public boolean active;
     public long bornTimestamp;
 
@@ -21,7 +22,7 @@ public class Ball extends Sprite {
 
     public Ball(Main main, final Image image, final double x, final double y, final double vX, final boolean active) {
         super(image, main.paddle.bounds.centerX, main.paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1, 0, -main.ballSpeed);
-        this.main = main;
+        this.GameStateManager = main;
         this.vX = vX;
         this.active = active;
         this.bornTimestamp = Instant.now().getEpochSecond();
@@ -29,7 +30,7 @@ public class Ball extends Sprite {
 
     public Ball(Main main, final Image image, final double x, final double y, final double vX, final double vY) {
         super(image, x, y, vX, vY);
-        this.main = main;
+        this.GameStateManager = main;
         this.active = true;
         this.bornTimestamp = Instant.now().getEpochSecond();
     }
@@ -39,8 +40,8 @@ public class Ball extends Sprite {
     public void update() {
         if (!active) {
             // Nếu bóng không active, đặt vị trí bóng trên paddle
-            this.x = main.paddle.bounds.centerX;
-            this.y = main.paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
+            this.x = GameStateManager.paddle.bounds.centerX;
+            this.y = GameStateManager.paddle.bounds.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
         } else {
             // Cần kiểm tra nếu bóng chạm vào block
             double x0 = x;       // (x0, y0) = tọa độ ban đầu
@@ -56,8 +57,8 @@ public class Ball extends Sprite {
                 double fy1 = y1;
 
                 // Tính toán va chạm bóng với tất cả các bounds
-                BallHit ballHit = Stream.concat(main.blocks.stream().map(b -> b.bounds), // Duyệt qua tất cả block bounds
-                                Stream.concat(Arrays.stream(GameConstants.BORDER_BOUNDS), Stream.of(main.paddle.bounds))) // cùng với borders và paddle bounds
+                BallHit ballHit = Stream.concat(GameStateManager.blocks.stream().map(b -> b.bounds), // Duyệt qua tất cả block bounds
+                                Stream.concat(Arrays.stream(GameConstants.BORDER_BOUNDS), Stream.of(GameStateManager.paddle.bounds))) // cùng với borders và paddle bounds
                         .map(bounds -> bounds.computeBallHit(fx0, fy0, fx1, fy1, radius)) // tính toán va chạm (trả về null nếu không va chạm)
                         .filter(Objects::nonNull) // loại bỏ các trường hợp không va chạm
                         // Nếu quỹ đạo (x0, y0) -> (x1, y1) chạm nhiều blocks, giữ lại block đầu tiên
@@ -86,9 +87,9 @@ public class Ball extends Sprite {
                 y1 = ballHit.correctedY;
 
                 // Trước khi lặp, xử lý trường hợp đặc biệt khi chạm paddle hoặc blocks
-                if (ballHit.hitBounds == main.paddle.bounds) {
-                    Bounds pb = main.paddle.bounds;
-                    if (main.stickyPaddle) {
+                if (ballHit.hitBounds == GameStateManager.paddle.bounds) {
+                    Bounds pb = GameStateManager.paddle.bounds;
+                    if (GameStateManager.stickyPaddle) {
                         // Chế độ paddle dính: bóng dính vào paddle
                         this.x = pb.centerX;
                         this.y = pb.minY - image.getHeight() * 0.5 - GameConstants.BALL_SPEED - 1;
@@ -96,7 +97,7 @@ public class Ball extends Sprite {
                         break;
                     } else {
                         // Ảnh hưởng vX của bóng nếu vX của paddle != 0
-                        if (main.paddle.vX != 0) {
+                        if (GameStateManager.paddle.vX != 0) {
                             double speedXY = Math.sqrt(vX * vX + vY * vY);
                             double posX = (x1 - pb.centerX) / (pb.width * 0.5);
                             double speedX = speedXY * posX * GameConstants.BALL_VX_INFLUENCE;
@@ -134,11 +135,11 @@ public class Ball extends Sprite {
                             }
                         }
                     }
-                    main.playSound(main.getAutoClips().ballPaddleSnd);
+                    GameStateManager.playSound(GameStateManager.autoClips.ballPaddleSnd);
                 }
 
                 // Lấy block bị bóng chạm để xử lý âm thanh, hiệu ứng nhấp nháy & tính điểm
-                Block block = main.blocks.stream()
+                Block block = GameStateManager.blocks.stream()
                         .filter(b -> b.bounds == ballHit.hitBounds)
                         .findFirst()
                         .orElse(null);
@@ -146,41 +147,41 @@ public class Ball extends Sprite {
                 if (block != null) { // Có thể null nếu bóng chạm thứ khác (paddle hoặc border)
                     switch (block.blockType) {
                         case GOLD -> {
-                            main.playSound(main.getAutoClips().ballHardBlockSnd);
-                            main.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
+                            GameStateManager.playSound(GameStateManager.autoClips.ballHardBlockSnd);
+                            GameStateManager.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                         }
                         case GRAY -> {
                             block.hits++;
                             if (block.hits == block.maxHits) {
                                 // GIỮ NGUYÊN LOGIC CŨ - trực tiếp thay đổi score và blockCounter
-                                main.score += main.level * 50;
-                                main.blockCounter += 1;
+                                GameStateManager.score += GameStateManager.level * 50;
+                                GameStateManager.blockCounter += 1;
                                 block.toBeRemoved = true;
-                                main.playSound(main.getAutoClips().ballBlockSnd);
+                                GameStateManager.playSound(GameStateManager.autoClips.ballBlockSnd);
                             } else {
-                                main.playSound(main.getAutoClips().ballHardBlockSnd);
-                                main.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
+                                GameStateManager.playSound(GameStateManager.autoClips.ballHardBlockSnd);
+                                GameStateManager.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                             }
                         }
                         default -> {
                             block.hits++;
                             if (block.hits >= block.maxHits) {
                                 // GIỮ NGUYÊN LOGIC CŨ - trực tiếp thay đổi score và blockCounter
-                                main.score += block.value;
-                                main.blockCounter += 1;
+                                GameStateManager.score += block.value;
+                                GameStateManager.blockCounter += 1;
                                 block.toBeRemoved = true;
-                                main.playSound(main.getAutoClips().ballBlockSnd);
-                                if (main.blockCounter % GameConstants.BONUS_BLOCK_INTERVAL == 0) {
-                                    main.bonusBlocks.add(new BonusBlock(block.x, block.y,
+                                GameStateManager.playSound(GameStateManager.autoClips.ballBlockSnd);
+                                if (GameStateManager.blockCounter % GameConstants.BONUS_BLOCK_INTERVAL == 0) {
+                                    GameStateManager.bonusBlocks.add(new BonusBlock(block.x, block.y,
                                             EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
                                 }
                             }
                         }
                     }
-                    main.blockFifo.add(block);
+                    GameStateManager.blockFifo.add(block);
 
                     // Kiểm tra pattern để tăng tốc
-                    final List<Block> items = main.blockFifo.getItems();
+                    final List<Block> items = GameStateManager.blockFifo.getItems();
                     if (items.size() == 9) {
                         if (items.get(0).equals(items.get(6)) &&
                                 items.get(1).equals(items.get(5)) &&
@@ -202,12 +203,12 @@ public class Ball extends Sprite {
         this.bounds.set(this.x - this.width * 0.5, this.y - this.height * 0.5, this.width, this.height);
 
         // Kiểm tra va chạm bóng với kẻ địch
-        for (Enemy enemy : main.enemies) {
+        for (Enemy enemy : GameStateManager.enemies) {
             boolean ballHitsEnemy = this.bounds.intersects(enemy.bounds);
             if (ballHitsEnemy) {
                 enemy.toBeRemoved = true;
-                main.explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                main.playSound(main.getAutoClips().explosionSnd);
+                GameStateManager.explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
+                GameStateManager.playSound(GameStateManager.autoClips.explosionSnd);
 
                 if (bounds.centerX > enemy.bounds.minX && bounds.centerX < enemy.bounds.maxX) {
                     // Va chạm trên hoặc dưới

@@ -1,6 +1,6 @@
 package com.arkanoid;
 
-abstract class AnimatedSprite extends Sprite {
+public abstract class AnimatedSprite extends Sprite {
     protected final int maxFrameX;
     protected final int maxFrameY;
     protected double scale;

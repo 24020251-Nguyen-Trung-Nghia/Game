@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class GameConstants {
     static final Random RND = new Random();
-
+    public static final Font UI_FONT = Font.font("Arial", 24);
     // Các hằng số cơ bản
     static final double WIDTH = 560;
     static final double HEIGHT = 740;

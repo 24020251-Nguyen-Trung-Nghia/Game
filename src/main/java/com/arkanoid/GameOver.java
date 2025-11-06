@@ -13,14 +13,14 @@ public class GameOver {
     void gameOver() {
         main.executor.schedule(() -> main.startScreen(), 5, TimeUnit.SECONDS);
 
-        main.playSound(main.getAutoClips().gameOverSnd);
+        main.playSound(main.autoClips.gameOverSnd);
 
 
         main.running = false;
         main.balls.clear();
         main.torpedoes.clear();
 
-        main.updateAndDraw();
+        main.updateAndDraw.updateAndDraw();
 
         if (main.score > main.highscore) {
             PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, main.score);

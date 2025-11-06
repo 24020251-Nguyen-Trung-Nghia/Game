@@ -1,10 +1,13 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
-class Blink extends AnimatedSprite {
+import com.arkanoid.AnimatedSprite;
+
+public class OpenDoor extends AnimatedSprite {
 
     // ******************** Constructors **************************************
-    public Blink(final double x, final double y) {
-        super(x, y, 0, 0, 8, 3, 1.0);
+    public OpenDoor(final double x, final double y) {
+        super(x, y, 0, 0, 3, 0, 1.0);
+        this.bounds.set(x, y, width, height);
     }
 
 
@@ -14,9 +17,6 @@ class Blink extends AnimatedSprite {
         countX++;
         if (countX == maxFrameX) {
             countY++;
-            if (countX == maxFrameX && countY == maxFrameY) {
-                toBeRemoved = true;
-            }
             countX = 0;
             if (countY == maxFrameY) {
                 countY = 0;

@@ -69,7 +69,7 @@ public class Enemy extends AnimatedSprite {
         if (getBounds().intersects(main.paddle.getBounds())) {
             this.toBeRemoved = true;
             main.explosions.add(new Explosion(this.x, this.y, this.vX, this.vY, 1.0));
-            main.playSound(main.getAutoClips().explosionSnd);
+            main.playSound(main.autoClips.explosionSnd);
         }
 
         if (y > GameConstants.HEIGHT) {

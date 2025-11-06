@@ -29,7 +29,7 @@ public class HitTest {
                         enemy.toBeRemoved = true;
                         torpedo.toBeRemoved = true;
                         main.explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                        main.playSound(main.getAutoClips().explosionSnd);
+                        main.playSound(main.autoClips.explosionSnd);
                         break;
                     }
                 }
@@ -51,8 +51,8 @@ public class HitTest {
                             double vY1 = (Math.cos(Math.toRadians(10)) * ball.vY);
                             double vX2 = (Math.sin(Math.toRadians(-10)) * ball.vX);
                             double vY2 = (Math.cos(Math.toRadians(-10)) * ball.vY);
-                            main.balls.add(new Ball(main, main.getImages().ballImg, ball.x, ball.y, vX1, vY1));
-                            main.balls.add(new Ball(main, main.getImages().ballImg, ball.x, ball.y, vX2, vY2));
+                            main.balls.add(new Ball(main, main.images.ballImg, ball.x, ball.y, vX1, vY1));
+                            main.balls.add(new Ball(main, main.images.ballImg, ball.x, ball.y, vX2, vY2));
                         }
                     }
                     case BONUS_F -> {
@@ -69,7 +69,7 @@ public class HitTest {
                         main.ballSpeed = GameConstants.BALL_SPEED * 0.5;
                     }
                     case BONUS_B -> {
-                        main.paddleResetCounter= 30;
+                        main.paddleResetCounter= 5;
                         main.nextLevelDoorOpen = true;
                     }
                     case BONUS_P -> {
