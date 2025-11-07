@@ -18,6 +18,7 @@ public class BonusBlock extends AnimatedSprite {
 
 
     // ******************** Methods *******************************************
+    // Tạo hiệu ứng xoay
     @Override
     public void update() {
         y += vY;

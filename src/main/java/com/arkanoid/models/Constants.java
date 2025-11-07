@@ -83,7 +83,7 @@ public class Constants {
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE },
       { BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN, BlockType.CYAN },
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE },
-      { BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.NONE, BlockType.NONE, BlockType.NONE },
+      { BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.GOLD, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE },
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE },
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE } };
 

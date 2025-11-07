@@ -30,9 +30,11 @@ public abstract class AnimatedSprite extends Sprite {
     // ******************** Methods *******************************************
     @Override
     public void update() {
+        // Di chuyển đối tượng theo cả x và y
         x += vX;
         y += vY;
 
+        // Cập nhật animation
         countX++;
         if (countX == maxFrameX) {
             countY++;

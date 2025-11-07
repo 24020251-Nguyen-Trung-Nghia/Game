@@ -102,8 +102,7 @@ public class Bounds {
             hit = true;
             xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
             yHit = minYr;
-            //x0 = x1 = xHit;
-            //y0 = y1 = yHit;
+
             inverseVy = true;
         }
         if (!hit)
