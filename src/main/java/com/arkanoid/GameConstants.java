@@ -14,7 +14,7 @@ public class GameConstants {
     static final double INSET = 22;
     static final double UPPER_INSET = 85;
     static final double PADDLE_OFFSET_Y = 68;
-    static final double PADDLE_SPEED = 8;
+    static final double PADDLE_SPEED = 5;
     static final double TORPEDO_SPEED = 12;
     static final double BLOCK_WIDTH = 38;
     static final double BLOCK_HEIGHT = 20;
@@ -32,6 +32,7 @@ public class GameConstants {
     static final Color TEXT_GRAY = Color.rgb(216, 216, 216);
     static final int BONUS_BLOCK_INTERVAL = 1;  // Cứ 10 cái thì 1 buff
     final static double BIG_VALUE = 100_000;
+    protected static final String UNLOCKED_LEVEL_KEY = "unlocked_level";
 
     // Các biến cần khởi tạo từ PropertyManager
     static final double BALL_SPEED;
