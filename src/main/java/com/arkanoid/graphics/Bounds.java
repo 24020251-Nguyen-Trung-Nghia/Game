@@ -57,38 +57,38 @@ public class Bounds {
     }
 
     public BallHit computeBallHit(double x0, double y0, double x1, double y1, double r) {
-        // Increased +r bounds to simplify computation and focus only on ball center
+        // Mở rộng bounds với bán kính bóng
         double minXr = minX - r, minYr = minY - r, maxXr = maxX + r, maxYr = maxY + r;
         double yHit = 0, xHit = 0;
         boolean hit = false, inverseVy = false, inverseVx = false;
-        // Did the ball hit the bottom border?
-        if (y0 >= maxYr && y1 <= maxYr) { // Means that the ball crossed the bottom line (while moving up)
-            xHit = Helper.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
-            hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
+        // KIỂM TRA VA CHẠM VỚI ĐÁY (BOTTOM)
+        if (y0 >= maxYr && y1 <= maxYr) {
+            xHit = Helper.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1);
+            hit = xHit >= minXr && xHit <= maxXr; // Giao điểm X có thuộc bounds?
             if (hit) {
                 yHit = maxYr;
                 inverseVy = true;
             }
         }
-        // If not, did it hit the top border?
-        if (!hit && y0 <= minYr && y1 >= minYr) { // Means that the ball crossed the top line (while moving down)
-            xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
-            hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
+        // KIỂM TRA VA CHẠM VỚI ĐỈNH (TOP)
+        if (!hit && y0 <= minYr && y1 >= minYr) {
+            xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1);
+            hit = xHit >= minXr && xHit <= maxXr;
             if (hit) {
                 yHit = minYr;
                 inverseVy = true;
             }
         }
-        // If not, did it hit the left border?
-        if (!hit && x0 <= minXr && x1 >= minXr) { // Means that the ball crossed the left line (while moving to right)
-            yHit = Helper.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
-            hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
+        // KIỂM TRA VA CHẠM VỚI TRÁI (LEFT) - chỉ nếu chưa va chạm
+        if (!hit && x0 <= minXr && x1 >= minXr) {
+            yHit = Helper.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1);
+            hit = yHit >= minYr && yHit <= maxYr;
             if (hit) {
                 xHit = minXr;
                 inverseVx = true;
             }
         }
-        // If not, did it hit the right border?
+        // KIỂM TRA VA CHẠM VỚI PHẢI (RIGHT)
         if (!hit && x0 >= maxXr && x1 <= maxXr) { // Means that the ball crossed the right line (while moving to left)
             yHit = Helper.computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
             hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
@@ -97,7 +97,7 @@ public class Bounds {
                 inverseVx = true;
             }
         }
-        // If not, is the ball inside the bounds? (this may happen with the paddle moving quickly)
+        // Có thể xảy ra khi paddle di chuyển quá nhanh và nuốT bóng
         if (!hit && contains(x1, y1)) {
             hit = true;
             xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
@@ -108,6 +108,7 @@ public class Bounds {
         }
         if (!hit)
             return null;
+        // TẠO ĐỐI TƯỢNG BallHit CHỨA THÔNG TIN VA CHẠM
         BallHit ballHit = new BallHit(this);
         ballHit.xHit = xHit;
         ballHit.yHit = yHit;

@@ -35,7 +35,7 @@ public class GameConstants {
     public static final Font SCORE_FONT = Fonts.emulogic(20);
     public static final Color HIGH_SCORE_RED = Color.rgb(229, 2, 1);
     public static final Color TEXT_GRAY = Color.rgb(216, 216, 216);
-    static final int BONUS_BLOCK_INTERVAL = 1;  // Cứ 10 cái thì 1 buff
+    static final int BONUS_BLOCK_INTERVAL = 2;  // Cứ 10 cái thì 1 buff
     final static double BIG_VALUE = 100_000;
 
     // Các biến cần khởi tạo từ PropertyManager
@@ -47,7 +47,7 @@ public class GameConstants {
 
     // Static initializer block
     static {
-        BALL_SPEED = Helper.clamp(0.1, 10, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
+        BALL_SPEED = Helper.clamp(0.1, 7, PropertyManager.INSTANCE.getDouble(Constants.BALL_SPEED_KEY, 3));
         BONUS_BLOCK_SPEED = Helper.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.BONUS_BLOCK_SPEED_KEY, 3));
         ENEMY_SPEED = Helper.clamp(0.1, 5, PropertyManager.INSTANCE.getDouble(Constants.ENEMY_SPEED_KEY, 3));
         SCORE_WHITE = Color.WHITE;
