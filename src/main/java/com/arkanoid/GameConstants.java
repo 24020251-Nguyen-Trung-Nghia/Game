@@ -1,5 +1,10 @@
 package com.arkanoid;
 
+import com.arkanoid.config.PropertyManager;
+import com.arkanoid.graphics.Bounds;
+import com.arkanoid.graphics.Fonts;
+import com.arkanoid.utils.Helper;
+import com.arkanoid.models.Constants;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -18,8 +23,8 @@ public class GameConstants {
     public static final double TORPEDO_SPEED = 12;
     public static final double BLOCK_WIDTH = 38;
     public static final double BLOCK_HEIGHT = 20;
-    static final double BLOCK_STEP_X = 40;
-    static final double BLOCK_STEP_Y = 22;
+    public static final double BLOCK_STEP_X = 40;
+    public static final double BLOCK_STEP_Y = 22;
     public static final double BONUS_BLOCK_WIDTH = 38;
     public static final double BONUS_BLOCK_HEIGHT = 18;
     public static final double ENEMY_WIDTH = 32;

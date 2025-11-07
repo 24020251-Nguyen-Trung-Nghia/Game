@@ -1,12 +1,18 @@
 package com.arkanoid;
 
-import com.arkanoid.core.*;
-import com.arkanoid.core.Objects.Enemy;
+import com.arkanoid.config.PropertyManager;
+import com.arkanoid.controllers.GameOver;
+import com.arkanoid.controllers.StartLevel;
+import com.arkanoid.graphics.MenuRenderer;
+import com.arkanoid.models.*;
+import com.arkanoid.models.Objects.*;
 import com.arkanoid.resources.AutoClips;
 import com.arkanoid.resources.Images;
-import com.arkanoid.utils.DrawBackground;
-import com.arkanoid.utils.DrawBorder;
-import com.arkanoid.utils.UpdateAndDraw;
+import com.arkanoid.graphics.DrawBackground;
+import com.arkanoid.graphics.DrawBorder;
+import com.arkanoid.graphics.UpdateAndDraw;
+import com.arkanoid.utils.FIFO;
+import com.arkanoid.utils.HitTest;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -32,7 +38,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 
 public class Main extends Application {
     // ==================== SINGLETON INSTANCES ====================
@@ -122,7 +127,7 @@ public class Main extends Application {
     public boolean enteringUsername = false;
     public boolean enteringPassword = false;
     public boolean loginFailed = false;
-    public static final Path PLAYER_FILE = Path.of("Game\\players.txt");
+    public static final Path PLAYER_FILE = Path.of("Game", "players.txt");
 
     @Override
     public void init() {
@@ -378,32 +383,30 @@ public class Main extends Application {
         stage.setResizable(false);
 
         if (gameState.equals(GameState.START_MENU)) {
-            renderStartMenu();
+            MenuRenderer.renderStartMenu(this, menuIndex);
             playSound(AutoClips.gameStartSnd);
-        }
-        else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+        } else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
             startLevel.startLevel(level);
         }
+
+        timer.start(); // Bắt đầu game loop
     }
 
     @Override
     public void stop() {
+        if (timer != null) timer.stop();
+        if (executor != null) executor.shutdownNow();
         Platform.exit();
-        System.exit(0);
     }
 
     private void handleKeyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
-        if (gameState == GameState.START_MENU) {
-            handleStartMenuInput(code);
-        } else if (gameState == GameState.LOGIN_SCREEN) {
-            handleLoginScreenInput(code);
-        } else if (gameState == GameState.PLAYING) {
-            handlePlayingInput(code);
-        } else if (gameState == GameState.PAUSE_MENU) {
-            handlePauseMenuInput(code);
-        } else if (gameState == GameState.SAVE_CREDENTIALS) {
-            handleSaveCredentialsInput(code);
+        switch (gameState) {
+            case START_MENU -> handleStartMenuInput(code);
+            case LOGIN_SCREEN -> handleLoginScreenInput(code);
+            case PLAYING -> handlePlayingInput(code);
+            case PAUSE_MENU -> handlePauseMenuInput(code);
+            case SAVE_CREDENTIALS -> handleSaveCredentialsInput(code);
         }
     }
 
@@ -427,7 +430,7 @@ public class Main extends Application {
                 } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
                     inputUsername += ch;
                 }
-                renderLoginScreen();
+                renderCurrentScreen();
             } else if (enteringPassword) {
                 if ("\b".equals(ch)) {
                     if (!inputPassword.isEmpty())
@@ -435,7 +438,7 @@ public class Main extends Application {
                 } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
                     inputPassword += ch;
                 }
-                renderLoginScreen();
+                renderCurrentScreen();
             }
         } else if (gameState == GameState.SAVE_CREDENTIALS) {
             if (enteringUsername) {
@@ -445,7 +448,7 @@ public class Main extends Application {
                 } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
                     inputUsername += ch;
                 }
-                renderSaveCredentials();
+                renderCurrentScreen();
             } else if (enteringPassword) {
                 if ("\b".equals(ch)) {
                     if (!inputPassword.isEmpty())
@@ -453,7 +456,7 @@ public class Main extends Application {
                 } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
                     inputPassword += ch;
                 }
-                renderSaveCredentials();
+                renderCurrentScreen();
             }
         }
     }
@@ -463,11 +466,11 @@ public class Main extends Application {
         switch (code) {
             case UP -> {
                 menuIndex = (menuIndex - 1 + 2) % 2;
-                renderStartMenu();
+                renderCurrentScreen();
             }
             case DOWN -> {
                 menuIndex = (menuIndex + 1) % 2;
-                renderStartMenu();
+                renderCurrentScreen();
             }
             case SPACE, ENTER -> {
                 if (menuIndex == 0) {
@@ -480,7 +483,7 @@ public class Main extends Application {
                     enteringPassword = false;
                     loginMenuIndex = 0;
                     loginFailed = false;
-                    renderLoginScreen();
+                    renderCurrentScreen();
                 }
             }
         }
@@ -492,32 +495,30 @@ public class Main extends Application {
                 loginMenuIndex = (loginMenuIndex - 1 + 3) % 3;
                 enteringUsername = loginMenuIndex == 0;
                 enteringPassword = loginMenuIndex == 1;
-                renderLoginScreen();
+                renderCurrentScreen();
             }
             case DOWN -> {
                 loginMenuIndex = (loginMenuIndex + 1) % 3;
                 enteringUsername = loginMenuIndex == 0;
                 enteringPassword = loginMenuIndex == 1;
-                renderLoginScreen();
+                renderCurrentScreen();
             }
             case SPACE -> {
                 if (loginMenuIndex == 2) {
                     gameState = GameState.START_MENU;
                     menuIndex = 0;
-                    renderStartMenu();
+                    renderCurrentScreen();
                 } else {
                     if (loginMenuIndex == 0) enteringUsername = true;
                     if (loginMenuIndex == 1) enteringPassword = true;
-                    renderLoginScreen();
+                    renderCurrentScreen();
                 }
             }
-            case ENTER -> {
-                attemptLogin();
-            }
+            case ENTER -> attemptLogin();
             case ESCAPE -> {
                 gameState = GameState.START_MENU;
                 menuIndex = 0;
-                renderStartMenu();
+                renderCurrentScreen();
             }
         }
     }
@@ -526,7 +527,7 @@ public class Main extends Application {
         if (code == KeyCode.ESCAPE) {
             gameState = GameState.PAUSE_MENU;
             pauseIndex = 0;
-            renderPauseMenu();
+            renderCurrentScreen();
             return;
         }
 
@@ -556,11 +557,11 @@ public class Main extends Application {
         switch (code) {
             case UP -> {
                 pauseIndex = (pauseIndex - 1 + 2) % 2;
-                renderPauseMenu();
+                renderCurrentScreen();
             }
             case DOWN -> {
                 pauseIndex = (pauseIndex + 1) % 2;
-                renderPauseMenu();
+                renderCurrentScreen();
             }
             case SPACE, ENTER -> {
                 if (pauseIndex == 1) {
@@ -571,12 +572,12 @@ public class Main extends Application {
                     inputPassword = "";
                     enteringUsername = true;
                     enteringPassword = false;
-                    renderSaveCredentials();
+                    renderCurrentScreen();
                 }
             }
             case ESCAPE -> {
                 gameState = GameState.PLAYING;
-                renderDuringGame();
+                renderCurrentScreen();
             }
         }
     }
@@ -588,14 +589,14 @@ public class Main extends Application {
                     enteringPassword = false;
                     enteringUsername = true;
                 }
-                renderSaveCredentials();
+                renderCurrentScreen();
             }
             case DOWN -> {
                 if (enteringUsername) {
                     enteringUsername = false;
                     enteringPassword = true;
                 }
-                renderSaveCredentials();
+                renderCurrentScreen();
             }
             case ENTER -> {
                 if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
@@ -605,81 +606,22 @@ public class Main extends Application {
             }
             case ESCAPE -> {
                 gameState = GameState.PAUSE_MENU;
-                renderPauseMenu();
+                renderCurrentScreen();
             }
         }
     }
 
     // ==================== UI RENDERING METHODS ====================
-    private void renderStartMenu() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        ctx.setGlobalAlpha(1.0);
-        String s1 = "New Player";
-        String s2 = "Old Player";
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 360;
-        ctx.fillText(s1, x, y);
-        ctx.fillText(s2, x, y + 40);
-        if (menuIndex == 0) {
-            ctx.fillText(">", x - 30, y);
-        } else {
-            ctx.fillText(">", x - 30, y + 40);
+    private void renderCurrentScreen() {
+        switch (gameState) {
+            case START_MENU -> MenuRenderer.renderStartMenu(this, menuIndex);
+            case LOGIN_SCREEN -> MenuRenderer.renderLoginScreen(this, inputUsername, inputPassword,
+                    enteringUsername, enteringPassword, loginMenuIndex, loginFailed);
+            case PAUSE_MENU -> MenuRenderer.renderPauseMenu(this, pauseIndex);
+            case SAVE_CREDENTIALS -> MenuRenderer.renderSaveCredentials(this, inputUsername, inputPassword,
+                    enteringUsername, enteringPassword);
+            case PLAYING -> MenuRenderer.renderDuringGame(this, level, updateAndDraw);
         }
-        drawBorder.drawBorder();
-    }
-
-    private void renderLoginScreen() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 360;
-        ctx.fillText("Username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
-        ctx.fillText("Password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
-        ctx.fillText("New Player (back)", x, y + 100);
-        if (loginMenuIndex == 0) ctx.fillText(">", x - 30, y);
-        if (loginMenuIndex == 1) ctx.fillText(">", x - 30, y + 40);
-        if (loginMenuIndex == 2) ctx.fillText(">", x - 30, y + 100);
-        if (loginFailed) {
-            ctx.fillText("Login failed. Try again.", x, y + 140);
-        }
-        drawBorder.drawBorder();
-    }
-
-    private void renderPauseMenu() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 260;
-        ctx.fillText("Save", x, y);
-        ctx.fillText("Not Save", x, y + 40);
-        ctx.fillText(">", x - 20, y + pauseIndex * 40);
-        drawBorder.drawBorder();
-    }
-
-    private void renderSaveCredentials() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 260;
-        ctx.fillText("Enter username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
-        ctx.fillText("Enter password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
-        ctx.fillText("Press Enter to save and exit", x, y + 100);
-        drawBorder.drawBorder();
-    }
-
-    private void renderDuringGame() {
-        drawBackground.drawBackground(level);
-        updateAndDraw.updateAndDraw();
-        drawBorder.drawBorder();
-    }
-
-    private String mask(String s) {
-        return "*".repeat(s.length());
     }
 
     // ==================== GAME CONTROL METHODS ====================
@@ -687,13 +629,8 @@ public class Main extends Application {
         running = true;
         gameState = GameState.PLAYING;
         level = 1;
-
-        if (timer != null) {
-            timer.start();
-        }
         startLevel.startLevel(level);
-        renderDuringGame();
-        startScreen();
+        renderCurrentScreen();
     }
 
     private void attemptLogin() {
@@ -701,17 +638,12 @@ public class Main extends Application {
             running = true;
             gameState = GameState.PLAYING;
             level = 1;
-
-            if (timer != null) {
-                timer.start();
-            }
             startLevel.startLevel(level);
-            renderDuringGame();
-            startScreen();
+            renderCurrentScreen();
         } else {
             loginFailed = true;
             inputPassword = "";
-            renderLoginScreen();
+            renderCurrentScreen();
         }
     }
 
@@ -727,7 +659,6 @@ public class Main extends Application {
         if (timer != null) timer.stop();
         if (executor != null) executor.shutdownNow();
         Platform.exit();
-        System.exit(0);
     }
 
     // ==================== GAME MECHANICS METHODS ====================
