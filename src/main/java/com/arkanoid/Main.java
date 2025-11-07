@@ -169,7 +169,122 @@ public class Main extends Application {
         lastEnemyUpdateCall = System.nanoTime();
     }
 
+<<<<<<< HEAD
     private void setupCanvas() {
+=======
+        // ***************** Game Loop ******************************************
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(final long now) {
+                if (running) {
+                    // 1 second check
+                    if (now > lastOneSecondCheck + 1_000_000_000) {
+                        // After 15 seconds in the level enemies will be spawned every 10 seconds if less 5 enemies in the game
+                        long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
+                        if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
+                            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
+                            switch (enemySpawnPosition) {
+                                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
+                                case TOP_RIGHT -> topRightDoorAlpha = 0.99;
+                            }
+                        }
+
+                        if (paddleResetCounter > 0) {
+                            paddleResetCounter--;
+                            if (paddleResetCounter == 0) {
+                                paddleState = EnumDefinitions.PaddleState.STANDARD;
+                            }
+                        }
+                        if (speedResetCounter > 0) {
+                            speedResetCounter--;
+                            if (speedResetCounter == 0) {
+                                ballSpeed = GameConstants.BALL_SPEED;
+                            }
+                        }
+                        if (nextLevelDoorCounter > 0) {
+                            nextLevelDoorCounter--;
+                            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
+                                nextLevelDoorAlpha = 1.0;
+                                nextLevelDoorOpen = false;
+                                drawBorder.drawBorder();
+                            }
+                        }
+
+                        lastOneSecondCheck = now;
+                    }
+
+                    // Animate bonus blocks and top doors
+                    if (now > lastBonusAnimCall + 50_000_000) {
+                        // Update bonus blocks
+                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
+
+                        // Fade out top doors
+                        if (topLeftDoorAlpha < 1) {
+                            topLeftDoorAlpha -= 0.1;
+                            if (topLeftDoorAlpha <= 0) {
+                                spawnEnemy(Pos.TOP_LEFT);
+                                topLeftDoorAlpha = 1;
+                            }
+                            drawBorder.drawBorder();
+                        } else if (topRightDoorAlpha < 1) {
+                            topRightDoorAlpha -= 0.1;
+                            if (topRightDoorAlpha <= 0) {
+                                spawnEnemy(Pos.TOP_RIGHT);
+                                topRightDoorAlpha = 1;
+                            }
+                            drawBorder.drawBorder();
+                        }
+                        lastBonusAnimCall = now;
+                    }
+
+                    // Animate enemies
+//                    if (now > lastEnemyUpdateCall + 100_000_000) {
+//                        enemies.forEach(enemy -> enemy.update());
+//                        explosions.forEach(explosion -> explosion.update());
+//                        lastEnemyUpdateCall = now;
+//                    }
+
+                    // Animation of paddle glow
+                    if (now > lastAnimCall + 5_000_000) {
+                        animateInc++;
+                        lastAnimCall = now;
+                    }
+
+                    // Main loop
+                    if (now > lastTimerCall) {
+                        hitTest.hitTests();
+                        updateAndDraw.updateAndDraw();
+                        if (nextLevelDoorOpen) {
+                            drawBorder.drawBorder();
+                        }
+                        lastTimerCall = now;
+                    }
+
+                    if (movingPaddleOut) {
+                        paddle.x += 1;
+                        paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
+                        updateAndDraw.updateAndDraw();
+                        if (paddle.x > GameConstants.WIDTH) {
+                            level++;
+                            if (level > Constants.LEVEL_MAP.size()) {
+                                level = 1;
+                            }
+                            score += 10_000;
+                            startLevel.startLevel(level);
+                        }
+                    }
+                } else {
+                    if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+                        showStartHint = true;
+                        startScreen();
+                    }
+                }
+            }
+        };
+
+        ////////// Setup canvas nodes //////////
+        // Layer 1: Background
+>>>>>>> ff88a04583ee2b55f95ec31cf5ad7313f66d6909
         bkgCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         bkgCtx = bkgCanvas.getGraphicsContext2D();
         canvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);

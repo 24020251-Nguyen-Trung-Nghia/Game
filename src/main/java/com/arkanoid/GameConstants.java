@@ -20,6 +20,7 @@ public class GameConstants {
     public static final double UPPER_INSET = 85;
     public static final double PADDLE_OFFSET_Y = 68;
     static final double PADDLE_SPEED = 8;
+<<<<<<< HEAD
     public static final double TORPEDO_SPEED = 12;
     public static final double BLOCK_WIDTH = 38;
     public static final double BLOCK_HEIGHT = 20;
@@ -35,6 +36,23 @@ public class GameConstants {
     public static final Font SCORE_FONT = Fonts.emulogic(20);
     public static final Color HIGH_SCORE_RED = Color.rgb(229, 2, 1);
     public static final Color TEXT_GRAY = Color.rgb(216, 216, 216);
+=======
+    static final double TORPEDO_SPEED = 12;
+    static final double BLOCK_WIDTH = 38;
+    static final double BLOCK_HEIGHT = 20;
+    static final double BLOCK_STEP_X = 40;
+    static final double BLOCK_STEP_Y = 22;
+    static final double BONUS_BLOCK_WIDTH = 38;
+    static final double BONUS_BLOCK_HEIGHT = 18;
+    static final double ENEMY_WIDTH = 32;
+    static final double ENEMY_HEIGHT = 32;
+    static final double EXPLOSION_WIDTH = 32;
+    static final double EXPLOSION_HEIGHT = 32;
+    static final double BALL_VX_INFLUENCE = 0.75;
+    static final Font SCORE_FONT = Fonts.emulogic(20);
+    static final Color HIGH_SCORE_RED = Color.rgb(229, 2, 1);
+    static final Color TEXT_GRAY = Color.rgb(216, 216, 216);
+>>>>>>> ff88a04583ee2b55f95ec31cf5ad7313f66d6909
     static final int BONUS_BLOCK_INTERVAL = 1;  // Cứ 10 cái thì 1 buff
     final static double BIG_VALUE = 100_000;
 
