@@ -98,6 +98,8 @@ public enum PropertyManager {
             properties.put(Constants.BALL_SPEED_KEY, Double.toString(3));
             properties.put(Constants.BONUS_BLOCK_SPEED_KEY, Double.toString(3));
             properties.put(Constants.ENEMY_SPEED_KEY, Double.toString(3));
+            properties.put(Constants.UNLOCKED_LEVEL_KEY, Integer.toString(1)); // mặc định mở khóa Level 1
+
             properties.store(output, null);
         } catch (IOException ex) {
             ex.printStackTrace();

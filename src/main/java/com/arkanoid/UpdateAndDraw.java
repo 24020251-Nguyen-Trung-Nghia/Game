@@ -155,6 +155,9 @@ public class UpdateAndDraw {
 
         // Check for level completeness
         if (main.getBlocks().isEmpty() || main.getBlocks().stream().filter(block -> block.maxHits > -1).count() == 0) {
+            // Mở khóa level tiếp theo trước khi chuyển
+            main.unlockNextLevel(main.getLevel());
+
             main.setLevel(main.getLevel() + 1);
             if (main.getLevel() > Constants.LEVEL_MAP.size()) {
                 main.setLevel(1);
