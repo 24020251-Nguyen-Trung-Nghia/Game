@@ -1,6 +1,6 @@
 package com.arkanoid;
 
-public class Utils {
+public class Helper {
     public static double clamp(final double min, final double max, final double value) {
         if (value < min) {
             return min;

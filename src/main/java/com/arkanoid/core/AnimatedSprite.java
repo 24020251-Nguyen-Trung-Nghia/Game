@@ -1,11 +1,11 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
 public abstract class AnimatedSprite extends Sprite {
     protected final int maxFrameX;
     protected final int maxFrameY;
     protected double scale;
-    protected int countX;
-    protected int countY;
+    public int countX;
+    public int countY;
 
 
     // ******************** Constructors **************************************

@@ -1,7 +1,5 @@
 package com.arkanoid.core;
 
-import com.arkanoid.AnimatedSprite;
-
 public class Blink extends AnimatedSprite {
 
     // ******************** Constructors **************************************

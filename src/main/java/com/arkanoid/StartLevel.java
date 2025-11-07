@@ -1,5 +1,7 @@
 package com.arkanoid;
 
+import com.arkanoid.resources.AutoClips;
+
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
@@ -11,7 +13,7 @@ public class StartLevel {
     }
 
     // Start Level
-    void startLevel(final int level) {
+    public void startLevel(final int level) {
         main.levelStartTime = Instant.now().getEpochSecond();
         main.blockCounter = 0;
         main.nextLevelDoorAlpha = 1.0;
@@ -23,7 +25,7 @@ public class StartLevel {
         main.paddle.x = GameConstants.WIDTH * 0.5 - main.paddleState.width * 0.5;
         main.paddle.bounds.minX = main.paddle.x+ main.paddle.width * 0.5;
         main.readyLevelVisible = true;
-        main.playSound(main.autoClips.startLevelSnd);
+        main.playSound(AutoClips.startLevelSnd);
         main.setupBlocks.setupBlocks(level);
         main.bonusBlocks.clear();
         main.balls.clear();

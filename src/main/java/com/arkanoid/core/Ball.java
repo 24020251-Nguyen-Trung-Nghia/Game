@@ -1,6 +1,8 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
-import com.arkanoid.core.Blink;
+import com.arkanoid.*;
+import com.arkanoid.core.Objects.Enemy;
+import com.arkanoid.resources.AutoClips;
 import javafx.scene.image.Image;
 
 import java.time.Instant;
@@ -135,7 +137,7 @@ public class Ball extends Sprite {
                             }
                         }
                     }
-                    GameStateManager.playSound(GameStateManager.autoClips.ballPaddleSnd);
+                    GameStateManager.playSound(AutoClips.ballPaddleSnd);
                 }
 
                 // Lấy block bị bóng chạm để xử lý âm thanh, hiệu ứng nhấp nháy & tính điểm
@@ -147,19 +149,19 @@ public class Ball extends Sprite {
                 if (block != null) { // Có thể null nếu bóng chạm thứ khác (paddle hoặc border)
                     switch (block.blockType) {
                         case GOLD -> {
-                            GameStateManager.playSound(GameStateManager.autoClips.ballHardBlockSnd);
+                            GameStateManager.playSound(AutoClips.ballHardBlockSnd);
                             GameStateManager.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                         }
                         case GRAY -> {
                             block.hits++;
                             if (block.hits == block.maxHits) {
                                 // GIỮ NGUYÊN LOGIC CŨ - trực tiếp thay đổi score và blockCounter
-                                GameStateManager.score += GameStateManager.level * 50;
+                                GameStateManager.score += GameStateManager.level * 50L;
                                 GameStateManager.blockCounter += 1;
                                 block.toBeRemoved = true;
-                                GameStateManager.playSound(GameStateManager.autoClips.ballBlockSnd);
+                                GameStateManager.playSound(AutoClips.ballBlockSnd);
                             } else {
-                                GameStateManager.playSound(GameStateManager.autoClips.ballHardBlockSnd);
+                                GameStateManager.playSound(AutoClips.ballHardBlockSnd);
                                 GameStateManager.blinks.add(new Blink(block.bounds.minX, block.bounds.minY));
                             }
                         }
@@ -170,11 +172,9 @@ public class Ball extends Sprite {
                                 GameStateManager.score += block.value;
                                 GameStateManager.blockCounter += 1;
                                 block.toBeRemoved = true;
-                                GameStateManager.playSound(GameStateManager.autoClips.ballBlockSnd);
-                                if (GameStateManager.blockCounter % GameConstants.BONUS_BLOCK_INTERVAL == 0) {
-                                    GameStateManager.bonusBlocks.add(new BonusBlock(block.x, block.y,
-                                            EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
-                                }
+                                GameStateManager.playSound(AutoClips.ballBlockSnd);
+                                GameStateManager.bonusBlocks.add(new BonusBlock(block.x, block.y,
+                                        EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
                             }
                         }
                     }
@@ -208,7 +208,7 @@ public class Ball extends Sprite {
             if (ballHitsEnemy) {
                 enemy.toBeRemoved = true;
                 GameStateManager.explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                GameStateManager.playSound(GameStateManager.autoClips.explosionSnd);
+                GameStateManager.playSound(AutoClips.explosionSnd);
 
                 if (bounds.centerX > enemy.bounds.minX && bounds.centerX < enemy.bounds.maxX) {
                     // Va chạm trên hoặc dưới

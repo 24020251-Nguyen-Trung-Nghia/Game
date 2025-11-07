@@ -1,5 +1,12 @@
 package com.arkanoid;
 
+import com.arkanoid.core.Ball;
+import com.arkanoid.core.Block;
+import com.arkanoid.core.BonusBlock;
+import com.arkanoid.core.Objects.Enemy;
+import com.arkanoid.core.Torpedo;
+import com.arkanoid.resources.AutoClips;
+
 public class HitTest {
     private final Main main;
 
@@ -29,7 +36,7 @@ public class HitTest {
                         enemy.toBeRemoved = true;
                         torpedo.toBeRemoved = true;
                         main.explosions.add(new Explosion(enemy.x, enemy.y, enemy.vX, enemy.vY, 1.0));
-                        main.playSound(main.autoClips.explosionSnd);
+                        main.playSound(AutoClips.explosionSnd);
                         break;
                     }
                 }
@@ -73,7 +80,7 @@ public class HitTest {
                         main.nextLevelDoorOpen = true;
                     }
                     case BONUS_P -> {
-                        main.noOfLifes = Utils.clamp(2, 5, main.noOfLifes + 1);
+                        main.noOfLifes = Helper.clamp(2, 5, main.noOfLifes + 1);
 
                     }
                 }

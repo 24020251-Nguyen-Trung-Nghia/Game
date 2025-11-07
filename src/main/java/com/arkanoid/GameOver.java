@@ -10,7 +10,7 @@ public class GameOver {
     }
 
     // Game Over
-    void gameOver() {
+    public void gameOver() {
         main.executor.schedule(() -> main.startScreen(), 5, TimeUnit.SECONDS);
 
         main.playSound(main.autoClips.gameOverSnd);

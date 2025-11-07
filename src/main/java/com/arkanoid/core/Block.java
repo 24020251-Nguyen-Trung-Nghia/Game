@@ -1,8 +1,10 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
+import com.arkanoid.Constants;
+import com.arkanoid.GameConstants;
 import javafx.scene.image.Image;
 
-class Block extends Sprite {
+public class Block extends Sprite {
     public int value;
     public int hits;
     public final int maxHits;

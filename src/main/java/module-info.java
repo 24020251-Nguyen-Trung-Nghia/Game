@@ -9,4 +9,8 @@ module com.arkanoid {
     requires transitive javafx.media;
 
     exports com.arkanoid to javafx.base,javafx.graphics,javafx.controls,javafx.media;
+    exports com.arkanoid.core to javafx.base, javafx.controls, javafx.graphics, javafx.media;
+    exports com.arkanoid.core.Objects to javafx.base, javafx.controls, javafx.graphics, javafx.media;
+    exports com.arkanoid.resources to javafx.base, javafx.controls, javafx.graphics, javafx.media;
+    exports com.arkanoid.utils to javafx.base, javafx.controls, javafx.graphics, javafx.media;
 }

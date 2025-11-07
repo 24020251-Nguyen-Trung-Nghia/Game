@@ -1,7 +1,12 @@
 package com.arkanoid;
 
-import com.arkanoid.core.Blink;
-import com.arkanoid.core.OpenDoor;
+import com.arkanoid.core.*;
+import com.arkanoid.core.Objects.Enemy;
+import com.arkanoid.resources.AutoClips;
+import com.arkanoid.resources.Images;
+import com.arkanoid.utils.DrawBackground;
+import com.arkanoid.utils.DrawBorder;
+import com.arkanoid.utils.UpdateAndDraw;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -374,7 +379,7 @@ public class Main extends Application {
 
         if (gameState.equals(GameState.START_MENU)) {
             renderStartMenu();
-            playSound(autoClips.gameStartSnd);
+            playSound(AutoClips.gameStartSnd);
         }
         else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
             startLevel.startLevel(level);
@@ -674,7 +679,7 @@ public class Main extends Application {
     }
 
     private String mask(String s) {
-        return "*".repeat(Math.max(0, s.length()));
+        return "*".repeat(s.length());
     }
 
     // ==================== GAME CONTROL METHODS ====================
@@ -739,11 +744,11 @@ public class Main extends Application {
     }
 
     private void fire(final double x) {
-        if (torpedoes.size() > 0) {
+        if (!torpedoes.isEmpty()) {
             return;
         }
-        torpedoes.add(new Torpedo(images.torpedoImg, x, GameConstants.HEIGHT - 50));
-        playSound(autoClips.laserSnd);
+        torpedoes.add(new Torpedo(Images.torpedoImg, x, GameConstants.HEIGHT - 50));
+        playSound(AutoClips.laserSnd);
     }
 
     public void playSound(final AudioClip audioClip) {
@@ -758,17 +763,17 @@ public class Main extends Application {
     private void spawnEnemy(final Pos position) {
         switch (position) {
             case TOP_LEFT ->
-                    enemies.add(new Enemy(this, 100 + images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+                    enemies.add(new Enemy(this, 100 + Images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
             case TOP_RIGHT ->
-                    enemies.add(new Enemy(this, GameConstants.WIDTH - 100 - images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+                    enemies.add(new Enemy(this, GameConstants.WIDTH - 100 - Images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
         }
     }
 
     public void spawnBall() {
-        if (balls.size() > 0) {
+        if (!balls.isEmpty()) {
             return;
         }
-        balls.add(new Ball(this, images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
+        balls.add(new Ball(this, Images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - Images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
     }
 
     public void startScreen() {

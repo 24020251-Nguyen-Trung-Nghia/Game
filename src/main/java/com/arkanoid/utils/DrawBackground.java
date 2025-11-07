@@ -1,5 +1,7 @@
-package com.arkanoid;
+package com.arkanoid.utils;
 
+import com.arkanoid.GameConstants;
+import com.arkanoid.Main;
 import javafx.geometry.VPos;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
@@ -12,7 +14,7 @@ public class DrawBackground {
     }
 
     // ******************** Redraw ********************************************
-    void drawBackground(final int level) {
+    public void drawBackground(final int level) {
         main.bkgCtx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
         main.bkgCtx.setFill(Color.BLACK);
         main.bkgCtx.fillRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);

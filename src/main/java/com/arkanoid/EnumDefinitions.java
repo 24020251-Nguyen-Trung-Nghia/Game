@@ -7,8 +7,8 @@ public class EnumDefinitions {
         WIDE(120, 22),
         LASER(80, 22);
 
-        protected final double width;
-        protected final double height;
+        public final double width;
+        public final double height;
 
         PaddleState(final double width, final double height) {
             this.width = width;

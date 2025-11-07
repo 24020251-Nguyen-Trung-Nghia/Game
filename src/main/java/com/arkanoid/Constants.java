@@ -9,7 +9,7 @@ import java.util.Map;
  * Các level tạm để ở đây, sau này ta sẽ tạo cách load file để tải level
  */
 public class Constants {
-    protected enum BlockType {
+    public enum BlockType {
         NONE(0),
         GOLD(-1),
         GRAY(2),
@@ -626,7 +626,7 @@ public class Constants {
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE },
       { BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE } };
 
-    protected static final Map<Integer, BlockType[][]> LEVEL_MAP = new HashMap<>();
+    public static final Map<Integer, BlockType[][]> LEVEL_MAP = new HashMap<>();
 
     static {
         LEVEL_MAP.put(1, LEVEL_1);

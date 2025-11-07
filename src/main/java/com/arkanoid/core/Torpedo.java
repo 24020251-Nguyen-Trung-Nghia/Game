@@ -1,8 +1,9 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
+import com.arkanoid.GameConstants;
 import javafx.scene.image.Image;
 
-class Torpedo extends Sprite {
+public class Torpedo extends Sprite {
 
     // ******************** Constructors **************************************
     public Torpedo(final Image image, final double x, final double y) {

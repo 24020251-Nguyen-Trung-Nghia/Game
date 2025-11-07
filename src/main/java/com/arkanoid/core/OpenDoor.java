@@ -1,7 +1,5 @@
 package com.arkanoid.core;
 
-import com.arkanoid.AnimatedSprite;
-
 public class OpenDoor extends AnimatedSprite {
 
     // ******************** Constructors **************************************

@@ -1,6 +1,9 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
-class Paddle extends AnimatedSprite {
+import com.arkanoid.GameConstants;
+import com.arkanoid.Main;
+
+public class Paddle extends AnimatedSprite {
 
     private final Main main;
 

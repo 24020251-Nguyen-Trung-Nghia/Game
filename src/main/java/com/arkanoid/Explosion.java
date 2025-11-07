@@ -1,6 +1,8 @@
 package com.arkanoid;
 
-class Explosion extends AnimatedSprite {
+import com.arkanoid.core.AnimatedSprite;
+
+public class Explosion extends AnimatedSprite {
 
     // ******************** Constructors **************************************
     public Explosion(final double x, final double y, final double vX, final double vY, final double scale) {

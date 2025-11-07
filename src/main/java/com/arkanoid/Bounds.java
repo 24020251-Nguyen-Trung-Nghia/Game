@@ -60,7 +60,7 @@ public class Bounds {
         boolean hit = false, inverseVy = false, inverseVx = false;
         // Did the ball hit the bottom border?
         if (y0 >= maxYr && y1 <= maxYr) { // Means that the ball crossed the bottom line (while moving up)
-            xHit = Utils.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
+            xHit = Helper.computeLineIntersectionX(-1, maxYr, 1, maxYr, x0, y0, x1, y1); // Where on X?
             hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
             if (hit) {
                 yHit = maxYr;
@@ -69,7 +69,7 @@ public class Bounds {
         }
         // If not, did it hit the top border?
         if (!hit && y0 <= minYr && y1 >= minYr) { // Means that the ball crossed the top line (while moving down)
-            xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
+            xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
             hit = xHit >= minXr && xHit <= maxXr; // X condition for a hit
             if (hit) {
                 yHit = minYr;
@@ -78,7 +78,7 @@ public class Bounds {
         }
         // If not, did it hit the left border?
         if (!hit && x0 <= minXr && x1 >= minXr) { // Means that the ball crossed the left line (while moving to right)
-            yHit = Utils.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
+            yHit = Helper.computeLineIntersectionY(minXr, 1, minXr, -1, x0, y0, x1, y1); // Where on Y?
             hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
             if (hit) {
                 xHit = minXr;
@@ -87,7 +87,7 @@ public class Bounds {
         }
         // If not, did it hit the right border?
         if (!hit && x0 >= maxXr && x1 <= maxXr) { // Means that the ball crossed the right line (while moving to left)
-            yHit = Utils.computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
+            yHit = Helper.computeLineIntersectionY(maxXr, 1, maxXr, -1, x0, y0, x1, y1); // Where on Y?
             hit = yHit >= minYr && yHit <= maxYr; // Y condition for a hit
             if (hit) {
                 xHit = maxXr;
@@ -97,7 +97,7 @@ public class Bounds {
         // If not, is the ball inside the bounds? (this may happen with the paddle moving quickly)
         if (!hit && contains(x1, y1)) {
             hit = true;
-            xHit = Utils.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
+            xHit = Helper.computeLineIntersectionX(-1, minYr, 1, minYr, x0, y0, x1, y1); // Where on X?
             yHit = minYr;
             //x0 = x1 = xHit;
             //y0 = y1 = yHit;
@@ -110,8 +110,8 @@ public class Bounds {
         ballHit.yHit = yHit;
         ballHit.inverseVx = inverseVx;
         ballHit.inverseVy = inverseVy;
-        ballHit.beforeHitDistance = Utils.distance(x0, y0, xHit, yHit);
-        double afterHitDistance = Utils.distance(xHit, yHit, x1, y1);
+        ballHit.beforeHitDistance = Helper.distance(x0, y0, xHit, yHit);
+        double afterHitDistance = Helper.distance(xHit, yHit, x1, y1);
         ballHit.correctedX = inverseVx ? xHit - (x1 - xHit) * afterHitDistance : x1;
         ballHit.correctedY = inverseVy ? yHit - (y1 - yHit) * afterHitDistance : y1;
         return ballHit;

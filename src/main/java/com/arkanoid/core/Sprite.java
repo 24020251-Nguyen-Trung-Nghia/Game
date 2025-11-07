@@ -1,5 +1,6 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
+import com.arkanoid.Bounds;
 import javafx.scene.image.Image;
 
 // ******************** Inner Classes *************************************
@@ -65,7 +66,7 @@ abstract class Sprite {
         this.vR = vR;
         this.width = null == image ? 0 : image.getWidth();
         this.height = null == image ? 0 : image.getHeight();
-        this.size = this.width > this.height ? width : height;
+        this.size = Math.max(this.width, this.height);
         this.radius = this.size * 0.5;
         this.toBeRemoved = false;
         this.bounds = null == image ? new Bounds(0, 0, 0, 0) : new Bounds(x - image.getWidth() * 0.5, y - image.getHeight() * 0.5, image.getWidth(), image.getHeight());

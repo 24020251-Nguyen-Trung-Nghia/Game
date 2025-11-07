@@ -1,5 +1,6 @@
-package com.arkanoid;
+package com.arkanoid.resources;
 
+import com.arkanoid.Main;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 

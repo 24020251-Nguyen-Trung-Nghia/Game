@@ -1,4 +1,9 @@
-package com.arkanoid;
+package com.arkanoid.core.Objects;
+
+import com.arkanoid.*;
+import com.arkanoid.core.AnimatedSprite;
+import com.arkanoid.core.Block;
+import com.arkanoid.resources.AutoClips;
 
 public class Enemy extends AnimatedSprite {
     private final Main main;
@@ -69,7 +74,7 @@ public class Enemy extends AnimatedSprite {
         if (getBounds().intersects(main.paddle.getBounds())) {
             this.toBeRemoved = true;
             main.explosions.add(new Explosion(this.x, this.y, this.vX, this.vY, 1.0));
-            main.playSound(main.autoClips.explosionSnd);
+            main.playSound(AutoClips.explosionSnd);
         }
 
         if (y > GameConstants.HEIGHT) {

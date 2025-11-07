@@ -1,6 +1,9 @@
-package com.arkanoid;
+package com.arkanoid.core;
 
-class BonusBlock extends AnimatedSprite {
+import com.arkanoid.EnumDefinitions;
+import com.arkanoid.GameConstants;
+
+public class BonusBlock extends AnimatedSprite {
     public EnumDefinitions.BonusType bonusType;
 
 
