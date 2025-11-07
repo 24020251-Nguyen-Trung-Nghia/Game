@@ -25,7 +25,7 @@ public class GameOver {
         main.balls.clear();
         main.torpedoes.clear();
 
-        main.updateAndDraw.updateAndDraw();
+        main.draw.drawGame();
 
         if (main.score > main.highscore) {
             PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, main.score);

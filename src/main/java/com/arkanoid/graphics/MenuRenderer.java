@@ -113,9 +113,9 @@ public final class MenuRenderer {
         main.drawBorder.drawBorder();
     }
 
-    public static void renderDuringGame(Main main, int level, UpdateAndDraw updateAndDraw) {
+    public static void renderDuringGame(Main main, int level, Draw draw) {
         main.drawBackground.drawBackground(level);
-        updateAndDraw.updateAndDraw();
+        draw.drawGame();
         main.drawBorder.drawBorder();
     }
 }

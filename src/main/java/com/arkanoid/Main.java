@@ -3,14 +3,15 @@ package com.arkanoid;
 import com.arkanoid.config.PropertyManager;
 import com.arkanoid.controllers.GameOver;
 import com.arkanoid.controllers.StartLevel;
+import com.arkanoid.graphics.Draw;
 import com.arkanoid.graphics.MenuRenderer;
+import com.arkanoid.graphics.Update;
 import com.arkanoid.models.*;
 import com.arkanoid.models.Objects.*;
 import com.arkanoid.resources.AutoClips;
 import com.arkanoid.resources.Images;
 import com.arkanoid.graphics.DrawBackground;
 import com.arkanoid.graphics.DrawBorder;
-import com.arkanoid.graphics.UpdateAndDraw;
 import com.arkanoid.utils.FIFO;
 import com.arkanoid.utils.HitTest;
 import javafx.animation.AnimationTimer;
@@ -48,7 +49,8 @@ public class Main extends Application {
     public final SetupBlocks setupBlocks = new SetupBlocks(this);
     public final GameOver gameOver = new GameOver(this);
     public StartLevel startLevel = new StartLevel(this);
-    public final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
+    public final Draw draw = new Draw(this);
+    public final Update update = new Update(this);
     public final DrawBorder drawBorder = new DrawBorder(this);
 
     // ==================== GAME OBJECTS ====================
@@ -186,8 +188,7 @@ public class Main extends Application {
 
     private void setupMouseHandler() {
         mouseHandler = e -> {
-            EventType<MouseEvent> type = (EventType<MouseEvent>) e.getEventType();
-            if (MouseEvent.MOUSE_DRAGGED.equals(type)) {
+            if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 double x = e.getSceneX() - paddleState.width * 0.5;
                 if (x + paddleState.width > GameConstants.WIDTH - GameConstants.INSET) {
                     if (nextLevelDoorOpen && !movingPaddleOut) {
@@ -308,7 +309,8 @@ public class Main extends Application {
         if (now > lastTimerCall) {
             hitTest.hitTests();
             handlePaddleMovement();
-            updateAndDraw.updateAndDraw();
+            update.updateGame();
+            draw.drawGame();
             if (nextLevelDoorOpen) {
                 drawBorder.drawBorder();
             }
@@ -329,7 +331,8 @@ public class Main extends Application {
     private void handlePaddleExit() {
         paddle.x += 1;
         paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
-        updateAndDraw.updateAndDraw();
+        update.updateGame();
+        draw.drawGame();
         if (paddle.x > GameConstants.WIDTH) {
             level++;
             if (level > Constants.LEVEL_MAP.size()) {
@@ -389,7 +392,7 @@ public class Main extends Application {
             startLevel.startLevel(level);
         }
 
-        timer.start(); // Bắt đầu game loop
+        timer.start();
     }
 
     @Override
@@ -620,8 +623,14 @@ public class Main extends Application {
             case PAUSE_MENU -> MenuRenderer.renderPauseMenu(this, pauseIndex);
             case SAVE_CREDENTIALS -> MenuRenderer.renderSaveCredentials(this, inputUsername, inputPassword,
                     enteringUsername, enteringPassword);
-            case PLAYING -> MenuRenderer.renderDuringGame(this, level, updateAndDraw);
+            case PLAYING -> renderDuringGame();
         }
+    }
+
+    private void renderDuringGame() {
+        drawBackground.drawBackground(level);
+        draw.drawGame();
+        drawBorder.drawBorder();
     }
 
     // ==================== GAME CONTROL METHODS ====================

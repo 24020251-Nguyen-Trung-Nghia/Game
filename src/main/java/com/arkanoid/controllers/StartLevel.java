@@ -39,7 +39,7 @@ public class StartLevel {
         }
         main.drawBackground.drawBackground(level);
         main.drawBorder.drawBorder();
-        main.updateAndDraw.updateAndDraw();
+        main.draw.drawGame();
         main.executor.schedule(() -> {
             main.readyLevelVisible = false;
         }, 2, TimeUnit.SECONDS);
