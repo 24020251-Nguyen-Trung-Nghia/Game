@@ -1,5 +1,19 @@
 package com.arkanoid;
 
+import com.arkanoid.config.PropertyManager;
+import com.arkanoid.controllers.GameOver;
+import com.arkanoid.controllers.StartLevel;
+import com.arkanoid.graphics.Draw;
+import com.arkanoid.graphics.MenuRenderer;
+import com.arkanoid.graphics.Update;
+import com.arkanoid.models.*;
+import com.arkanoid.models.Objects.*;
+import com.arkanoid.resources.AutoClips;
+import com.arkanoid.resources.Images;
+import com.arkanoid.graphics.DrawBackground;
+import com.arkanoid.graphics.DrawBorder;
+import com.arkanoid.utils.FIFO;
+import com.arkanoid.utils.HitTest;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -27,78 +41,78 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class Main extends Application {
-    private final Images images = new Images();
-    private final AutoClips autoClips = new AutoClips();
-    private final LoadImages loadImages = new LoadImages();
-    private final LoadSounds loadSounds = new LoadSounds();
-    private final DrawBackground drawBackground = new DrawBackground(this);
-    private final HitTest hitTest = new HitTest(this);
-    private final SetupBlocks setupBlocks = new SetupBlocks(this);
-    private final GameOver gameOver = new GameOver(this);
-    private final StartLevel startLevel = new StartLevel(this);
-    private final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
-    private final DrawBorder drawBorder = new DrawBorder(this);
+    // ==================== SINGLETON INSTANCES ====================
+    public final Images images = Images.getInstance();
+    public final AutoClips autoClips = AutoClips.getInstance();
+    public final DrawBackground drawBackground = new DrawBackground(this);
+    public final HitTest hitTest = new HitTest(this);
+    public final SetupBlocks setupBlocks = new SetupBlocks(this);
+    public final GameOver gameOver = new GameOver(this);
+    public StartLevel startLevel = new StartLevel(this);
+    public final Draw draw = new Draw(this);
+    public final Update update = new Update(this);
+    public final DrawBorder drawBorder = new DrawBorder(this);
 
-    private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private boolean running;
-    private Instant gameStartTime;
-    private long levelStartTime;
-    private AnimationTimer timer;
-    private long lastTimerCall;
-    private long lastAnimCall;
-    private long lastBonusAnimCall;
-    private long lastEnemyUpdateCall;
-    private long lastOneSecondCheck;
-    private Canvas bkgCanvas;
-    private GraphicsContext bkgCtx;
-    private Canvas canvas;
-    private GraphicsContext ctx;
-    private Canvas brdrCanvas;
-    private GraphicsContext brdrCtx;
+    // ==================== GAME OBJECTS ====================
+    public Paddle paddle;
+    public List<Ball> balls;
+    public List<Block> blocks;
+    public List<BonusBlock> bonusBlocks;
+    public List<Enemy> enemies;
+    public List<Blink> blinks;
+    public List<Torpedo> torpedoes;
+    public List<Explosion> explosions;
+    public FIFO<Block> blockFifo;
+    public OpenDoor openDoor;
 
-    private Paddle paddle;
-    private List<Ball> balls;
-    private List<Block> blocks;
-    private List<BonusBlock> bonusBlocks;
-    private List<Enemy> enemies;
-    private List<Torpedo> torpedoes;
+    // ==================== CANVAS LAYERS ====================
+    public Canvas bkgCanvas;
+    public GraphicsContext bkgCtx;
+    public Canvas canvas;
+    public GraphicsContext ctx;
+    public Canvas brdrCanvas;
+    public GraphicsContext brdrCtx;
 
-    private int noOfLifes = 3;
+    // ==================== INPUT HANDLING ====================
+    public EventHandler<MouseEvent> mouseHandler;
+    public ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    public AnimationTimer timer;
+
+    // ==================== GAME STATE VARIABLES ====================
+    public boolean running;
+    public boolean movingLeft = false;
+    public boolean movingRight = false;
+    public int noOfLifes = 3;
     public long score = 0;
-    private long highscore;
-    private int level = 1;
-    private EnumDefinitions.PaddleState paddleState;
-
-    private boolean stickyPaddle = false;
-    private boolean nextLevelDoorOpen = false;
+    public long highscore;
+    public int level = 1;
+    public Instant gameStartTime;
+    public long levelStartTime;
+    public long lastTimerCall;
+    public long lastAnimCall;
+    public long lastBonusAnimCall;
+    public long lastEnemyUpdateCall;
+    public long lastOneSecondCheck;
+    public EnumDefinitions.PaddleState paddleState;
+    public boolean stickyPaddle = false;
+    public boolean nextLevelDoorOpen = false;
     public boolean movingPaddleOut = false;
-
-    private boolean movingLeft = false;
-    private boolean movingRight = false;
-
-
     public int animateInc;
-    private List<Blink> blinks;
-    private double ballSpeed;
-    private boolean readyLevelVisible;
-    private int paddleResetCounter;
-    private int speedResetCounter;
-    private int nextLevelDoorCounter;
-    private double nextLevelDoorAlpha;
-    private OpenDoor openDoor;
-    private boolean showStartHint;
-
-    private int silverBlockMaxHits;
+    public double ballSpeed;
+    public boolean readyLevelVisible;
+    public int paddleResetCounter;
+    public int speedResetCounter;
+    public int nextLevelDoorCounter;
+    public double nextLevelDoorAlpha;
+    public boolean showStartHint;
+    public int silverBlockMaxHits;
     public int blockCounter;
+    public Pos enemySpawnPosition;
+    public double topLeftDoorAlpha;
+    public double topRightDoorAlpha;
 
-    private List<Explosion> explosions;
-    private Pos enemySpawnPosition;
-    private double topLeftDoorAlpha;
-    private double topRightDoorAlpha;
-    private FIFO<Block> blockFifo;
-    private EventHandler<MouseEvent> mouseHandler;
-
-    private enum GameState {
+    // ==================== UI STATE VARIABLES ====================
+    public enum GameState {
         START_MENU,
         LOGIN_SCREEN,
         PLAYING,
@@ -106,132 +120,31 @@ public class Main extends Application {
         SAVE_CREDENTIALS
     }
 
-    private GameState gameState = GameState.START_MENU;
-    private int menuIndex = 0;
-    private int loginMenuIndex = 0;
-    private int pauseIndex = 0;
-    private String inputUsername = "";
-    private String inputPassword = "";
-    private boolean enteringUsername = false;
-    private boolean enteringPassword = false;
-    private boolean loginFailed = false;
-    private static final Path PLAYER_FILE = Path.of("players.txt");
-
-    public HitTest getHitTest() { return hitTest; }
-    public SetupBlocks getSetupBlocks() { return setupBlocks; }
-    public GameOver getGameOver() { return gameOver; }
-    public StartLevel getStartLevel() { return startLevel; }
-    public EventHandler<MouseEvent> getMouseHandler() { return mouseHandler; }
-    public boolean isRunning() { return running; }
-    public GraphicsContext getCtx() { return ctx; }
-    public GraphicsContext getBkgCtx() { return bkgCtx; }
-    public Images getImages() { return images; }
-    public long getHighscore() { return highscore; }
-    public boolean isShowStartHint() { return showStartHint; }
-    public AutoClips getAutoClips() { return autoClips; }
-    public LoadImages getLoadImages() { return loadImages; }
-    public LoadSounds getLoadSounds() { return loadSounds; }
-    public DrawBackground getDrawBackground() { return drawBackground; }
-    public ScheduledExecutorService getExecutor() { return executor; }
-    public Instant getGameStartTime() { return gameStartTime; }
-    public long getLevelStartTime() { return levelStartTime; }
-    public AnimationTimer getTimer() { return timer; }
-    public long getLastTimerCall() { return lastTimerCall; }
-    public long getLastAnimCall() { return lastAnimCall; }
-    public long getLastBonusAnimCall() { return lastBonusAnimCall; }
-    public long getLastEnemyUpdateCall() { return lastEnemyUpdateCall; }
-    public long getLastOneSecondCheck() { return lastOneSecondCheck; }
-    public Canvas getBkgCanvas() { return bkgCanvas; }
-    public Canvas getCanvas() { return canvas; }
-    public Canvas getBrdrCanvas() { return brdrCanvas; }
-    public Paddle getPaddle() { return paddle; }
-    public List<Ball> getBalls() { return balls; }
-    public List<Block> getBlocks() { return blocks; }
-    public List<BonusBlock> getBonusBlocks() { return bonusBlocks; }
-    public List<Enemy> getEnemies() { return enemies; }
-    public List<Torpedo> getTorpedoes() { return torpedoes; }
-    public int getNoOfLifes() { return noOfLifes; }
-    public long getScore() { return score; }
-    public int getLevel() { return level; }
-    public EnumDefinitions.PaddleState getPaddleState() { return paddleState; }
-    public boolean isStickyPaddle() { return stickyPaddle; }
-    public boolean isNextLevelDoorOpen() { return nextLevelDoorOpen; }
-    public boolean isMovingPaddleOut() { return movingPaddleOut; }
-    public int getAnimateInc() { return animateInc; }
-    public List<Blink> getBlinks() { return blinks; }
-    public double getBallSpeed() { return ballSpeed; }
-    public boolean isReadyLevelVisible() { return readyLevelVisible; }
-    public int getPaddleResetCounter() { return paddleResetCounter; }
-    public int getSpeedResetCounter() { return speedResetCounter; }
-    public int getNextLevelDoorCounter() { return nextLevelDoorCounter; }
-    public double getNextLevelDoorAlpha() { return nextLevelDoorAlpha; }
-    public OpenDoor getOpenDoor() { return openDoor; }
-    public int getSilverBlockMaxHits() { return silverBlockMaxHits; }
-    public int getBlockCounter() { return blockCounter; }
-    public List<Explosion> getExplosions() { return explosions; }
-    public Pos getEnemySpawnPosition() { return enemySpawnPosition; }
-    public double getTopLeftDoorAlpha() { return topLeftDoorAlpha; }
-    public double getTopRightDoorAlpha() { return topRightDoorAlpha; }
-    public FIFO<Block> getBlockFifo() { return blockFifo; }
-    public GraphicsContext getBrdrCtx() {
-        return brdrCtx;
-    }
-
-    public void setExecutor(ScheduledExecutorService executor) { this.executor = executor; }
-    public void setRunning(boolean running) { this.running = running; }
-    public void setGameStartTime(Instant gameStartTime) { this.gameStartTime = gameStartTime; }
-    public void setLevelStartTime(long levelStartTime) { this.levelStartTime = levelStartTime; }
-    public void setTimer(AnimationTimer timer) { this.timer = timer; }
-    public void setLastTimerCall(long lastTimerCall) { this.lastTimerCall = lastTimerCall; }
-    public void setLastAnimCall(long lastAnimCall) { this.lastAnimCall = lastAnimCall; }
-    public void setLastBonusAnimCall(long lastBonusAnimCall) { this.lastBonusAnimCall = lastBonusAnimCall; }
-    public void setLastEnemyUpdateCall(long lastEnemyUpdateCall) { this.lastEnemyUpdateCall = lastEnemyUpdateCall; }
-    public void setLastOneSecondCheck(long lastOneSecondCheck) { this.lastOneSecondCheck = lastOneSecondCheck; }
-    public void setBkgCanvas(Canvas bkgCanvas) { this.bkgCanvas = bkgCanvas; }
-    public void setBkgCtx(GraphicsContext bkgCtx) { this.bkgCtx = bkgCtx; }
-    public void setCanvas(Canvas canvas) { this.canvas = canvas; }
-    public void setCtx(GraphicsContext ctx) { this.ctx = ctx; }
-    public void setBrdrCanvas(Canvas brdrCanvas) { this.brdrCanvas = brdrCanvas; }
-    public void setBrdrCtx(GraphicsContext brdrCtx) { this.brdrCtx = brdrCtx; }
-    public void setPaddle(Paddle paddle) { this.paddle = paddle; }
-    public void setBalls(List<Ball> balls) { this.balls = balls; }
-    public void setBlocks(List<Block> blocks) { this.blocks = blocks; }
-    public void setBonusBlocks(List<BonusBlock> bonusBlocks) { this.bonusBlocks = bonusBlocks; }
-    public void setEnemies(List<Enemy> enemies) { this.enemies = enemies; }
-    public void setTorpedoes(List<Torpedo> torpedoes) { this.torpedoes = torpedoes; }
-    public void setNoOfLifes(int noOfLifes) { this.noOfLifes = noOfLifes; }
-    public void setScore(long score) { this.score = score; }
-    public void setHighscore(long highscore) { this.highscore = highscore; }
-    public void setLevel(int level) { this.level = level; }
-    public void setPaddleState(EnumDefinitions.PaddleState paddleState) { this.paddleState = paddleState; }
-    public void setStickyPaddle(boolean stickyPaddle) { this.stickyPaddle = stickyPaddle; }
-    public void setNextLevelDoorOpen(boolean nextLevelDoorOpen) { this.nextLevelDoorOpen = nextLevelDoorOpen; }
-    public void setMovingPaddleOut(boolean movingPaddleOut) { this.movingPaddleOut = movingPaddleOut; }
-    public void setAnimateInc(int animateInc) { this.animateInc = animateInc; }
-    public void setBlinks(List<Blink> blinks) { this.blinks = blinks; }
-    public void setBallSpeed(double ballSpeed) { this.ballSpeed = ballSpeed; }
-    public void setReadyLevelVisible(boolean readyLevelVisible) { this.readyLevelVisible = readyLevelVisible; }
-    public void setPaddleResetCounter(int paddleResetCounter) { this.paddleResetCounter = paddleResetCounter; }
-    public void setSpeedResetCounter(int speedResetCounter) { this.speedResetCounter = speedResetCounter; }
-    public void setNextLevelDoorCounter(int nextLevelDoorCounter) { this.nextLevelDoorCounter = nextLevelDoorCounter; }
-    public void setNextLevelDoorAlpha(double nextLevelDoorAlpha) { this.nextLevelDoorAlpha = nextLevelDoorAlpha; }
-    public void setOpenDoor(OpenDoor openDoor) { this.openDoor = openDoor; }
-    public void setShowStartHint(boolean showStartHint) { this.showStartHint = showStartHint; }
-    public void setSilverBlockMaxHits(int silverBlockMaxHits) { this.silverBlockMaxHits = silverBlockMaxHits; }
-    public void setBlockCounter(int blockCounter) { this.blockCounter = blockCounter; }
-    public void setExplosions(List<Explosion> explosions) { this.explosions = explosions; }
-    public void setEnemySpawnPosition(Pos enemySpawnPosition) { this.enemySpawnPosition = enemySpawnPosition; }
-    public void setTopLeftDoorAlpha(double topLeftDoorAlpha) { this.topLeftDoorAlpha = topLeftDoorAlpha; }
-    public void setTopRightDoorAlpha(double topRightDoorAlpha) { this.topRightDoorAlpha = topRightDoorAlpha; }
-    public void setBlockFifo(FIFO<Block> blockFifo) { this.blockFifo = blockFifo; }
-    public void setMouseHandler(EventHandler<MouseEvent> mouseHandler) { this.mouseHandler = mouseHandler; }
+    public GameState gameState = GameState.START_MENU;
+    public int menuIndex = 0;
+    public int loginMenuIndex = 0;
+    public int pauseIndex = 0;
+    public String inputUsername = "";
+    public String inputPassword = "";
+    public boolean enteringUsername = false;
+    public boolean enteringPassword = false;
+    public boolean loginFailed = false;
+    public static final Path PLAYER_FILE = Path.of("Game", "players.txt");
 
     @Override
     public void init() {
+        initializeGame();
+        setupCanvas();
+        setupEventHandlers();
+        loadResources();
+        initializeGameObjects();
+    }
+
+    private void initializeGame() {
         running = false;
         paddleState = EnumDefinitions.PaddleState.STANDARD;
         highscore = PropertyManager.INSTANCE.getLong(Constants.HIGHSCORE_KEY, 0);
-        level = 2;
+        level = 1;
         blinks = new ArrayList<>();
         ballSpeed = GameConstants.BALL_SPEED;
         readyLevelVisible = false;
@@ -256,102 +169,9 @@ public class Main extends Application {
         lastAnimCall = System.nanoTime();
         lastBonusAnimCall = System.nanoTime();
         lastEnemyUpdateCall = System.nanoTime();
+    }
 
-        timer = new AnimationTimer() {
-            @Override
-            public void handle(final long now) {
-                if (running && gameState == GameState.PLAYING) {
-                    if (now > lastOneSecondCheck + 1_000_000_000L) {
-                        long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
-                        if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
-                            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
-                            switch (enemySpawnPosition) {
-                                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
-                                case TOP_RIGHT -> topRightDoorAlpha = 0.99;
-                            }
-                        }
-                        if (paddleResetCounter > 0) {
-                            paddleResetCounter--;
-                            if (paddleResetCounter == 0) {
-                                paddleState = EnumDefinitions.PaddleState.STANDARD;
-                            }
-                        }
-                        if (speedResetCounter > 0) {
-                            speedResetCounter--;
-                            if (speedResetCounter == 0) {
-                                ballSpeed = GameConstants.BALL_SPEED;
-                            }
-                        }
-                        if (nextLevelDoorCounter > 0) {
-                            nextLevelDoorCounter--;
-                            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
-                                nextLevelDoorAlpha = 1.0;
-                                nextLevelDoorOpen = false;
-                                drawBorder.drawBorder();
-                            }
-                        }
-                        lastOneSecondCheck = now;
-                    }
-
-                    if (now > lastBonusAnimCall + 50_000_000L) {
-                        bonusBlocks.forEach(bonusBlock -> bonusBlock.update());
-                        if (topLeftDoorAlpha < 1) {
-                            topLeftDoorAlpha -= 0.1;
-                            if (topLeftDoorAlpha <= 0) {
-                                spawnEnemy(Pos.TOP_LEFT);
-                                topLeftDoorAlpha = 1;
-                            }
-                            drawBorder.drawBorder();
-                        } else if (topRightDoorAlpha < 1) {
-                            topRightDoorAlpha -= 0.1;
-                            if (topRightDoorAlpha <= 0) {
-                                spawnEnemy(Pos.TOP_RIGHT);
-                                topRightDoorAlpha = 1;
-                            }
-                            drawBorder.drawBorder();
-                        }
-                        lastBonusAnimCall = now;
-                    }
-
-                    if (now > lastAnimCall + 5_000_000L) {
-                        animateInc++;
-                        lastAnimCall = now;
-                    }
-
-                    if (now > lastTimerCall) {
-                        hitTest.hitTests();
-                        if (movingLeft) movePaddleLeft();
-                        else if (movingRight) movePaddleRight();
-                        else paddle.vX = 0;
-                        updateAndDraw.updateAndDraw();
-                        if (nextLevelDoorOpen) {
-                            drawBorder.drawBorder();
-                        }
-                        lastTimerCall = now;
-                    }
-
-                    if (movingPaddleOut) {
-                        paddle.x += 1;
-                        paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
-                        updateAndDraw.updateAndDraw();
-                        if (paddle.x > GameConstants.WIDTH) {
-                            level++;
-                            if (level > Constants.LEVEL_MAP.size()) {
-                                level = 1;
-                            }
-                            score += 10_000;
-                            startLevel.startLevel(level);
-                        }
-                    }
-                } else {
-                    if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-                        showStartHint = true;
-                        startScreen();
-                    }
-                }
-            }
-        };
-
+    private void setupCanvas() {
         bkgCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         bkgCtx = bkgCanvas.getGraphicsContext2D();
         canvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
@@ -359,7 +179,14 @@ public class Main extends Application {
         brdrCanvas = new Canvas(GameConstants.WIDTH, GameConstants.HEIGHT);
         brdrCtx = brdrCanvas.getGraphicsContext2D();
         brdrCanvas.setMouseTransparent(true);
+    }
 
+    private void setupEventHandlers() {
+        setupMouseHandler();
+        setupGameLoop();
+    }
+
+    private void setupMouseHandler() {
         mouseHandler = e -> {
             if (e.getEventType() == MouseEvent.MOUSE_DRAGGED) {
                 double x = e.getSceneX() - paddleState.width * 0.5;
@@ -377,9 +204,159 @@ public class Main extends Application {
             }
         };
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
+    }
 
-        loadImages.loadImages(images, this);
+    private void setupGameLoop() {
+        timer = new AnimationTimer() {
+            @Override
+            public void handle(final long now) {
+                if (running && gameState == GameState.PLAYING) {
+                    updateGameState(now);
+                } else {
+                    handleIdleState();
+                }
+            }
+        };
+    }
 
+    private void updateGameState(long now) {
+        updateOneSecondChecks(now);
+        updateAnimations(now);
+        updateGameLogic(now);
+    }
+
+    private void updateOneSecondChecks(long now) {
+        if (now > lastOneSecondCheck + 1_000_000_000) {
+            handleOneSecondUpdates();
+            lastOneSecondCheck = now;
+        }
+    }
+
+    private void handleOneSecondUpdates() {
+        long levelPlayTime = Instant.now().getEpochSecond() - levelStartTime;
+        if (levelPlayTime > 15 && enemies.size() < 5 && levelPlayTime % 10 == 0) {
+            enemySpawnPosition = GameConstants.RND.nextBoolean() ? Pos.TOP_LEFT : Pos.TOP_RIGHT;
+            switch (enemySpawnPosition) {
+                case TOP_LEFT -> topLeftDoorAlpha = 0.99;
+                case TOP_RIGHT -> topRightDoorAlpha = 0.99;
+            }
+        }
+
+        updateCounters();
+    }
+
+    private void updateCounters() {
+        if (paddleResetCounter > 0) {
+            paddleResetCounter--;
+            if (paddleResetCounter == 0) {
+                paddleState = EnumDefinitions.PaddleState.STANDARD;
+            }
+        }
+        if (speedResetCounter > 0) {
+            speedResetCounter--;
+            if (speedResetCounter == 0) {
+                ballSpeed = GameConstants.BALL_SPEED;
+            }
+        }
+        if (nextLevelDoorCounter > 0) {
+            nextLevelDoorCounter--;
+            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
+                nextLevelDoorAlpha = 1.0;
+                nextLevelDoorOpen = false;
+                drawBorder.drawBorder();
+            }
+        }
+    }
+
+    private void updateAnimations(long now) {
+        if (now > lastBonusAnimCall + 50_000_000) {
+            bonusBlocks.forEach(BonusBlock::update);
+            updateTopDoorAnimations();
+            lastBonusAnimCall = now;
+        }
+
+        if (now > lastEnemyUpdateCall + 100_000_000) {
+            enemies.forEach(Enemy::update);
+            explosions.forEach(Explosion::update);
+            lastEnemyUpdateCall = now;
+        }
+
+        if (now > lastAnimCall + 5_000_000) {
+            animateInc++;
+            lastAnimCall = now;
+        }
+    }
+
+    private void updateTopDoorAnimations() {
+        if (topLeftDoorAlpha < 1) {
+            topLeftDoorAlpha -= 0.1;
+            if (topLeftDoorAlpha <= 0) {
+                spawnEnemy(Pos.TOP_LEFT);
+                topLeftDoorAlpha = 1;
+            }
+            drawBorder.drawBorder();
+        } else if (topRightDoorAlpha < 1) {
+            topRightDoorAlpha -= 0.1;
+            if (topRightDoorAlpha <= 0) {
+                spawnEnemy(Pos.TOP_RIGHT);
+                topRightDoorAlpha = 1;
+            }
+            drawBorder.drawBorder();
+        }
+    }
+
+    private void updateGameLogic(long now) {
+        if (now > lastTimerCall) {
+            hitTest.hitTests();
+            handlePaddleMovement();
+            update.updateGame();
+            draw.drawGame();
+            if (nextLevelDoorOpen) {
+                drawBorder.drawBorder();
+            }
+            lastTimerCall = now;
+        }
+
+        if (movingPaddleOut) {
+            handlePaddleExit();
+        }
+    }
+
+    private void handlePaddleMovement() {
+        if (movingLeft) movePaddleLeft();
+        else if (movingRight) movePaddleRight();
+        else stopPaddle();
+    }
+
+    private void handlePaddleExit() {
+        paddle.x += 1;
+        paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
+        update.updateGame();
+        draw.drawGame();
+        if (paddle.x > GameConstants.WIDTH) {
+            level++;
+            if (level > Constants.LEVEL_MAP.size()) {
+                level = 1;
+            }
+            score += 10_000;
+            startLevel.startLevel(level);
+        }
+    }
+
+    private void handleIdleState() {
+        if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+            showStartHint = true;
+            startScreen();
+        }
+    }
+
+    private void loadResources() {
+        Images.loadImages(this);
+        AutoClips.loadSounds(this);
+        ensurePlayerFileExists();
+    }
+
+    private void initializeGameObjects() {
         paddle = new Paddle(this);
         balls = new CopyOnWriteArrayList<>();
         blocks = new CopyOnWriteArrayList<>();
@@ -389,17 +366,16 @@ public class Main extends Application {
         torpedoes = new CopyOnWriteArrayList<>();
         noOfLifes = 3;
         score = 0;
-        ensurePlayerFileExists();
     }
 
+    // ==================== KEYBOARD INPUT HANDLING ====================
     @Override
     public void start(final Stage stage) {
         gameStartTime = Instant.now();
+
         final StackPane pane = new StackPane(bkgCanvas, canvas, brdrCanvas);
         final Scene scene = new Scene(pane, GameConstants.WIDTH, GameConstants.HEIGHT);
 
-        scene.setOnKeyPressed(e -> handleKeyPressed(e));
-        scene.setOnKeyTyped(e -> handleKeyTyped(e));
         scene.setOnKeyPressed(this::handleKeyPressed);
         scene.setOnKeyReleased(this::handleKeyReleased);
         scene.setOnKeyTyped(this::handleKeyTyped);
@@ -409,198 +385,34 @@ public class Main extends Application {
         stage.show();
         stage.setResizable(false);
 
-        playSound(autoClips.gameStartSnd);
+        if (gameState.equals(GameState.START_MENU)) {
+            MenuRenderer.renderStartMenu(this, menuIndex);
+            playSound(AutoClips.gameStartSnd);
+        } else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+            startLevel.startLevel(level);
+        }
 
-        renderStartMenu();
         timer.start();
+    }
+
+    @Override
+    public void stop() {
+        if (timer != null) timer.stop();
+        if (executor != null) executor.shutdownNow();
+        Platform.exit();
     }
 
     private void handleKeyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
-        if (gameState == GameState.START_MENU) {
-            switch (code) {
-                case UP -> {
-                    menuIndex = (menuIndex - 1 + 2) % 2;
-                    renderStartMenu();
-                }
-                case DOWN -> {
-                    menuIndex = (menuIndex + 1) % 2;
-                    renderStartMenu();
-                }
-                case SPACE -> {
-                    if (menuIndex == 0) {
-                        enterAsNewPlayer();
-                    } else {
-                        gameState = GameState.LOGIN_SCREEN;
-                        inputUsername = "";
-                        inputPassword = "";
-                        enteringUsername = true;
-                        enteringPassword = false;
-                        loginMenuIndex = 0;
-                        renderLoginScreen();
-                    }
-                }
-            }
-        } else if (gameState == GameState.LOGIN_SCREEN) {
-            switch (code) {
-                case UP -> {
-                    loginMenuIndex = (loginMenuIndex - 1 + 3) % 3;
-                    enteringUsername = loginMenuIndex == 0;
-                    enteringPassword = loginMenuIndex == 1;
-                    renderLoginScreen();
-                }
-                case DOWN -> {
-                    loginMenuIndex = (loginMenuIndex + 1) % 3;
-                    enteringUsername = loginMenuIndex == 0;
-                    enteringPassword = loginMenuIndex == 1;
-                    renderLoginScreen();
-                }
-                case SPACE -> {
-                    if (loginMenuIndex == 2) {
-                        gameState = GameState.START_MENU;
-                        menuIndex = 0;
-                        renderStartMenu();
-                    } else {
-                        if (loginMenuIndex == 0) enteringUsername = true;
-                        if (loginMenuIndex == 1) enteringPassword = true;
-                        renderLoginScreen();
-                    }
-                }
-                case ENTER -> {
-                    attemptLogin();
-                }
-                case ESCAPE -> {
-                    gameState = GameState.START_MENU;
-                    menuIndex = 0;
-                    renderStartMenu();
-                }
-            }
-        } else if (gameState == GameState.PLAYING) {
-            if (code == KeyCode.ESCAPE) {
-                gameState = GameState.PAUSE_MENU;
-                pauseIndex = 0;
-                renderPauseMenu();
-            } else if (running && !movingPaddleOut) {
-                switch (code) {
-                    case RIGHT, D -> movingRight = true;
-                    case LEFT, A -> movingLeft = true;
-                    case SPACE -> {
-                        final long activeBalls = balls.stream().filter(ball -> ball.active).count();
-                        if (activeBalls > 0) {
-                            if (EnumDefinitions.PaddleState.LASER == paddleState) {
-                                fire(paddle.bounds.centerX);
-                            }
-                        } else {
-                            stickyPaddle = false;
-                            balls.forEach(ball -> {
-                                ball.active = true;
-                                ball.bornTimestamp = Instant.now().getEpochSecond();
-                            });
-                        }
-                    }
-                }
-            }
-
-
-    } else if (gameState == GameState.PAUSE_MENU) {
-            switch (code) {
-                case UP -> {
-                    pauseIndex = (pauseIndex - 1 + 2) % 2;
-                    renderPauseMenu();
-                }
-                case DOWN -> {
-                    pauseIndex = (pauseIndex + 1) % 2;
-                    renderPauseMenu();
-                }
-                case SPACE -> {
-                    if (pauseIndex == 1) {
-                        exitWithoutSave();
-                    } else {
-                        gameState = GameState.SAVE_CREDENTIALS;
-                        inputUsername = "";
-                        inputPassword = "";
-                        enteringUsername = true;
-                        enteringPassword = false;
-                        renderSaveCredentials();
-                    }
-                }
-                case ESCAPE -> {
-                    gameState = GameState.PLAYING;
-                    renderDuringGame();
-                }
-            }
-        } else if (gameState == GameState.SAVE_CREDENTIALS) {
-            switch (code) {
-                case UP -> {
-                    if (enteringPassword) {
-                        enteringPassword = false;
-                        enteringUsername = true;
-                    }
-                    renderSaveCredentials();
-                }
-                case DOWN -> {
-                    if (enteringUsername) {
-                        enteringUsername = false;
-                        enteringPassword = true;
-                    }
-                    renderSaveCredentials();
-                }
-                case ENTER -> {
-                    if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
-                        savePlayer(inputUsername.trim(), inputPassword.trim());
-                        exitAfterSave();
-                    }
-                }
-                case ESCAPE -> {
-                    gameState = GameState.PAUSE_MENU;
-                    renderPauseMenu();
-                }
-            }
-        }
-
-    }
-
-
-    private void handleKeyTyped(KeyEvent e) {
-        String ch = e.getCharacter();
-        if (gameState == GameState.LOGIN_SCREEN) {
-            if (enteringUsername) {
-                if ("\b".equals(ch)) {
-                    if (!inputUsername.isEmpty()) inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputUsername += ch;
-                }
-                renderLoginScreen();
-            } else if (enteringPassword) {
-                if ("\b".equals(ch)) {
-                    if (!inputPassword.isEmpty()) inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputPassword += ch;
-                }
-                renderLoginScreen();
-            }
-        } else if (gameState == GameState.SAVE_CREDENTIALS) {
-            if (enteringUsername) {
-                if ("\b".equals(ch)) {
-                    if (!inputUsername.isEmpty()) inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputUsername += ch;
-                }
-                renderSaveCredentials();
-            } else if (enteringPassword) {
-                if ("\b".equals(ch)) {
-                    if (!inputPassword.isEmpty()) inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputPassword += ch;
-                }
-                renderSaveCredentials();
-            }
-        } else if (gameState == GameState.START_MENU) {
-            // ignore
-        } else if (gameState == GameState.PLAYING) {
-            // ignore typed chars during game
+        switch (gameState) {
+            case START_MENU -> handleStartMenuInput(code);
+            case LOGIN_SCREEN -> handleLoginScreenInput(code);
+            case PLAYING -> handlePlayingInput(code);
+            case PAUSE_MENU -> handlePauseMenuInput(code);
+            case SAVE_CREDENTIALS -> handleSaveCredentialsInput(code);
         }
     }
+
     private void handleKeyReleased(KeyEvent e) {
         KeyCode code = e.getCode();
         if (gameState == GameState.PLAYING) {
@@ -611,13 +423,223 @@ public class Main extends Application {
         }
     }
 
+    private void handleKeyTyped(KeyEvent e) {
+        String ch = e.getCharacter();
+        if (gameState == GameState.LOGIN_SCREEN) {
+            if (enteringUsername) {
+                if ("\b".equals(ch)) {
+                    if (!inputUsername.isEmpty())
+                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputUsername += ch;
+                }
+                renderCurrentScreen();
+            } else if (enteringPassword) {
+                if ("\b".equals(ch)) {
+                    if (!inputPassword.isEmpty())
+                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputPassword += ch;
+                }
+                renderCurrentScreen();
+            }
+        } else if (gameState == GameState.SAVE_CREDENTIALS) {
+            if (enteringUsername) {
+                if ("\b".equals(ch)) {
+                    if (!inputUsername.isEmpty())
+                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputUsername += ch;
+                }
+                renderCurrentScreen();
+            } else if (enteringPassword) {
+                if ("\b".equals(ch)) {
+                    if (!inputPassword.isEmpty())
+                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                    inputPassword += ch;
+                }
+                renderCurrentScreen();
+            }
+        }
+    }
 
+    // ==================== INPUT HANDLING METHODS ====================
+    private void handleStartMenuInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                menuIndex = (menuIndex - 1 + 2) % 2;
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                menuIndex = (menuIndex + 1) % 2;
+                renderCurrentScreen();
+            }
+            case SPACE, ENTER -> {
+                if (menuIndex == 0) {
+                    enterAsNewPlayer();
+                } else {
+                    gameState = GameState.LOGIN_SCREEN;
+                    inputUsername = "";
+                    inputPassword = "";
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    loginMenuIndex = 0;
+                    loginFailed = false;
+                    renderCurrentScreen();
+                }
+            }
+        }
+    }
+
+    private void handleLoginScreenInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                loginMenuIndex = (loginMenuIndex - 1 + 3) % 3;
+                enteringUsername = loginMenuIndex == 0;
+                enteringPassword = loginMenuIndex == 1;
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                loginMenuIndex = (loginMenuIndex + 1) % 3;
+                enteringUsername = loginMenuIndex == 0;
+                enteringPassword = loginMenuIndex == 1;
+                renderCurrentScreen();
+            }
+            case SPACE -> {
+                if (loginMenuIndex == 2) {
+                    gameState = GameState.START_MENU;
+                    menuIndex = 0;
+                    renderCurrentScreen();
+                } else {
+                    if (loginMenuIndex == 0) enteringUsername = true;
+                    if (loginMenuIndex == 1) enteringPassword = true;
+                    renderCurrentScreen();
+                }
+            }
+            case ENTER -> attemptLogin();
+            case ESCAPE -> {
+                gameState = GameState.START_MENU;
+                menuIndex = 0;
+                renderCurrentScreen();
+            }
+        }
+    }
+
+    private void handlePlayingInput(KeyCode code) {
+        if (code == KeyCode.ESCAPE) {
+            gameState = GameState.PAUSE_MENU;
+            pauseIndex = 0;
+            renderCurrentScreen();
+            return;
+        }
+
+        if (running && !movingPaddleOut) {
+            switch (code) {
+                case RIGHT, D -> movingRight = true;
+                case LEFT, A -> movingLeft = true;
+                case SPACE -> {
+                    final long activeBalls = balls.stream().filter(ball -> ball.active).count();
+                    if (activeBalls > 0) {
+                        if (EnumDefinitions.PaddleState.LASER == paddleState) {
+                            fire(paddle.bounds.centerX);
+                        }
+                    } else {
+                        stickyPaddle = false;
+                        balls.forEach(ball -> {
+                            ball.active = true;
+                            ball.bornTimestamp = Instant.now().getEpochSecond();
+                        });
+                    }
+                }
+            }
+        }
+    }
+
+    private void handlePauseMenuInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                pauseIndex = (pauseIndex - 1 + 2) % 2;
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                pauseIndex = (pauseIndex + 1) % 2;
+                renderCurrentScreen();
+            }
+            case SPACE, ENTER -> {
+                if (pauseIndex == 1) {
+                    exitWithoutSave();
+                } else {
+                    gameState = GameState.SAVE_CREDENTIALS;
+                    inputUsername = "";
+                    inputPassword = "";
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    renderCurrentScreen();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PLAYING;
+                renderCurrentScreen();
+            }
+        }
+    }
+
+    private void handleSaveCredentialsInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                if (enteringPassword) {
+                    enteringPassword = false;
+                    enteringUsername = true;
+                }
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                if (enteringUsername) {
+                    enteringUsername = false;
+                    enteringPassword = true;
+                }
+                renderCurrentScreen();
+            }
+            case ENTER -> {
+                if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
+                    savePlayer(inputUsername.trim(), inputPassword.trim());
+                    exitAfterSave();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PAUSE_MENU;
+                renderCurrentScreen();
+            }
+        }
+    }
+
+    // ==================== UI RENDERING METHODS ====================
+    private void renderCurrentScreen() {
+        switch (gameState) {
+            case START_MENU -> MenuRenderer.renderStartMenu(this, menuIndex);
+            case LOGIN_SCREEN -> MenuRenderer.renderLoginScreen(this, inputUsername, inputPassword,
+                    enteringUsername, enteringPassword, loginMenuIndex, loginFailed);
+            case PAUSE_MENU -> MenuRenderer.renderPauseMenu(this, pauseIndex);
+            case SAVE_CREDENTIALS -> MenuRenderer.renderSaveCredentials(this, inputUsername, inputPassword,
+                    enteringUsername, enteringPassword);
+            case PLAYING -> renderDuringGame();
+        }
+    }
+
+    private void renderDuringGame() {
+        drawBackground.drawBackground(level);
+        draw.drawGame();
+        drawBorder.drawBorder();
+    }
+
+    // ==================== GAME CONTROL METHODS ====================
     private void enterAsNewPlayer() {
         running = true;
         gameState = GameState.PLAYING;
         level = 1;
         startLevel.startLevel(level);
-        renderDuringGame();
+        renderCurrentScreen();
     }
 
     private void attemptLogin() {
@@ -626,11 +648,11 @@ public class Main extends Application {
             gameState = GameState.PLAYING;
             level = 1;
             startLevel.startLevel(level);
-            renderDuringGame();
+            renderCurrentScreen();
         } else {
             loginFailed = true;
             inputPassword = "";
-            renderLoginScreen();
+            renderCurrentScreen();
         }
     }
 
@@ -646,79 +668,27 @@ public class Main extends Application {
         if (timer != null) timer.stop();
         if (executor != null) executor.shutdownNow();
         Platform.exit();
-        System.exit(0);
     }
 
-    private void renderStartMenu() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
+    // ==================== GAME MECHANICS METHODS ====================
+    private void movePaddleRight() {
+        paddle.vX = GameConstants.PADDLE_SPEED;
+    }
 
-        ctx.setFont(GameConstants.UI_FONT);
-        ctx.setGlobalAlpha(1.0);
-        String s1 = "New Player";
-        String s2 = "Old Player";
-        double x = GameConstants.WIDTH / 2.0 - 100;;
-        double y = 360;
-        ctx.fillText(s1, x, y);
-        ctx.fillText(s2, x, y + 40);
-        if (menuIndex == 0) {
-            ctx.fillText(">", x - 30, y);
-        } else {
-            ctx.fillText(">", x - 30, y + 40);
+    private void movePaddleLeft() {
+        paddle.vX = -GameConstants.PADDLE_SPEED;
+    }
+
+    private void stopPaddle() {
+        paddle.vX = 0;
+    }
+
+    private void fire(final double x) {
+        if (!torpedoes.isEmpty()) {
+            return;
         }
-        drawBorder.drawBorder();
-    }
-
-    private void renderLoginScreen() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;;
-        double y = 360;
-        ctx.fillText("Username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
-        ctx.fillText("Password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
-        ctx.fillText("New Player (back)", x, y + 100);
-        if (loginMenuIndex == 0) ctx.fillText(">", x - 30, y);
-        if (loginMenuIndex == 1) ctx.fillText(">", x - 30, y + 40);
-        if (loginMenuIndex == 2) ctx.fillText(">", x - 30, y + 100);
-        if (loginFailed) {
-            ctx.fillText("Login failed. Try again.", x, y + 140);
-        }
-        drawBorder.drawBorder();
-    }
-
-    private void renderPauseMenu() {
-        drawBorder.drawBorder();
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 260;
-        ctx.fillText("Save", x, y);
-        ctx.fillText("Not Save", x, y + 40);
-        ctx.fillText(">", x - 20, y + pauseIndex * 40);
-        drawBorder.drawBorder();
-    }
-
-    private void renderSaveCredentials() {
-        ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(0);
-        ctx.setFont(GameConstants.UI_FONT);
-        double x = GameConstants.WIDTH / 2.0 - 100;
-        double y = 260;
-        ctx.fillText("Enter username: " + inputUsername + (enteringUsername ? "_" : ""), x, y);
-        ctx.fillText("Enter password: " + mask(inputPassword) + (enteringPassword ? "_" : ""), x, y + 40);
-        ctx.fillText("Press Enter to save and exit", x, y + 100);
-        drawBorder.drawBorder();
-    }
-
-    private void renderDuringGame() {
-        drawBackground.drawBackground(level);
-        updateAndDraw.updateAndDraw();
-        drawBorder.drawBorder();
-    }
-
-    private String mask(String s) {
-        return "*".repeat(Math.max(0, s.length()));
+        torpedoes.add(new Torpedo(Images.torpedoImg, x, GameConstants.HEIGHT - 50));
+        playSound(AutoClips.laserSnd);
     }
 
     public void playSound(final AudioClip audioClip) {
@@ -733,17 +703,17 @@ public class Main extends Application {
     private void spawnEnemy(final Pos position) {
         switch (position) {
             case TOP_LEFT ->
-                    enemies.add(new Enemy(this,100 + images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+                    enemies.add(new Enemy(this, 100 + Images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
             case TOP_RIGHT ->
-                    enemies.add(new Enemy(this,GameConstants.WIDTH - 100 - images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
+                    enemies.add(new Enemy(this, GameConstants.WIDTH - 100 - Images.topDoorImg.getWidth() * 0.5 - GameConstants.ENEMY_WIDTH * 0.5, GameConstants.UPPER_INSET, EnumDefinitions.EnemyType.MOLECULE));
         }
     }
 
     public void spawnBall() {
-        if (balls.size() > 0) {
+        if (!balls.isEmpty()) {
             return;
         }
-        balls.add(new Ball(this, images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
+        balls.add(new Ball(this, Images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - Images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
     }
 
     public void startScreen() {
@@ -752,37 +722,11 @@ public class Main extends Application {
         drawBorder.drawBorder();
     }
 
-    private void startLevel(final int level) {
-        startLevel.startLevel(level);
-    }
-
-    private void gameOver() {
-        gameOver.gameOver();
-    }
-
-    private void setupBlocks(final int level) {
-        setupBlocks.setupBlocks(level);
-    }
-
-    private void hitTests() {
-        hitTest.hitTests();
-    }
-
-    public void drawBackground(final int level) {
-        drawBackground.drawBackground(level);
-    }
-
-    public void updateAndDraw() {
-        updateAndDraw.updateAndDraw();
-    }
-
-    public void drawBorder() {
-        drawBorder.drawBorder();
-    }
-
+    // ==================== PLAYER MANAGEMENT ====================
     private void ensurePlayerFileExists() {
         try {
             if (!Files.exists(PLAYER_FILE)) {
+                Files.createDirectories(PLAYER_FILE.getParent());
                 Files.createFile(PLAYER_FILE);
             }
         } catch (IOException e) {
@@ -819,26 +763,7 @@ public class Main extends Application {
         }
     }
 
-    private void movePaddleRight() {
-        paddle.vX = GameConstants.PADDLE_SPEED;
-    }
-
-    private void movePaddleLeft() {
-        paddle.vX = -GameConstants.PADDLE_SPEED;
-    }
-
-    private void stopPaddle() {
-        paddle.vX = 0;
-    }
-
-    private void fire(final double x) {
-        if (torpedoes.size() > 0) {
-            return;
-        }
-        torpedoes.add(new Torpedo(images.torpedoImg, x, GameConstants.HEIGHT - 50));
-        playSound(autoClips.laserSnd);
-    }
-
+    // ==================== MAIN METHOD ====================
     public static void main(String[] args) {
         launch(args);
     }
