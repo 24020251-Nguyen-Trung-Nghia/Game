@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+
+
+<StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.arkanoid.LevelSelectController">
+
+    <ImageView fitHeight="550.0" fitWidth="704.0" pickOnBounds="true" preserveRatio="false">
+        <image>
+            <Image url="@com/arkanoid/background.png"/>
+        </image>
+    </ImageView>
+
+    <BorderPane prefHeight="550.0" prefWidth="704.0" style="-fx-background-color: transparent;">
+
+        <center>
+            <ScrollPane fitToHeight="true" fitToWidth="true">
+                <TilePane fx:id="levelSelectionPane" alignment="CENTER" hgap="15" prefColumns="8" prefHeight="375.0"
+                          prefWidth="702.0" style="-fx-padding: 20;" vgap="15">
+                    <children>
+                        <VBox fx:id="level1Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level1.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level2Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level2.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level3Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level3.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level4Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level4.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level5Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level5.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level6Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level6.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level7Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level7.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level8Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level8.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level9Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level9.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level10Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level10.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level11Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level11.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level12Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level12.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level13Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level13.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level14Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level14.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level15Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level15.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level16Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level16.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level17Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level17.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level18Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level18.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level19Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level19.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level20Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level20.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level21Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level21.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level22Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level22.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level23Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level23.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level24Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level24.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level25Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level25.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level26Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level26.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level27Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level27.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level28Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level28.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level29Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level29.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level30Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level30.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level31Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level31.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="level32Box" alignment="CENTER" onMouseClicked="#handleLevelClicked"
+                              prefHeight="31.0" prefWidth="70.0" spacing="5.0" styleClass="level-box"
+                              TilePane.alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@level32.png"/>
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </TilePane>
+            </ScrollPane>
+        </center>
+
+        <bottom>
+            <HBox alignment="CENTER" prefHeight="31.0" prefWidth="704.0" spacing="15" style="-fx-padding: 10;"/>
+        </bottom>
+
+    </BorderPane>
+
+</StackPane>

@@ -21,6 +21,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 /**
  * Main (Application)
  * ├── Game State Management
@@ -43,7 +48,9 @@ public class Main extends Application {
     private final StartLevel startLevel = new StartLevel(this);
     private final UpdateAndDraw updateAndDraw = new UpdateAndDraw(this);
     private final DrawBorder drawBorder = new DrawBorder(this);
-
+    private Stage primaryStage;     // Để lưu cửa sổ chính
+    private Scene mainScene;        // Để lưu Scene (chúng ta sẽ thay đổi nội dung của nó)
+    private StackPane gameRootPane; // Để lưu 3 canvas game
 
     // ************ GAME STATE VARIABLES ************************
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -410,6 +417,17 @@ public class Main extends Application {
         this.paddle = paddle;
     }
 
+    public void setPaddleType(EnumDefinitions.PaddleState paddleType) {
+        System.out.println("Đã chọn ván: " + paddleType.name());
+        if (this.paddle != null) {
+            this.setPaddleState(paddleType); // Gọi setter có sẵn của bạn
+            // Bạn có thể cần gọi thêm hàm cập nhật hình ảnh/kích thước nếu có
+            // this.paddle.updateVisualState(paddleType);
+        } else {
+            System.err.println("Lỗi: Paddle chưa được khởi tạo trong Main.setPaddleType!");
+        }
+    }
+
     public void setBalls(List<Ball> balls) {
         this.balls = balls;
     }
@@ -660,6 +678,9 @@ public class Main extends Application {
                         paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
                         updateAndDraw.updateAndDraw();
                         if (paddle.x > GameConstants.WIDTH) {
+                            // Mở khóa level tiếp theo
+                            unlockNextLevel(level);
+
                             level++;
                             if (level > Constants.LEVEL_MAP.size()) {
                                 level = 1;
@@ -740,20 +761,51 @@ public class Main extends Application {
     // ****************** Keyboard Controls *****************************
     @Override
     public void start(final Stage stage) {
+
+        this.primaryStage = stage;
         gameStartTime = Instant.now();
 
-        final StackPane pane = new StackPane(bkgCanvas, canvas, brdrCanvas);
-        final Scene scene = new Scene(pane, GameConstants.WIDTH, GameConstants.HEIGHT);
+        gameRootPane = new StackPane(bkgCanvas, canvas, brdrCanvas);
 
-        scene.setOnKeyPressed(e -> {
-            if (running) {
-                if (movingPaddleOut) {
-                    return;
+
+        mainScene = new Scene(gameRootPane, GameConstants.WIDTH, GameConstants.HEIGHT);
+
+
+        setMenuKeyHandler();
+
+
+        stage.setTitle("Arkanoid");
+        stage.setScene(mainScene);
+        stage.show();
+        stage.setResizable(false);
+
+        playSound(autoClips.gameStartSnd);
+
+        startScreen(); // Vẽ màn hình chờ "press key"
+
+        timer.start();
+    }
+
+    private void setMenuKeyHandler() {
+        mainScene.setOnKeyPressed(e -> {
+            if (!running) {
+                if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+                    Platform.runLater(() -> showMainMenu());
                 }
+            }
+        });
+        mainScene.setOnKeyReleased(null);
+    }
+
+    private void setGameKeyHandler() {
+        mainScene.setOnKeyPressed(e -> {
+            if (running) {
+                if (movingPaddleOut) return;
                 switch (e.getCode()) {
                     case RIGHT, D -> movePaddleRight();
                     case LEFT, A -> movePaddleLeft();
                     case SPACE -> {
+                        // (Toàn bộ logic bắn/thả bóng...)
                         final long activeBalls = balls.stream().filter(ball -> ball.active).count();
                         if (activeBalls > 0) {
                             if (EnumDefinitions.PaddleState.LASER == paddleState) {
@@ -769,31 +821,103 @@ public class Main extends Application {
                     }
                 }
             } else {
-                // Block for the first 8 seconds to give it some time to play the game start song
+
                 if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-                    level = 1;
-                    startLevel.startLevel(level);
+
+                    startLevel(this.level);
                 }
             }
         });
-        scene.setOnKeyReleased(e -> {
+
+        mainScene.setOnKeyReleased(e -> {
             switch (e.getCode()) {
                 case RIGHT -> stopPaddle();
                 case LEFT -> stopPaddle();
             }
         });
-
-        stage.setTitle("Arkanoid");
-        stage.setScene(scene);
-        stage.show();
-        stage.setResizable(false);
-
-        playSound(autoClips.gameStartSnd);
-
-        startScreen();
-
-        timer.start();
     }
+
+    public void showMainMenu() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
+            Parent root = loader.load();
+            MainMenuController controller = loader.getController();
+            controller.setMainApplication(this); // Tiêm Main vào controller
+
+            // Thay thế nội dung Scene (đè lên 3 canvas)
+            mainScene.setRoot(root);
+
+            // Tắt handler phím của game để không bị xung đột
+            mainScene.setOnKeyPressed(null);
+            mainScene.setOnKeyReleased(null);
+
+            primaryStage.setTitle("Arkanoid - Menu");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showBoardSelect() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("choosepaddle.fxml"));
+            Parent root = loader.load();
+            BoardSelectController controller = loader.getController();
+            controller.setMainApplication(this); // Tiêm Main vào controller
+
+            // Thay thế nội dung Scene (đè lên MainMenu)
+            mainScene.setRoot(root);
+            primaryStage.setTitle("Arkanoid - Chọn Ván");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showLevelSelect() {
+        try {
+            // Tải file "LevelSelect.fxml"
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("LevelSelect.fxml"));
+            Parent root = loader.load();
+
+            // Lấy controller và tiêm Main vào
+            LevelSelectController controller = loader.getController();
+            controller.setMainApp(this); // Tiêm Main vào controller
+
+            // Thay thế nội dung Scene
+            mainScene.setRoot(root);
+            primaryStage.setTitle("Arkanoid - Chọn Level");
+
+            System.out.println("Đã chuyển sang màn hình chọn Level");
+        } catch (Exception e) {
+            System.err.println("LỖI khi tải LevelSelect.fxml:");
+            e.printStackTrace();
+        }
+    }
+
+    public void showGameSceneAndStart(int selectedLevel) {
+        // 1. Lưu ván đã chọn
+        this.level = selectedLevel;
+
+        // 2. Trả lại 3 canvas game làm nội dung Scene
+        mainScene.setRoot(gameRootPane);
+        primaryStage.setTitle("Arkanoid");
+
+        // 3. Gắn lại trình xử lý phím THỰC SỰ của game
+        setGameKeyHandler();
+
+        startLevel(this.level);
+    }
+
+    public void unlockNextLevel(int currentLevel) {
+        int highest = PropertyManager.INSTANCE.getInt(Constants.UNLOCKED_LEVEL_KEY, 1);
+        int nextLevel = currentLevel + 1;
+
+        if (nextLevel > highest && nextLevel <= Constants.LEVEL_MAP.size()) {
+            PropertyManager.INSTANCE.setInt(Constants.UNLOCKED_LEVEL_KEY, nextLevel);
+            PropertyManager.INSTANCE.storeProperties();
+            System.out.println("Mở khóa thành công Level " + nextLevel);
+        }
+    }
+
 
     @Override
     public void stop() {
@@ -836,7 +960,7 @@ public class Main extends Application {
 
     // Play audio clips
     public void playSound(final AudioClip audioClip) {
-        //audioClip.play();
+        audioClip.play();
     }
 
 
