@@ -51,6 +51,9 @@ public class Main extends Application {
     private Stage primaryStage;     // Để lưu cửa sổ chính
     private Scene mainScene;        // Để lưu Scene (chúng ta sẽ thay đổi nội dung của nó)
     private StackPane gameRootPane; // Để lưu 3 canvas game
+    private MainMenuController mainMenuController;
+    private BoardSelectController boardSelectController;
+    private LevelSelectController levelSelectController;
 
     // ************ GAME STATE VARIABLES ************************
     private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -755,46 +758,53 @@ public class Main extends Application {
         torpedoes = new CopyOnWriteArrayList<>();
         noOfLifes = 3;
         score = 0;
+
     }
 
 
     // ****************** Keyboard Controls *****************************
     @Override
     public void start(final Stage stage) {
+        try {
+            // 1. Lưu lại Stage và Game Time
+            this.primaryStage = stage;
+            gameStartTime = Instant.now();
 
-        this.primaryStage = stage;
-        gameStartTime = Instant.now();
+            // 2. Tạo StackPane cho game và LƯU LẠI
+            gameRootPane = new StackPane(bkgCanvas, canvas, brdrCanvas);
 
-        gameRootPane = new StackPane(bkgCanvas, canvas, brdrCanvas);
+            // 3. Gắn trình xử lý phím ban đầu (để mở menu)
+            setMenuKeyHandler();
 
+            // 4. Hiển thị Stage trước
+            stage.setTitle("Arkanoid");
+            stage.show();
+            stage.setResizable(false);
 
-        mainScene = new Scene(gameRootPane, GameConstants.WIDTH, GameConstants.HEIGHT);
+            // 5. Sau khi Stage sẵn sàng, mới hiển thị Main Menu
+            playSound(autoClips.gameStartSnd);
 
+            // Hiển thị Main Menu
+            showMainMenu();
 
-        setMenuKeyHandler();
+            // 6. Start timer
+            timer.start();
 
-
-        stage.setTitle("Arkanoid");
-        stage.setScene(mainScene);
-        stage.show();
-        stage.setResizable(false);
-
-        playSound(autoClips.gameStartSnd);
-
-        startScreen(); // Vẽ màn hình chờ "press key"
-
-        timer.start();
+            System.out.println("Game đã khởi động thành công!");
+        } catch (Exception e) {
+            System.err.println("Lỗi khi khởi động game:");
+            e.printStackTrace();
+        }
     }
-
     private void setMenuKeyHandler() {
-        mainScene.setOnKeyPressed(e -> {
-            if (!running) {
-                if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-                    Platform.runLater(() -> showMainMenu());
-                }
-            }
-        });
-        mainScene.setOnKeyReleased(null);
+        //mainScene.setOnKeyPressed(e -> {
+            //if (!running) {
+               // if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+                   // Platform.runLater(() -> showMainMenu());
+                //}
+            //}
+       // });
+       // mainScene.setOnKeyReleased(null);
     }
 
     private void setGameKeyHandler() {
@@ -837,74 +847,85 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * Hiển thị Main Menu
+     */
     public void showMainMenu() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
-            Parent root = loader.load();
-            MainMenuController controller = loader.getController();
-            controller.setMainApplication(this); // Tiêm Main vào controller
+            mainMenuController = new MainMenuController(this); // Tạo mới mỗi lần
+            mainScene = mainMenuController.getScene();
+            primaryStage.setScene(mainScene);
+            primaryStage.setTitle("Arkanoid - Menu");
 
-            // Thay thế nội dung Scene (đè lên 3 canvas)
-            mainScene.setRoot(root);
-
-            // Tắt handler phím của game để không bị xung đột
+            // Tắt handler phím của game
             mainScene.setOnKeyPressed(null);
             mainScene.setOnKeyReleased(null);
 
-            primaryStage.setTitle("Arkanoid - Menu");
+            System.out.println("Hiển thị Main Menu");
         } catch (Exception e) {
+            System.err.println("Lỗi khi hiển thị Main Menu:");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Hiển thị chọn ván
+     */
     public void showBoardSelect() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("choosepaddle.fxml"));
-            Parent root = loader.load();
-            BoardSelectController controller = loader.getController();
-            controller.setMainApplication(this); // Tiêm Main vào controller
+            boardSelectController = new BoardSelectController(this); // Tạo mới
+            mainScene = boardSelectController.getScene();
+            primaryStage.setScene(mainScene);
+            primaryStage.setTitle("Arkanoid - Chọn Vớt");
 
-            // Thay thế nội dung Scene (đè lên MainMenu)
-            mainScene.setRoot(root);
-            primaryStage.setTitle("Arkanoid - Chọn Ván");
+            System.out.println("Hiển thị Board Select");
         } catch (Exception e) {
+            System.err.println("Lỗi khi hiển thị Board Select:");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Hiển thị Level Select
+     */
     public void showLevelSelect() {
         try {
-            // Tải file "LevelSelect.fxml"
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("LevelSelect.fxml"));
-            Parent root = loader.load();
-
-            // Lấy controller và tiêm Main vào
-            LevelSelectController controller = loader.getController();
-            controller.setMainApp(this); // Tiêm Main vào controller
-
-            // Thay thế nội dung Scene
-            mainScene.setRoot(root);
+            levelSelectController = new LevelSelectController(this); // Tạo mới
+            mainScene = levelSelectController.getScene();
+            primaryStage.setScene(mainScene);
             primaryStage.setTitle("Arkanoid - Chọn Level");
 
-            System.out.println("Đã chuyển sang màn hình chọn Level");
+            System.out.println("Hiển thị Level Select");
         } catch (Exception e) {
-            System.err.println("LỖI khi tải LevelSelect.fxml:");
+            System.err.println("Lỗi khi hiển thị Level Select:");
             e.printStackTrace();
         }
     }
 
+    /**
+     * Quay lại game và bắt đầu level
+     */
     public void showGameSceneAndStart(int selectedLevel) {
-        // 1. Lưu ván đã chọn
-        this.level = selectedLevel;
+        try {
+            // 1. Lưu level đã chọn
+            this.level = selectedLevel;
 
-        // 2. Trả lại 3 canvas game làm nội dung Scene
-        mainScene.setRoot(gameRootPane);
-        primaryStage.setTitle("Arkanoid");
+            // 2. Tạo lại Scene với 3 canvas game
+            mainScene = new Scene(gameRootPane, GameConstants.WIDTH, GameConstants.HEIGHT);
+            primaryStage.setScene(mainScene);
+            primaryStage.setTitle("Arkanoid");
 
-        // 3. Gắn lại trình xử lý phím THỰC SỰ của game
-        setGameKeyHandler();
+            // 3. Gắn lại trình xử lý phím THỰC SỰ của game
+            setGameKeyHandler();
 
-        startLevel(this.level);
+            // 4. GỌI GAME NGAY LẬP TỨC
+            startLevel(this.level);
+
+            System.out.println("Bắt đầu Level " + selectedLevel);
+        } catch (Exception e) {
+            System.err.println("Lỗi khi bắt đầu game:");
+            e.printStackTrace();
+        }
     }
 
     public void unlockNextLevel(int currentLevel) {

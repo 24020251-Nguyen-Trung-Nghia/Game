@@ -1,156 +1,237 @@
 package com.arkanoid;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.effect.DropShadow;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
-public class LevelSelectController implements Initializable {
-
-    @FXML
-    private TilePane levelSelectionPane;
-
-    // Khai báo tất cả 32 VBox từ FXML
-    @FXML
-    private VBox level1Box, level2Box, level3Box, level4Box, level5Box, level6Box, level7Box, level8Box;
-    @FXML
-    private VBox level9Box, level10Box, level11Box, level12Box, level13Box, level14Box, level15Box, level16Box;
-    @FXML
-    private VBox level17Box, level18Box, level19Box, level20Box, level21Box, level22Box, level23Box, level24Box;
-    @FXML
-    private VBox level25Box, level26Box, level27Box, level28Box, level29Box, level30Box, level31Box, level32Box;
-
+public class LevelSelectController {
+    private final Main main;
+    private Scene scene;
     private int selectedLevel = 1;
-    private Main mainApp;
     private int highestLevelUnlocked = 1;
-
-    // Mảng chứa tất cả các VBox để dễ thao tác
     private VBox[] levelBoxes;
 
-    public void setMainApp(Main mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    public void setMainApplication(Main mainApp) {
-        this.mainApp = mainApp;
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Đọc level đã mở khóa
+    public LevelSelectController(Main main) {
+        this.main = main;
         highestLevelUnlocked = PropertyManager.INSTANCE.getInt(Constants.UNLOCKED_LEVEL_KEY, 1);
-
-        // Tạo mảng chứa tất cả các VBox
-        levelBoxes = new VBox[]{
-                level1Box, level2Box, level3Box, level4Box, level5Box, level6Box, level7Box, level8Box,
-                level9Box, level10Box, level11Box, level12Box, level13Box, level14Box, level15Box, level16Box,
-                level17Box, level18Box, level19Box, level20Box, level21Box, level22Box, level23Box, level24Box,
-                level25Box, level26Box, level27Box, level28Box, level29Box, level30Box, level31Box, level32Box
-        };
-
-        // Áp dụng trạng thái khóa/mở cho từng level
-        applyLockingToBoxes();
-
-        // Highlight level đầu tiên
-        //highlightLevel(selectedLevel);
+        createScene();
     }
 
-    private void applyLockingToBoxes() {
-        for (int i = 0; i < levelBoxes.length; i++) {
-            VBox box = levelBoxes[i];
-            int levelNumber = i + 1;
+    private void createScene() {
+        StackPane root = new StackPane();
+        root.setPrefSize(GameConstants.WIDTH, GameConstants.HEIGHT);
 
-            if (levelNumber <= highestLevelUnlocked) {
-                // Level đã mở khóa
-                box.setDisable(false);
-                box.setOpacity(1.0);
-                box.setStyle("-fx-cursor: hand;");
-
-                // Thêm hiệu ứng hover
-                addHoverEffect(box, levelNumber);
-            } else {
-                // Level bị khóa
-                box.setDisable(true);
-                box.setOpacity(0.3);
-                box.setStyle("-fx-cursor: default;");
-            }
-        }
-    }
-
-    private void addHoverEffect(VBox box, int levelNumber) {
-        box.setOnMouseEntered(e -> {
-            if (!box.isDisabled() && selectedLevel != levelNumber) {
-                box.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, cyan, 10, 0.5, 0, 0);");
-            }
-        });
-
-        box.setOnMouseExited(e -> {
-            if (!box.isDisabled() && selectedLevel != levelNumber) {
-                box.setStyle("-fx-cursor: hand;");
-            }
-        });
-    }
-
-    @FXML
-    private void handleLevelClicked(MouseEvent event) {
-        Object source = event.getSource();
-        if (!(source instanceof VBox)) {
-            return;
+        // Background
+        try {
+            Image bgImage = new Image(getClass().getResourceAsStream("background.png"));
+            ImageView background = new ImageView(bgImage);
+            background.setFitWidth(GameConstants.WIDTH);
+            background.setFitHeight(GameConstants.HEIGHT);
+            background.setPreserveRatio(false);
+            root.getChildren().add(background);
+        } catch (Exception e) {
+            root.setStyle("-fx-background-color: #1a1a2e;");
         }
 
-        VBox clickedBox = (VBox) source;
+        // Content container
+        BorderPane content = new BorderPane();
+        content.setPadding(new Insets(20));
 
-        // Tìm level number từ VBox được click
-        for (int i = 0; i < levelBoxes.length; i++) {
-            if (levelBoxes[i] == clickedBox) {
-                int levelNumber = i + 1;
+        // Title
+        try {
+            Image titleImage = new Image(getClass().getResourceAsStream("/com/arkanoid/selectlevel.png"));
+            ImageView titleView = new ImageView(titleImage);
+            titleView.setPreserveRatio(true);
+            titleView.setFitWidth(400);
 
-                // Kiểm tra level có được mở khóa không
-                if (levelNumber <= highestLevelUnlocked) {
-                    selectedLevel = levelNumber;
-                    highlightLevel(levelNumber);
-                    System.out.println("Đã chọn Level " + levelNumber);
+            StackPane titleContainer = new StackPane(titleView);
+            titleContainer.setPadding(new Insets(10, 0, 20, 0));
+            BorderPane.setAlignment(titleContainer, Pos.CENTER);
+            content.setTop(titleContainer);
+        } catch (Exception e) {
+            Label title = new Label("CHỌN LEVEL");
+            title.setFont(Fonts.emulogic(24));
+            title.setTextFill(Color.CYAN);
+            BorderPane.setAlignment(title, Pos.CENTER);
+            BorderPane.setMargin(title, new Insets(10, 0, 20, 0));
+            content.setTop(title);
+        }
 
-                    // TỰ ĐỘNG BẮT ĐẦU GAME NGAY KHI CLICK
-                    startGame();
-                } else {
-                    System.out.println("Level " + levelNumber + " đang bị khóa!");
+        // Level grid
+        TilePane levelGrid = new TilePane();
+        levelGrid.setAlignment(Pos.CENTER);
+        levelGrid.setHgap(15);
+        levelGrid.setVgap(15);
+        levelGrid.setPrefColumns(8);
+        levelGrid.setPadding(new Insets(20));
+        levelGrid.setStyle("-fx-background-color: transparent;");
+
+        // Create level boxes
+        levelBoxes = new VBox[32];
+        for (int i = 1; i <= 32; i++) {
+            VBox levelBox = createLevelBox(i);
+            levelBoxes[i - 1] = levelBox;
+            levelGrid.getChildren().add(levelBox);
+        }
+
+        // ScrollPane for level grid
+        ScrollPane scrollPane = new ScrollPane(levelGrid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+        content.setCenter(scrollPane);
+
+        root.getChildren().add(content);
+
+        scene = new Scene(root, GameConstants.WIDTH, GameConstants.HEIGHT);
+    }
+
+    private VBox createLevelBox(int levelNumber) {
+        VBox box = new VBox(5);
+        box.setAlignment(Pos.CENTER);
+        box.setPrefSize(70, 70);
+
+        // BỎ KHUNG - CHỈ DÙNG TRANSPARENT
+        box.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-border-width: 0;" +
+                        "-fx-padding: 0;"
+        );
+
+        boolean isUnlocked = levelNumber <= highestLevelUnlocked;
+
+        // Level image or number
+        ImageView imageView = null;
+        try {
+            Image levelImg = new Image(getClass().getResourceAsStream("level" + levelNumber + ".png"));
+            imageView = new ImageView(levelImg);
+            imageView.setFitWidth(70);  // Kích thước ảnh
+            imageView.setFitHeight(70);
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+
+            box.getChildren().add(imageView);
+
+            // Nếu bị khóa thì làm mờ
+            if (!isUnlocked) {
+                imageView.setOpacity(0.3);
+            }
+
+        } catch (Exception e) {
+            // Fallback to text nếu không có ảnh
+            Label levelLabel = new Label(String.valueOf(levelNumber));
+            levelLabel.setFont(Fonts.emulogic(18));
+            levelLabel.setTextFill(isUnlocked ? Color.CYAN : Color.GRAY);
+            box.getChildren().add(levelLabel);
+        }
+
+        if (isUnlocked && imageView != null) {
+            ImageView finalImageView = imageView; // Để dùng trong lambda
+
+            // Tạo hiệu ứng glow
+            javafx.scene.effect.DropShadow glowEffect = new javafx.scene.effect.DropShadow();
+            glowEffect.setColor(Color.CYAN);
+            glowEffect.setRadius(15);
+            glowEffect.setSpread(0.6);
+
+            javafx.scene.effect.DropShadow selectedEffect = new javafx.scene.effect.DropShadow();
+            selectedEffect.setColor(Color.LIME);
+            selectedEffect.setRadius(20);
+            selectedEffect.setSpread(0.8);
+
+            // Click handler
+            box.setOnMouseClicked(e -> {
+                selectedLevel = levelNumber;
+                highlightLevel(levelNumber);
+                System.out.println("🎮 Đã chọn Level " + levelNumber);
+
+                // Tự động bắt đầu game
+                main.showGameSceneAndStart(levelNumber);
+            });
+
+            // Hover effect - CHỈ TRÊN ẢNH
+            box.setOnMouseEntered(e -> {
+                if (selectedLevel != levelNumber) {
+                    finalImageView.setEffect(glowEffect);
+                    finalImageView.setScaleX(1.1);
+                    finalImageView.setScaleY(1.1);
+                    box.setStyle(
+                            "-fx-background-color: transparent;" +
+                                    "-fx-cursor: hand;"
+                    );
                 }
-                break;
-            }
+            });
+
+            box.setOnMouseExited(e -> {
+                if (selectedLevel != levelNumber) {
+                    finalImageView.setEffect(null);
+                    finalImageView.setScaleX(1.0);
+                    finalImageView.setScaleY(1.0);
+                    box.setStyle("-fx-background-color: transparent;");
+                }
+            });
+
+            // Click effect
+            box.setOnMousePressed(e -> {
+                finalImageView.setScaleX(0.95);
+                finalImageView.setScaleY(0.95);
+            });
+
+            box.setOnMouseReleased(e -> {
+                if (selectedLevel == levelNumber) {
+                    finalImageView.setScaleX(1.1);
+                    finalImageView.setScaleY(1.1);
+                } else {
+                    finalImageView.setScaleX(1.0);
+                    finalImageView.setScaleY(1.0);
+                }
+            });
         }
+
+        return box;
     }
 
-    private void highlightLevel(int levelToHighlight) {
-        // Reset tất cả các box
+    private void highlightLevel(int levelNumber) {
         for (int i = 0; i < levelBoxes.length; i++) {
             VBox box = levelBoxes[i];
             int levelNum = i + 1;
 
-            if (!box.isDisabled()) {
-                if (levelNum == levelToHighlight) {
-                    // Level được chọn - viền xanh lá sáng
-                    box.setStyle("-fx-cursor: hand; -fx-effect: dropshadow(gaussian, lime, 15, 0.8, 0, 0);");
-                } else {
-                    // Level khác - bỏ viền
-                    box.setStyle("-fx-cursor: hand;");
+            if (levelNum <= highestLevelUnlocked) {
+                // Lấy ImageView từ VBox
+                if (box.getChildren().size() > 0 && box.getChildren().get(0) instanceof ImageView) {
+                    ImageView imageView = (ImageView) box.getChildren().get(0);
+
+                    if (levelNum == levelNumber) {
+                        // Level được chọn - Hiệu ứng xanh lá sáng + phóng to
+                        javafx.scene.effect.DropShadow selectedEffect = new javafx.scene.effect.DropShadow();
+                        selectedEffect.setColor(Color.LIME);
+                        selectedEffect.setRadius(20);
+                        selectedEffect.setSpread(0.8);
+
+                        imageView.setEffect(selectedEffect);
+                        imageView.setScaleX(1.1);
+                        imageView.setScaleY(1.1);
+                    } else {
+                        // Level khác - Bỏ hiệu ứng
+                        imageView.setEffect(null);
+                        imageView.setScaleX(1.0);
+                        imageView.setScaleY(1.0);
+                    }
                 }
+
+                box.setStyle("-fx-background-color: transparent;");
             }
         }
     }
 
-    private void startGame() {
-        if (mainApp != null) {
-            System.out.println("Bắt đầu chơi Level " + selectedLevel);
-            mainApp.showGameSceneAndStart(selectedLevel);
-        } else {
-            System.err.println("Lỗi: mainApp chưa được gán!");
-        }
+    public Scene getScene() {
+        return scene;
     }
 }

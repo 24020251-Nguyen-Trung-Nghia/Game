@@ -45,6 +45,9 @@ ext {
     ciGHToken       = System.getenv('GH_TOKEN')
     gpgkey          = System.getenv("GPG_PRIVATE_KEY")
     gpgpassphrase   = System.getenv("PASSPHRASE")
+    javafxVersion = '21.0.8'
+    buildDate = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildTime = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
 }
 
 dependencies {
@@ -110,11 +113,11 @@ sourceSets {
 }
 
 run {
-    inputs.property("moduleName", moduleName)
+    inputs.property("moduleName", "com.arkanoid")
     doFirst {
         jvmArgs = [
                 '--module-path', classpath.asPath,
-                '--module', mainClassName
+                '--module', 'com.arkanoid/com.arkanoid.Launcher'
         ]
         classpath = files()
     }

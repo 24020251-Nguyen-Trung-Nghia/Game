@@ -1,84 +1,285 @@
 package com.arkanoid;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.TilePane;
-import javafx.scene.layout.VBox;
-import com.arkanoid.EnumDefinitions.PaddleState; // Import Enum
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+public class BoardSelectController {
+    private final Main main;
+    private Scene scene;
+    private EnumDefinitions.PaddleState selectedPaddle = EnumDefinitions.PaddleState.STANDARD;
 
-public class BoardSelectController implements Initializable {
-
-    @FXML
-    private TilePane paddleSelectionPane;
-    @FXML
-    private Button nextButton;
-    private Main mainApp;
-    private PaddleState selectedPaddle = PaddleState.STANDARD;
-
-    public void setMainApplication(Main mainApp) {
-        this.mainApp = mainApp;
+    public BoardSelectController(Main main) {
+        this.main = main;
+        createScene();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        for (PaddleState state : PaddleState.values()) {
-            VBox paddleBox = createPaddleBox(state);
-            paddleSelectionPane.getChildren().add(paddleBox);
-        }
-        highlightPaddle(selectedPaddle);
-    }
+    private Button createImageButton(String imagePath, double width, double height) {
+        Button button = new Button();
+        button.setPrefSize(width, height);
+        button.setMaxSize(width, height);
+        button.setMinSize(width, height);
 
-    private VBox createPaddleBox(PaddleState paddle) {
-        VBox box = new VBox(5); // Spacing 5
-        box.setAlignment(Pos.CENTER);
-        String imageName = paddle.name().toLowerCase();
-        Image img = null;
+        // Set transparent background và padding = 0
+        button.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-border-width: 0;" +
+                        "-fx-padding: 0;" +
+                        "-fx-background-insets: 0;" +
+                        "-fx-background-radius: 0;"
+        );
+
         try {
-            // === SỬA ĐƯỜNG DẪN Ở ĐÂY (BỎ DẤU /) ===
-            // Nó sẽ tìm trong cùng package với Controller
-            img = new Image(getClass().getResourceAsStream("paddle_" + imageName + ".png"));
-            // =====================================
-            if (img == null || img.isError()) throw new NullPointerException(); // Ném lỗi nếu không tìm thấy
+            Image image = new Image(getClass().getResourceAsStream(imagePath));
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+
+            button.setGraphic(imageView);
+
+            // Hiệu ứng hover
+            javafx.scene.effect.DropShadow glow = new javafx.scene.effect.DropShadow();
+            glow.setColor(Color.CYAN);
+            glow.setRadius(20);
+            glow.setSpread(0.6);
+
+            button.setOnMouseEntered(e -> {
+                imageView.setEffect(glow);
+                imageView.setScaleX(1.05);
+                imageView.setScaleY(1.05);
+                button.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-cursor: hand;" +
+                                "-fx-padding: 0;"
+                );
+            });
+
+            button.setOnMouseExited(e -> {
+                imageView.setEffect(null);
+                imageView.setScaleX(1.0);
+                imageView.setScaleY(1.0);
+                button.setStyle(
+                        "-fx-background-color: transparent;" +
+                                "-fx-padding: 0;"
+                );
+            });
+
+            // Hiệu ứng khi click
+            button.setOnMousePressed(e -> {
+                imageView.setScaleX(0.95);
+                imageView.setScaleY(0.95);
+            });
+
+            button.setOnMouseReleased(e -> {
+                imageView.setScaleX(1.05);
+                imageView.setScaleY(1.05);
+            });
+
         } catch (Exception e) {
-            System.err.println("Không tìm thấy ảnh: paddle_" + imageName + ".png" + ". Dùng ảnh placeholder.");
-            try {
-                // === VÀ CẢ Ở ĐÂY (ẢNH PLACEHOLDER) ===
-                img = new Image(getClass().getResourceAsStream("placeholder.png"));
-                // ======================================
-            } catch (Exception e2) {
-                System.err.println("LỖI NGHIÊM TRỌNG: Không tìm thấy cả ảnh placeholder.png!");
-                // Bạn có thể tạo ảnh mặc định bằng code ở đây nếu muốn
-            }
+            // Fallback: nếu không có ảnh, dùng button với chữ
+            button.setText("TIẾP TỤC");
+            button.setFont(Fonts.emulogic(16));
+            button.setStyle("-fx-background-color: #00ff00; -fx-text-fill: black;");
+            System.err.println("Không tìm thấy ảnh button: " + imagePath + " - " + e.getMessage());
         }
+
+        return button;
+    }
+
+    private void createScene() {
+        StackPane root = new StackPane();
+        root.setPrefSize(GameConstants.WIDTH, GameConstants.HEIGHT);
+
+        // Background
+        try {
+            Image bgImage = new Image(getClass().getResourceAsStream("background.png"));
+            ImageView background = new ImageView(bgImage);
+            background.setFitWidth(GameConstants.WIDTH);
+            background.setFitHeight(GameConstants.HEIGHT);
+            background.setPreserveRatio(false);
+            root.getChildren().add(background);
+        } catch (Exception e) {
+            root.setStyle("-fx-background-color: #1a1a2e;");
+        }
+
+        // Content
+        VBox content = new VBox(30);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(50));
+
+        // Title
+        try {
+            Image titleImage = new Image(getClass().getResourceAsStream("/com/arkanoid/selectpaddle.png"));
+            ImageView titleView = new ImageView(titleImage);
+            titleView.setPreserveRatio(true);
+            titleView.setFitWidth(400); // Điều chỉnh kích thước phù hợp
+            content.getChildren().add(titleView);
+        } catch (Exception e) {
+            // Fallback: nếu không có ảnh, dùng label như cũ
+            Label title = new Label("CHỌN LOẠI VÁN");
+            title.setFont(Fonts.emulogic(24));
+            title.setTextFill(Color.CYAN);
+            content.getChildren().add(title);
+            System.err.println("Không tìm thấy ảnh title: " + e.getMessage());
+        }
+
+        // Paddle selection container
+        HBox paddleContainer = new HBox(30);
+        paddleContainer.setAlignment(Pos.CENTER);
+
+        // Create paddle boxes
+        VBox standardBox = createPaddleBox("STANDARD", EnumDefinitions.PaddleState.STANDARD, "paddle_std.png");
+        VBox wideBox = createPaddleBox("WIDE", EnumDefinitions.PaddleState.WIDE, "paddle_wide.png");
+        VBox laserBox = createPaddleBox("LASER", EnumDefinitions.PaddleState.LASER, "paddle_gun.png");
+
+        paddleContainer.getChildren().addAll(standardBox, wideBox, laserBox);
+
+        // Highlight default selection
+        highlightPaddleBox(standardBox);
+
+        // Next button
+        Button nextButton = createImageButton("/com/arkanoid/continue.png", 300, 50);
+        nextButton.setOnAction(e -> {
+            main.setPaddleType(selectedPaddle);
+            main.showLevelSelect();
+        });
+
+        content.getChildren().addAll(paddleContainer, nextButton);
+        root.getChildren().add(content);
+
+        scene = new Scene(root, GameConstants.WIDTH, GameConstants.HEIGHT);
+    }
+
+    private VBox createPaddleBox(String name, EnumDefinitions.PaddleState paddleState, String imageName) {
+        VBox box = new VBox(10);
+        box.setAlignment(Pos.CENTER);
+        box.setPrefSize(150, 150);
+        box.setPadding(new Insets(10));
+        box.setStyle(
+                "-fx-background-color: rgba(42, 42, 42, 0.8);" +
+                        "-fx-border-color: #555;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"
+        );
+
+        // Paddle image
+        try {
+            Image paddleImg = new Image(getClass().getResourceAsStream(imageName));
+            ImageView imageView = new ImageView(paddleImg);
+            imageView.setFitWidth(100);
+            imageView.setFitHeight(50);
+            imageView.setPreserveRatio(true);
+            box.getChildren().add(imageView);
+        } catch (Exception e) {
+            // Nếu không có ảnh, hiển thị text
+            Label placeholder = new Label("[" + name + "]");
+            placeholder.setFont(Fonts.emulogic(12));
+            placeholder.setTextFill(Color.WHITE);
+            box.getChildren().add(placeholder);
+        }
+
+        // Label
+        Label label = new Label(name);
+        label.setFont(Fonts.emulogic(12));
+        label.setTextFill(Color.WHITE);
+        box.getChildren().add(label);
+
+        // Click handler
+        box.setOnMouseClicked(e -> {
+            selectedPaddle = paddleState;
+            // Remove highlight from all boxes
+            ((HBox) box.getParent()).getChildren().forEach(node -> {
+                if (node instanceof VBox) {
+                    ((VBox) node).setStyle(
+                            "-fx-background-color: rgba(42, 42, 42, 0.8);" +
+                                    "-fx-border-color: #555;" +
+                                    "-fx-border-width: 2;" +
+                                    "-fx-cursor: hand;"
+                    );
+                }
+            });
+            // Highlight selected box
+            highlightPaddleBox(box);
+            System.out.println("🎯 Đã chọn: " + name);
+        });
+
+        // Hover effect
+        box.setOnMouseEntered(e -> {
+            if (selectedPaddle != paddleState) {
+                box.setStyle(
+                        "-fx-background-color: rgba(58, 58, 58, 0.9);" +
+                                "-fx-border-color: #00ffff;" +
+                                "-fx-border-width: 2;" +
+                                "-fx-cursor: hand;"
+                );
+            }
+        });
+
+        box.setOnMouseExited(e -> {
+            if (selectedPaddle != paddleState) {
+                box.setStyle(
+                        "-fx-background-color: rgba(42, 42, 42, 0.8);" +
+                                "-fx-border-color: #555;" +
+                                "-fx-border-width: 2;" +
+                                "-fx-cursor: hand;"
+                );
+            }
+        });
+
         return box;
     }
 
-    private void highlightPaddle(PaddleState paddle) {
-        for (var node : paddleSelectionPane.getChildren()) {
-            node.setStyle("-fx-border-color: transparent;");
-        }
-        int index = paddle.ordinal();
-        if (index < paddleSelectionPane.getChildren().size()) {
-            paddleSelectionPane.getChildren().get(index).setStyle("-fx-border-color: #00FFFF; -fx-border-width: 3;");
-        }
+    private void highlightPaddleBox(VBox box) {
+        box.setStyle(
+                "-fx-background-color: rgba(58, 58, 58, 0.9);" +
+                        "-fx-border-color: #00ff00;" +
+                        "-fx-border-width: 3;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-effect: dropshadow(gaussian, lime, 15, 0.8, 0, 0);"
+        );
     }
 
-    @FXML
-    void handleNextButton(ActionEvent event) {
-        if (mainApp != null) {
-            mainApp.setPaddleType(this.selectedPaddle); // Báo cho Main
-            mainApp.showLevelSelect(); // Chuyển sang chọn level
-        } else {
-            System.err.println("LỖI: mainApp chưa được kết nối!");
-        }
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setFont(Fonts.emulogic(16));
+        button.setPrefWidth(300);
+        button.setPrefHeight(50);
+        button.setStyle(
+                "-fx-background-color: #00ff00;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-border-color: #00aa00;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"
+        );
+
+        button.setOnMouseEntered(e -> button.setStyle(
+                "-fx-background-color: #00ff88;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-border-color: #00ffff;" +
+                        "-fx-border-width: 3;" +
+                        "-fx-cursor: hand;"
+        ));
+
+        button.setOnMouseExited(e -> button.setStyle(
+                "-fx-background-color: #00ff00;" +
+                        "-fx-text-fill: black;" +
+                        "-fx-border-color: #00aa00;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"
+        ));
+
+        return button;
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }
