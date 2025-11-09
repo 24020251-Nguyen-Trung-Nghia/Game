@@ -351,10 +351,22 @@ public class Main extends Application {
     }
 
     private void loadResources() {
-        Images.loadImages(this);
+        Thread imageThread = new Thread(() -> {
+            Images.loadImages(this);
+        });
+        imageThread.start();
+
+        // Load âm thanh và dữ liệu khác song song
         AutoClips.loadSounds(this);
         ensurePlayerFileExists();
+
+        try {
+            imageThread.join(); // đợi ảnh load xong rồi mới tiếp tục
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private void initializeGameObjects() {
         paddle = new Paddle(this);
