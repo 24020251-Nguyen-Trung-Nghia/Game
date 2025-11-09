@@ -54,8 +54,12 @@ dependencies {
     implementation "org.openjfx:javafx-graphics:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-controls:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-media:${javafxVersion}:${platform}"
-}
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
+}
+test {
+    useJUnitPlatform()
+}
 
 application.mainModule = 'com.arkanoid'
 mainClassName          = 'com.arkanoid.Launcher'
@@ -107,6 +111,7 @@ sourceSets {
         output.setResourcesDir(java.classesDirectory)
     }
 }
+
 
 run {
     inputs.property("moduleName", moduleName)
