@@ -41,13 +41,13 @@ public class Draw {
         main.ctx.save();
         main.ctx.translate(10, 10);
 
-        // Draw block shadows
+        // vẽ bóng block
         main.blocks.forEach(block -> main.ctx.drawImage(Images.blockShadowImg, block.x, block.y));
 
-        // Draw bonus block shadows
+        // vẽ bóng của bonus block
         main.bonusBlocks.forEach(bonusBlock -> main.ctx.drawImage(Images.bonusBlockShadowImg, bonusBlock.x, bonusBlock.y));
 
-        // Draw paddle shadow
+        // vẽ paddle shadow
         if (main.noOfLifes > 0) {
             switch (main.paddleState) {
                 case STANDARD -> main.ctx.drawImage(Images.paddleStdShadowImg, main.paddle.bounds.minX, main.paddle.bounds.minY);
@@ -56,7 +56,7 @@ public class Draw {
             }
         }
 
-        // Draw ball shadow
+        //  vẽ ball shadow
         main.balls.forEach(ball -> main.ctx.drawImage(Images.ballShadowImg, ball.bounds.minX, ball.bounds.minY));
         main.ctx.restore();
     }

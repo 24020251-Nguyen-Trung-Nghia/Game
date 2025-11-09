@@ -17,7 +17,7 @@ public class Torpedo extends Sprite {
         y -= vY;
         this.bounds.set(this.x - this.width * 0.5, this.y - this.height * 0.5, this.width, this.height);
         if (bounds.minY < GameConstants.UPPER_INSET) {
-            toBeRemoved = true;
+            toBeRemoved = true; // xoá khi chạm trần
         }
     }
 }

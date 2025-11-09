@@ -9,6 +9,7 @@ public class Blink extends AnimatedSprite {
 
 
     // ******************** Methods *******************************************
+
     @Override
     public void update() {
         countX++;

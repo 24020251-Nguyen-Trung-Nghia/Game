@@ -37,12 +37,14 @@ public class Paddle extends AnimatedSprite {
     public void update() {
         x += vX;
 
+        // giới hạn bên phải
         if (x + main.paddleState.width > GameConstants.WIDTH - GameConstants.INSET) {
             if (main.nextLevelDoorOpen && !main.movingPaddleOut) {
                 main.movingPaddleOut = true;
             }
             x = GameConstants.WIDTH - GameConstants.INSET - main.paddleState.width;
         }
+        // giới hạn bên trái
         if (x < GameConstants.INSET) {
             x = GameConstants.INSET;
         }

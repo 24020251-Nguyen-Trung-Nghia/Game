@@ -12,15 +12,15 @@ public class SetupBlocks {
         this.main = main;
     }
 
-    // Setup blocks for given level
+    // Setup blocks cho các level
     public void setupBlocks(final int level) {
         main.blocks.clear();
-        Constants.BlockType[][] level2 = Constants.LEVEL_MAP.get(level);
-        main.silverBlockMaxHits = (level % 8 == 0 ? main.silverBlockMaxHits + 1 : main.silverBlockMaxHits);
-        for (int iy = 0; iy < level2.length; iy++) {
-            for (int ix = 0; ix < level2[iy].length; ix++) {
+        Constants.BlockType[][] currentLevel = Constants.LEVEL_MAP.get(level);
+        main.silverBlockMaxHits = (level % 8 == 0 ? main.silverBlockMaxHits + 1 : main.silverBlockMaxHits); // mỗi 8 level gạch bạc tăng thêm 1 hit
+        for (int iy = 0; iy < currentLevel.length; iy++) {
+            for (int ix = 0; ix < currentLevel[iy].length; ix++) {
                 Block block;
-                final Constants.BlockType blockType = level2[iy][ix];
+                final Constants.BlockType blockType = currentLevel[iy][ix];
                 switch (blockType) {
                     case GOLD ->
                             block = new Block(Images.goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);
