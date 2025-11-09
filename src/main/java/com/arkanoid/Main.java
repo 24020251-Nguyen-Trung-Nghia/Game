@@ -393,6 +393,16 @@ public class Main extends Application {
         }
 
         timer.start();
+        // thêm phần xử lý đa luồng
+        new Thread(() -> {
+            while (true) {
+                if (running && gameState == GameState.PLAYING) {
+                    Platform.runLater(() -> updateGameState(System.nanoTime()));
+                }
+                try { Thread.sleep(16); } catch (InterruptedException e) { }
+            }
+        }).start();
+
     }
 
     @Override
@@ -691,14 +701,18 @@ public class Main extends Application {
         playSound(AutoClips.laserSnd);
     }
 
+    // thêm thread đa luồng
     public void playSound(final AudioClip audioClip) {
         if (audioClip == null) return;
-        try {
-            audioClip.play();
-        } catch (Exception ex) {
-            System.err.println("Audio play error: " + ex.getMessage());
-        }
+        new Thread(() -> {
+            try {
+                audioClip.play();
+            } catch (Exception ex) {
+                System.err.println("Audio play error: " + ex.getMessage());
+            }
+        }).start();
     }
+
 
     private void spawnEnemy(final Pos position) {
         switch (position) {
