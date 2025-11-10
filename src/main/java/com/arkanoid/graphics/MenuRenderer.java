@@ -18,7 +18,7 @@ public final class MenuRenderer {
 
     private static void clearAndSetupMenu(Main main) {
         main.ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        main.drawBackground.drawBackground(0);
+        main.gameRenderer.drawBackground(0);
         main.ctx.setFont(GameConstants.UI_FONT);
         main.ctx.setGlobalAlpha(1.0);
         main.ctx.setFill(Color.WHITE);
@@ -51,7 +51,7 @@ public final class MenuRenderer {
             drawMenuItem(main, menuItems[i], centerX, startY + (i * ITEM_SPACING), menuIndex == i);
         }
 
-        main.drawBorder.drawBorder();
+        main.gameRenderer.drawBorder();
     }
 
     public static void renderLoginScreen(Main main,
@@ -80,7 +80,7 @@ public final class MenuRenderer {
             main.ctx.fillText("Login failed. Try again.", centerX, startY + 3 * ITEM_SPACING);
         }
 
-        main.drawBorder.drawBorder();
+        main.gameRenderer.drawBorder();
     }
 
     public static void renderPauseMenu(Main main, int pauseIndex) {
@@ -95,7 +95,7 @@ public final class MenuRenderer {
             drawMenuItem(main, pauseItems[i], centerX, startY + (i * ITEM_SPACING), pauseIndex == i);
         }
 
-        main.drawBorder.drawBorder();
+        main.gameRenderer.drawBorder();
     }
 
     public static void renderSaveCredentials(Main main,
@@ -110,12 +110,12 @@ public final class MenuRenderer {
         main.ctx.fillText("Enter password: " + maskPassword(inputPassword) + (enteringPassword ? "_" : ""), centerX, startY + ITEM_SPACING);
         main.ctx.fillText("Press Enter to save and exit", centerX, startY + 2 * ITEM_SPACING);
 
-        main.drawBorder.drawBorder();
+        main.gameRenderer.drawBorder();
     }
 
-    public static void renderDuringGame(Main main, int level, Draw draw) {
-        main.drawBackground.drawBackground(level);
-        draw.drawGame();
-        main.drawBorder.drawBorder();
+    public static void renderDuringGame(Main main, int level) {
+        main.gameRenderer.drawBackground(level);
+        main.gameRenderer.drawGame();
+        main.gameRenderer.drawBorder();
     }
 }

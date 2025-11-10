@@ -3,15 +3,13 @@ package com.arkanoid;
 import com.arkanoid.config.PropertyManager;
 import com.arkanoid.controllers.GameOver;
 import com.arkanoid.controllers.StartLevel;
-import com.arkanoid.graphics.Draw;
 import com.arkanoid.graphics.MenuRenderer;
+import com.arkanoid.graphics.GameRenderer;
 import com.arkanoid.graphics.Update;
 import com.arkanoid.models.*;
 import com.arkanoid.models.Objects.*;
 import com.arkanoid.resources.AutoClips;
 import com.arkanoid.resources.Images;
-import com.arkanoid.graphics.DrawBackground;
-import com.arkanoid.graphics.DrawBorder;
 import com.arkanoid.utils.FIFO;
 import com.arkanoid.utils.HitTest;
 import javafx.animation.AnimationTimer;
@@ -44,14 +42,12 @@ public class Main extends Application {
     // ==================== SINGLETON INSTANCES ====================
     public final Images images = Images.getInstance();
     public final AutoClips autoClips = AutoClips.getInstance();
-    public final DrawBackground drawBackground = new DrawBackground(this);
+    public final GameRenderer gameRenderer = new GameRenderer(this);
     public final HitTest hitTest = new HitTest(this);
     public final SetupBlocks setupBlocks = new SetupBlocks(this);
     public final GameOver gameOver = new GameOver(this);
     public StartLevel startLevel = new StartLevel(this);
-    public final Draw draw = new Draw(this);
     public final Update update = new Update(this);
-    public final DrawBorder drawBorder = new DrawBorder(this);
 
     // ==================== GAME OBJECTS ====================
     public Paddle paddle;
@@ -110,6 +106,7 @@ public class Main extends Application {
     public Pos enemySpawnPosition;
     public double topLeftDoorAlpha;
     public double topRightDoorAlpha;
+    public boolean needBackgroundRedraw = true;
 
     // ==================== UI STATE VARIABLES ====================
     public enum GameState {
@@ -263,7 +260,7 @@ public class Main extends Application {
             if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
                 nextLevelDoorAlpha = 1.0;
                 nextLevelDoorOpen = false;
-                drawBorder.drawBorder();
+                gameRenderer.drawBorder();
             }
         }
     }
@@ -294,14 +291,14 @@ public class Main extends Application {
                 spawnEnemy(Pos.TOP_LEFT);
                 topLeftDoorAlpha = 1;
             }
-            drawBorder.drawBorder();
+            gameRenderer.drawBorder();
         } else if (topRightDoorAlpha < 1) {
             topRightDoorAlpha -= 0.1;
             if (topRightDoorAlpha <= 0) {
                 spawnEnemy(Pos.TOP_RIGHT);
                 topRightDoorAlpha = 1;
             }
-            drawBorder.drawBorder();
+            gameRenderer.drawBorder();
         }
     }
 
@@ -310,9 +307,9 @@ public class Main extends Application {
             hitTest.hitTests();
             handlePaddleMovement();
             update.updateGame();
-            draw.drawGame();
+            gameRenderer.drawGame();
             if (nextLevelDoorOpen) {
-                drawBorder.drawBorder();
+                gameRenderer.drawBorder();
             }
             lastTimerCall = now;
         }
@@ -332,19 +329,23 @@ public class Main extends Application {
         paddle.x += 1;
         paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
         update.updateGame();
-        draw.drawGame();
+        gameRenderer.drawGame();
         if (paddle.x > GameConstants.WIDTH) {
             level++;
             if (level > Constants.LEVEL_MAP.size()) {
                 level = 1;
             }
             score += 10_000;
-            startLevel.startLevel(level);
+
+            // QUAN TRỌNG: Clear blocks và setup level mới
+            blocks.clear();
+            needBackgroundRedraw = true;
+            startLevel.startLevel(level); // Cái này sẽ gọi setupBlocks
         }
     }
 
     private void handleIdleState() {
-        if (!showStartHint && Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
+        if (gameState.equals(GameState.PLAYING)) {
             showStartHint = true;
             startScreen();
         }
@@ -388,8 +389,6 @@ public class Main extends Application {
         if (gameState.equals(GameState.START_MENU)) {
             MenuRenderer.renderStartMenu(this, menuIndex);
             playSound(AutoClips.gameStartSnd);
-        } else if (Instant.now().getEpochSecond() - gameStartTime.getEpochSecond() > 8) {
-            startLevel.startLevel(level);
         }
 
         timer.start();
@@ -534,6 +533,28 @@ public class Main extends Application {
             return;
         }
 
+        if (!running && !movingPaddleOut) {
+            // Nếu game chưa chạy hoặc đang game over, bấm SPACE để bắt đầu
+            if (code == KeyCode.SPACE) {
+                running = true;
+                stickyPaddle = false;
+                needBackgroundRedraw = true;
+
+                if (balls.isEmpty()) {
+                    spawnBall();
+                } else {
+                    balls.forEach(ball -> {
+                        ball.active = true;
+                        ball.bornTimestamp = Instant.now().getEpochSecond();
+                    });
+                }
+                renderCurrentScreen();
+                return;
+            }
+        }
+
+        // ĐÃ XÓA PHẦN XỬ LÝ GAME OVER Ở ĐÂY VÌ ĐÃ ĐƯỢC XỬ LÝ TRONG GameOver.java
+
         if (running && !movingPaddleOut) {
             switch (code) {
                 case RIGHT, D -> movingRight = true;
@@ -580,6 +601,7 @@ public class Main extends Application {
             }
             case ESCAPE -> {
                 gameState = GameState.PLAYING;
+                needBackgroundRedraw = true;
                 renderCurrentScreen();
             }
         }
@@ -615,7 +637,7 @@ public class Main extends Application {
     }
 
     // ==================== UI RENDERING METHODS ====================
-    private void renderCurrentScreen() {
+    public void renderCurrentScreen() {
         switch (gameState) {
             case START_MENU -> MenuRenderer.renderStartMenu(this, menuIndex);
             case LOGIN_SCREEN -> MenuRenderer.renderLoginScreen(this, inputUsername, inputPassword,
@@ -628,32 +650,69 @@ public class Main extends Application {
     }
 
     private void renderDuringGame() {
-        drawBackground.drawBackground(level);
-        draw.drawGame();
-        drawBorder.drawBorder();
+        // Chỉ vẽ background nếu chưa được vẽ hoặc cần update
+        if (needBackgroundRedraw) {
+            gameRenderer.drawBackground(level);
+            needBackgroundRedraw = false;
+        }
+        gameRenderer.drawGame();
+        gameRenderer.drawBorder();
     }
 
     // ==================== GAME CONTROL METHODS ====================
     private void enterAsNewPlayer() {
-        running = true;
+        resetGame(); // Reset game state
         gameState = GameState.PLAYING;
         level = 1;
+        needBackgroundRedraw = true;
         startLevel.startLevel(level);
+        showStartHint = true;
         renderCurrentScreen();
     }
 
     private void attemptLogin() {
         if (checkLogin(inputUsername.trim(), inputPassword.trim())) {
-            running = true;
+            resetGame(); // Reset game state
             gameState = GameState.PLAYING;
             level = 1;
+            needBackgroundRedraw = true;
             startLevel.startLevel(level);
+            showStartHint = true;
             renderCurrentScreen();
         } else {
             loginFailed = true;
             inputPassword = "";
             renderCurrentScreen();
         }
+    }
+
+    // Thêm phương thức reset game
+    private void resetGame() {
+        running = false;
+        noOfLifes = 3;
+        score = 0;
+        level = 1;
+        balls.clear();
+        blocks.clear();
+        bonusBlocks.clear();
+        enemies.clear();
+        explosions.clear();
+        torpedoes.clear();
+        blinks.clear();
+        paddleState = EnumDefinitions.PaddleState.STANDARD;
+        stickyPaddle = false;
+        nextLevelDoorOpen = false;
+        movingPaddleOut = false;
+        ballSpeed = GameConstants.BALL_SPEED;
+        readyLevelVisible = false;
+        showStartHint = false;
+        needBackgroundRedraw = true;
+
+        // Khởi tạo lại paddle
+        paddle = new Paddle(this);
+
+        // QUAN TRỌNG: Setup lại blocks cho level hiện tại
+        setupBlocks.setupBlocks(level);
     }
 
     private void exitWithoutSave() {
@@ -714,13 +773,19 @@ public class Main extends Application {
             return;
         }
         balls.add(new Ball(this, Images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - Images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
+
+        // Đảm bảo running được set đúng khi spawn ball mới
+        if (noOfLifes > 0) {
+            running = true;
+        }
     }
 
     public void startScreen() {
         ctx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
-        drawBackground.drawBackground(1);
-        drawBorder.drawBorder();
+        gameRenderer.drawBackground(level);
+        gameRenderer.drawBorder();
     }
+
 
     // ==================== PLAYER MANAGEMENT ====================
     private void ensurePlayerFileExists() {
