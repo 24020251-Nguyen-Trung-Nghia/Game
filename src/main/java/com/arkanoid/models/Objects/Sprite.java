@@ -21,8 +21,8 @@ abstract class Sprite {
     public Image image;
 
     public Bounds bounds;
-    public double x; // Center of Sprite in x-direction
-    public double y; // Center of Sprite in y-direction
+    public double x; // Tâm Sprite theo X
+    public double y; // Tâm Sprtie theo Y
     public double r;
     public double vX;
     public double vY;
@@ -64,7 +64,7 @@ abstract class Sprite {
         this.vX = vX;
         this.vY = vY;
         this.vR = vR;
-        this.width = null == image ? 0 : image.getWidth();
+        this.width = null == image ? 0 : image.getWidth(); // Nếu image null thì trả về 0
         this.height = null == image ? 0 : image.getHeight();
         this.size = Math.max(this.width, this.height);
         this.radius = this.size * 0.5;

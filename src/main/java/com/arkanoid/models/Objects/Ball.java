@@ -1,6 +1,6 @@
 package com.arkanoid.models.Objects;
 
-import com.arkanoid.GameConstants;
+import  com.arkanoid.GameConstants;
 import com.arkanoid.Main;
 import com.arkanoid.graphics.Bounds;
 import com.arkanoid.models.EnumDefinitions;
