@@ -12,11 +12,10 @@ public class SetupBlocks {
         this.main = main;
     }
 
-<<<<<<< HEAD
+
     // Setup blocks cho các level
-=======
     // Thiết lập gạch cho các level
->>>>>>> main
+
     public void setupBlocks(final int level) {
         main.blocks.clear();
         Constants.BlockType[][] currentLevel = Constants.LEVEL_MAP.get(level);
