@@ -59,6 +59,13 @@ public class Images {
     public static Image blockShadowImg;
     public static Image bonusBlockShadowImg;
     public static Image explosionMapImg;
+    public static Image loginBgImg;
+    public static  Image startBgImg;
+    public static Image saveBgImg;
+    public static Image pauseBgImg;
+    public static Image startscreenBgImg;
+
+
 
     // Constructor private để ngăn việc khởi tạo từ bên ngoài
     private Images() {}
@@ -123,6 +130,12 @@ public class Images {
         bkgPatternFill4 = new ImagePattern(bkgPatternImg4, 0, 0, 64, 64, false);
         borderPatternFill = new ImagePattern(borderVerticalImg, 0, 0, 20, 113, false);
         pipePatternFill = new ImagePattern(pipeImg, 0, 0, 5, 17, false);
+        saveBgImg = new Image(main.getClass().getResourceAsStream("save_background.png"), 560,740, false, false);
+        pauseBgImg = new Image(main.getClass().getResourceAsStream("pause_background.png"),560,740,false,false);
+        loginBgImg = new Image(main.getClass().getResourceAsStream("loginscreen.png"),560,740,false,false);
+        startBgImg = new Image(main.getClass().getResourceAsStream("start.png"),560,740,false,false);
+        startscreenBgImg= new Image(main.getClass().getResourceAsStream("startscreen.png"),560,740,false,false);
+
     }
 
 }

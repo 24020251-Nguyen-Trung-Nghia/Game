@@ -43,21 +43,7 @@ public class GameRenderer {
             main.bkgCtx.fillRect(0, GameConstants.UPPER_INSET, 40, GameConstants.HEIGHT);
             main.bkgCtx.fillRect(0, GameConstants.UPPER_INSET, GameConstants.WIDTH, 20);
         } else if (shouldShowStartScreen) {
-            // Start screen hoặc Game Over screen
-            main.ctx.setFont(GameConstants.SCORE_FONT);
-            main.ctx.setTextBaseline(VPos.TOP);
-            main.ctx.setFill(GameConstants.HIGH_SCORE_RED);
-            main.ctx.setTextAlign(TextAlignment.CENTER);
-            main.ctx.fillText("HIGH SCORE", GameConstants.WIDTH * 0.5, 0);
-            main.ctx.setFill(GameConstants.SCORE_WHITE);
-            main.ctx.fillText(Long.toString(main.highscore), GameConstants.WIDTH * 0.5, 30);
-
-            if (main.showStartHint && main.noOfLifes > 0) {
-                main.ctx.fillText("Hit space to start", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.6);
-            }
-
-            main.bkgCtx.drawImage(Images.logoImg, (GameConstants.WIDTH - Images.logoImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.25);
-            main.bkgCtx.drawImage(Images.copyrightImg, (GameConstants.WIDTH - Images.copyrightImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.75);
+            MenuRenderer.renderStartScreen(main, main.showStartHint && main.noOfLifes > 0);
         }
     }
 
