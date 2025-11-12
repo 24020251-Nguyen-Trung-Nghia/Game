@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb15add9-e5d1-41c1-b594-0fb31b1abbe8" name="Changes" comment="chọn level">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="eb15add9-e5d1-41c1-b594-0fb31b1abbe8" name="Changes" comment="fix lỗi lưu người chơi">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -180,7 +179,7 @@
       <workItem from="1762942379506" duration="11331000" />
       <workItem from="1762960727090" duration="402000" />
       <workItem from="1762961141116" duration="344000" />
-      <workItem from="1762961499388" duration="1988000" />
+      <workItem from="1762961499388" duration="2463000" />
     </task>
     <task id="LOCAL-00001" summary="Tách xong">
       <option name="closed" value="true" />
@@ -254,7 +253,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762960001684</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix lỗi lưu người chơi">
+      <option name="closed" value="true" />
+      <created>1762963579088</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1762963579088</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -279,7 +286,8 @@
     <MESSAGE value="resources and draw" />
     <MESSAGE value="draw all in one" />
     <MESSAGE value="chọn level" />
-    <option name="LAST_COMMIT_MESSAGE" value="chọn level" />
+    <MESSAGE value="fix lỗi lưu người chơi" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix lỗi lưu người chơi" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

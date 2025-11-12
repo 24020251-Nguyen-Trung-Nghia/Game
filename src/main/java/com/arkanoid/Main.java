@@ -808,8 +808,10 @@ public class Main extends Application {
             }
             case SPACE, ENTER -> {
                 if (menuIndex == 0) {
+                    // "New Player" - bắt đầu từ chọn ván
                     enterAsNewPlayer();
                 } else {
+                    // "Old Player" - vào màn hình đăng nhập
                     gameState = GameState.LOGIN_SCREEN;
                     inputUsername = "";
                     inputPassword = "";
@@ -994,17 +996,28 @@ public class Main extends Application {
         gameState = GameState.SELECT_PADLE_AND_LEVEL;
         level = 1;
         highest_level = 1;
-        showMainMenu();
+
+        // ✅ HIỂN THỊ MÀN HÌNH CHỌN VÁN TRƯỚC, RỒI ĐẾN CHỌN LEVEL
+        showBoardSelect();
     }
 
     private void attemptLogin() {
         if (checkLogin(inputUsername.trim(), inputPassword.trim())) {
+            System.out.println("✅ Đăng nhập thành công - Chuyển đến chọn level");
+
+            // ✅ THAY VÌ VÀO THẲNG GAME, CHUYỂN ĐẾN CHỌN LEVEL
             resetGame();
-            gameState = GameState.PLAYING;
-            level = 1;
-            startLevel.startLevel(level);
-            showStartHint = true;
-            renderCurrentScreen();
+            gameState = GameState.SELECT_PADLE_AND_LEVEL;
+
+            // ✅ HIỂN THỊ MÀN HÌNH CHỌN LEVEL
+            showLevelSelect();
+
+            // ✅ RESET INPUT FIELDS
+            inputUsername = "";
+            inputPassword = "";
+            enteringUsername = false;
+            enteringPassword = false;
+
         } else {
             loginFailed = true;
             inputPassword = "";
