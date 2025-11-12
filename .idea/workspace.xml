@@ -4,104 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb15add9-e5d1-41c1-b594-0fb31b1abbe8" name="Changes" comment="draw all in one">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/BoardSelectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/LevelSelectController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/MainMenuController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/GameRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="eb15add9-e5d1-41c1-b594-0fb31b1abbe8" name="Changes" comment="chọn level">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Game/players.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/controllers/GameOver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/controllers/GameOver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/controllers/StartLevel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/controllers/StartLevel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/Draw.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/DrawBackground.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/DrawBorder.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/MenuRenderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/MenuRenderer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/Update.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/graphics/Update.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/models/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/models/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/arkanoid/models/SetupBlocks.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/arkanoid/models/SetupBlocks.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/module-info.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/module-info.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid/backgroundPattern_1.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/arkanoid/backgroundPattern_1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid/copyright.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/arkanoid/copyright.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/Emulogic-zrEw.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/arkanoid_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/backgroundPattern_1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/backgroundPattern_2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/backgroundPattern_3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/backgroundPattern_4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_block.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_block.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_hard_block.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_hard_block.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_paddle.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_paddle.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/ball_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/blink_map.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_gray.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_b.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_c.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_d.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_f.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_l.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_p.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_map_bonus_s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/block_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/blueBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/bonus_block_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/borderPartVertical.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/borderPattern.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/borderVertical.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/copyright.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/cyanBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/explosion.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/explosion.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/explosion_map.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/game_over.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/game_over.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/game_start.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/game_start.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/goldBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/grayBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/greenBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/gun.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/gun.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon.icns" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon128x128.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon16x16.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon256x256.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon32x32.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/icon48x48.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/level_ready.mp3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/level_ready.wav" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/limeBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/magentaBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/molecule_map.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/open_door_map.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/orangeBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_gun.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_gun_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_std_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_wide.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddle_wide_shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddlemap_gun.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddlemap_std.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/paddlemap_wide.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/pipe.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/redBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/topDoor.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/torpedo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/upperLeftCorner.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/upperRightCorner.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/whiteBlock.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/arkanoid2/yellowBlock.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,8 +74,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/24020251-Nguyen-Trung-Nghia/Game.git&quot;,
-    &quot;accountId&quot;: &quot;273136d2-3e2c-4be2-8395-11b380c7a5ff&quot;
+    &quot;url&quot;: &quot;git@github.com:24020251-Nguyen-Trung-Nghia/Game.git&quot;,
+    &quot;accountId&quot;: &quot;be815248-d729-4f82-a122-5c50ddff854a&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -237,8 +142,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
-        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.26830.84" />
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.27397.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-IU-252.27397.103" />
       </set>
     </attachedChunks>
   </component>
@@ -272,7 +177,10 @@
       <workItem from="1762496986656" duration="969000" />
       <workItem from="1762916184724" duration="43000" />
       <workItem from="1762920452039" duration="3133000" />
-      <workItem from="1762942379506" duration="10654000" />
+      <workItem from="1762942379506" duration="11331000" />
+      <workItem from="1762960727090" duration="402000" />
+      <workItem from="1762961141116" duration="344000" />
+      <workItem from="1762961499388" duration="1988000" />
     </task>
     <task id="LOCAL-00001" summary="Tách xong">
       <option name="closed" value="true" />
@@ -338,7 +246,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762480921956</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="chọn level">
+      <option name="closed" value="true" />
+      <created>1762960001684</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1762960001684</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -362,7 +278,8 @@
     <MESSAGE value="Tối giản" />
     <MESSAGE value="resources and draw" />
     <MESSAGE value="draw all in one" />
-    <option name="LAST_COMMIT_MESSAGE" value="draw all in one" />
+    <MESSAGE value="chọn level" />
+    <option name="LAST_COMMIT_MESSAGE" value="chọn level" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

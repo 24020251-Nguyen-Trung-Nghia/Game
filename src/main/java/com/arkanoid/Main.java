@@ -262,34 +262,69 @@ public class Main extends Application {
             gameScene.setOnKeyPressed(e -> {
                 debugKeyEvent(e.getCode(), "GAME_PRESSED");
 
-                // ✅ CHỈ xử lý khi đang trong trạng thái PLAYING
-                if (gameState != GameState.PLAYING) return;
-
-                if (running) {
-                    if (movingPaddleOut) return;
-                    switch (e.getCode()) {
-                        case RIGHT, D -> {
-                            movingRight = true;
-                            movingLeft = false;
-                        }
-                        case LEFT, A -> {
-                            movingLeft = true;
-                            movingRight = false;
-                        }
-                        case SPACE -> handleSpaceKey();
-                    }
-                } else {
-                    // Nếu game chưa chạy, bấm SPACE để bắt đầu
-                    if (e.getCode() == KeyCode.SPACE && noOfLifes > 0) {
-                        startGame();
-                    }
+                // ✅ XỬ LÝ PAUSE_MENU TRƯỚC
+                if (gameState == GameState.PAUSE_MENU) {
+                    handlePauseMenuInput(e.getCode());
+                    return;
                 }
 
-                // ✅ Xử lý ESC cho pause menu
-                if (e.getCode() == KeyCode.ESCAPE) {
-                    gameState = GameState.PAUSE_MENU;
-                    pauseIndex = 0;
-                    renderCurrentScreen();
+                // ✅ XỬ LÝ SAVE_CREDENTIALS
+                if (gameState == GameState.SAVE_CREDENTIALS) {
+                    handleSaveCredentialsInput(e.getCode());
+                    return;
+                }
+
+                // ✅ Xử lý khi đang PLAYING
+                if (gameState == GameState.PLAYING) {
+                    if (running) {
+                        if (movingPaddleOut) return;
+                        switch (e.getCode()) {
+                            case RIGHT, D -> {
+                                movingRight = true;
+                                movingLeft = false;
+                            }
+                            case LEFT, A -> {
+                                movingLeft = true;
+                                movingRight = false;
+                            }
+                            case SPACE -> handleSpaceKey();
+                        }
+                    } else {
+                        if (e.getCode() == KeyCode.SPACE && noOfLifes > 0) {
+                            startGame();
+                        }
+                    }
+
+                    if (e.getCode() == KeyCode.ESCAPE) {
+                        gameState = GameState.PAUSE_MENU;
+                        pauseIndex = 0;
+                        renderCurrentScreen();
+                    }
+                }
+            });
+
+            // ✅ THÊM XỬ LÝ KEY TYPED CHO SAVE_CREDENTIALS
+            gameScene.setOnKeyTyped(e -> {
+                String ch = e.getCharacter();
+
+                if (gameState == GameState.SAVE_CREDENTIALS) {
+                    if (enteringUsername) {
+                        if ("\b".equals(ch)) {
+                            if (!inputUsername.isEmpty())
+                                inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+                        } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                            inputUsername += ch;
+                        }
+                        renderCurrentScreen();
+                    } else if (enteringPassword) {
+                        if ("\b".equals(ch)) {
+                            if (!inputPassword.isEmpty())
+                                inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+                        } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                            inputPassword += ch;
+                        }
+                        renderCurrentScreen();
+                    }
                 }
             });
 
@@ -687,17 +722,21 @@ public class Main extends Application {
     }
 
     private void handleKeyPressed(KeyEvent e) {
-        // ✅ KHÔNG xử lý key events toàn cục khi đang trong game
-        if (gameState == GameState.PLAYING) {
-            return;
-        }
-
         KeyCode code = e.getCode();
+        debugKeyEvent(code, "GLOBAL_PRESSED");
+
+        // ✅ Xử lý theo game state - CHỈ các state không phải game scene
         switch (gameState) {
             case START_MENU -> handleStartMenuInput(code);
             case LOGIN_SCREEN -> handleLoginScreenInput(code);
-            case PAUSE_MENU -> handlePauseMenuInput(code);
-            case SAVE_CREDENTIALS -> handleSaveCredentialsInput(code);
+            // ❌ BỎ QUA PAUSE_MENU và SAVE_CREDENTIALS - để game scene handler xử lý
+            case SELECT_PADLE_AND_LEVEL -> {
+                // Không xử lý ở đây, để controller riêng xử lý
+            }
+            case PLAYING, PAUSE_MENU, SAVE_CREDENTIALS -> {
+                // Các state này được xử lý bởi game scene handler
+                return;
+            }
         }
     }
 
@@ -878,12 +917,17 @@ public class Main extends Application {
         }
     }
 
-    private void handleSaveCredentialsInput(KeyCode code) {
+    public void handleSaveCredentialsInput(KeyCode code) {
+        System.out.println("💾 SAVE CREDENTIALS - Key pressed: " + code);
+        System.out.println("   - Current state: enteringUsername=" + enteringUsername + ", enteringPassword=" + enteringPassword);
+        System.out.println("   - Input: username='" + inputUsername + "', password='" + "*".repeat(inputPassword.length()) + "'");
+
         switch (code) {
             case UP -> {
                 if (enteringPassword) {
                     enteringPassword = false;
                     enteringUsername = true;
+                    System.out.println("   ↪ Chuyển sang nhập Username");
                 }
                 renderCurrentScreen();
             }
@@ -891,17 +935,35 @@ public class Main extends Application {
                 if (enteringUsername) {
                     enteringUsername = false;
                     enteringPassword = true;
+                    System.out.println("   ↪ Chuyển sang nhập Password");
                 }
                 renderCurrentScreen();
             }
             case ENTER -> {
                 if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
+                    System.out.println("✅ Lưu thông tin player");
                     savePlayer(inputUsername.trim(), inputPassword.trim());
                     exitAfterSave();
+                } else {
+                    System.out.println("❌ Username hoặc password không được để trống");
                 }
             }
             case ESCAPE -> {
+                System.out.println("⎋ Quay lại Pause Menu");
                 gameState = GameState.PAUSE_MENU;
+                renderCurrentScreen();
+            }
+            case TAB -> {
+                // Chuyển đổi giữa username và password field
+                if (enteringUsername) {
+                    enteringUsername = false;
+                    enteringPassword = true;
+                    System.out.println("   ↪ Tab: Chuyển sang nhập Password");
+                } else {
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    System.out.println("   ↪ Tab: Chuyển sang nhập Username");
+                }
                 renderCurrentScreen();
             }
         }
