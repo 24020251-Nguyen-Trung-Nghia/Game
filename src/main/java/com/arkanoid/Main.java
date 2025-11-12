@@ -650,6 +650,34 @@ public class Main extends Application {
                 level = 1;
             }
             score += 10_000;
+
+            // ✅ QUAN TRỌNG: RESET TRẠNG THÁI VÀ LOAD BLOCKS MỚI
+            running = false;
+            balls.clear();
+            blocks.clear();
+            bonusBlocks.clear();
+            enemies.clear();
+            explosions.clear();
+            torpedoes.clear();
+            blinks.clear();
+            stickyPaddle = false;
+            nextLevelDoorOpen = false;
+            movingPaddleOut = false;
+            ballSpeed = GameConstants.BALL_SPEED;
+            readyLevelVisible = false;
+            showStartHint = true;
+
+            // ✅ RESET PADDLE
+            paddle.x = GameConstants.WIDTH * 0.5 - paddleState.width * 0.5;
+            paddle.y = GameConstants.HEIGHT - GameConstants.PADDLE_OFFSET_Y;
+            paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
+
+            // ✅ LOAD BLOCKS MỚI CHO LEVEL MỚI
+            setupBlocks.setupBlocks(level);
+
+            System.out.println("🎯 Chuyển đến Level " + level + " - Đã load blocks mới");
+
+            // ✅ BẮT ĐẦU LEVEL MỚI
             startLevel.startLevel(level);
         }
     }
