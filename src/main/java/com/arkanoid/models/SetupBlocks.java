@@ -15,6 +15,7 @@ public class SetupBlocks {
     // Setup blocks for given level
     public void setupBlocks(final int level) {
         main.blocks.clear();
+        main.blockCounter = 0;
         Constants.BlockType[][] level2 = Constants.LEVEL_MAP.get(level);
         main.silverBlockMaxHits = (level % 8 == 0 ? main.silverBlockMaxHits + 1 : main.silverBlockMaxHits);
         for (int iy = 0; iy < level2.length; iy++) {

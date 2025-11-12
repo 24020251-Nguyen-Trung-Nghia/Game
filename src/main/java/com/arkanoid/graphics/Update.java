@@ -1,5 +1,6 @@
 package com.arkanoid.graphics;
 
+import com.arkanoid.config.PropertyManager;
 import com.arkanoid.models.Constants;
 import com.arkanoid.Main;
 import com.arkanoid.models.Objects.Blink;
@@ -59,8 +60,18 @@ public class Update {
             main.noOfLifes -= 1;
             if (main.noOfLifes == 0) {
                 main.gameOver.gameOver();
+                main.running = false;
+                // Cập nhật highscore nếu cần
+                if (main.score > main.highscore) {
+                    main.highscore = main.score;
+                    // Lưu highscore mới
+                    PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, main.highscore);
+                }
+            } else {
+                main.spawnBall();
+                main.running = true;
             }
-            main.spawnBall();
+            main.renderCurrentScreen();
         }
     }
 
