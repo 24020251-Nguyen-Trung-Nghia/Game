@@ -26,7 +26,8 @@ public class LevelSelectController {
 
     public LevelSelectController(Main main) {
         this.main = main;
-        if(!main.isNewPlayer) highestLevelUnlocked = PropertyManager.INSTANCE.getInt(Constants.UNLOCKED_LEVEL_KEY);
+        if(! main.isNewPlayer) highestLevelUnlocked = PropertyManager.INSTANCE.getInt(Constants.UNLOCKED_LEVEL_KEY, 1);
+        else {highestLevelUnlocked = Math.max(highestLevelUnlocked,main.level );}
         createScene();
     }
 

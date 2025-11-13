@@ -1,8 +1,6 @@
 <h1 align="center">🎮 Arkanoid Game - Object-Oriented Programming Project</h1>
 
-<p align="center">
-  <img src="docs/screenshots/gameplay.png" width="500" alt="Arkanoid Gameplay">
-</p>
+
 
 ---
 

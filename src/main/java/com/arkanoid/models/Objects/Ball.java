@@ -176,8 +176,11 @@ public class Ball extends Sprite {
                                 GameStateManager.blockCounter += 1;
                                 block.toBeRemoved = true;
                                 GameStateManager.playSound(AutoClips.ballBlockSnd);
-                                GameStateManager.bonusBlocks.add(new BonusBlock(block.x, block.y,
-                                        EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
+
+                                if (GameStateManager.blockCounter % GameConstants.BONUS_BLOCK_INTERVAL == 0) {
+                                    GameStateManager.bonusBlocks.add(new BonusBlock(block.x, block.y,
+                                            EnumDefinitions.BonusType.values()[GameConstants.RND.nextInt(EnumDefinitions.BonusType.values().length)]));
+                                }
                             }
                         }
                     }

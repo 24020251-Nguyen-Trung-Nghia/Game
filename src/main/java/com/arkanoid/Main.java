@@ -319,6 +319,7 @@ public class Main extends Application {
         running = false;
         paddleState = EnumDefinitions.PaddleState.STANDARD;
         highscore = PropertyManager.INSTANCE.getLong(Constants.HIGHSCORE_KEY, 0);
+
         level = 1;
         blinks = new ArrayList<>();
         ballSpeed = GameConstants.BALL_SPEED;
@@ -935,6 +936,27 @@ public class Main extends Application {
     }
 
     private void exitAfterSave() {
+        System.out.println("💾 Lưu game và thoát...");
+
+        // Lưu thông tin game hiện tại - sử dụng đúng các phương thức set
+        if (score > highscore) {
+            PropertyManager.INSTANCE.setLong(Constants.HIGHSCORE_KEY, score);
+            System.out.println("🏆 Đã cập nhật highscore mới: " + score);
+        }
+
+        // Lưu level đã mở khóa
+        int currentUnlocked = PropertyManager.INSTANCE.getInt(Constants.UNLOCKED_LEVEL_KEY, 1);
+        if (level > currentUnlocked) {
+            PropertyManager.INSTANCE.setInt(Constants.UNLOCKED_LEVEL_KEY, level);
+            System.out.println("🔓 Đã mở khóa level: " + level);
+        }
+
+        // LƯU PROPERTIES - QUAN TRỌNG!
+        PropertyManager.INSTANCE.storeProperties();
+
+        System.out.println("✅ Đã lưu game thành công!");
+
+
         stopAndExit();
     }
 

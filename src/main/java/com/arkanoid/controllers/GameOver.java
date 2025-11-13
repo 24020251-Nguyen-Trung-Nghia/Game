@@ -29,6 +29,7 @@ public class GameOver {
             main.highscore = main.score;
             PropertyManager.INSTANCE.storeProperties();
         }
+        PropertyManager.INSTANCE.storeProperties();
 
         // Vẽ màn hình game over
         main.gameRenderer.drawGame();
