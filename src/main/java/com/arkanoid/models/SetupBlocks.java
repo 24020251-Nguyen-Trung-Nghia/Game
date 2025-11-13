@@ -16,12 +16,12 @@ public class SetupBlocks {
     public void setupBlocks(final int level) {
         main.blocks.clear();
         main.blockCounter = 0;
-        Constants.BlockType[][] level2 = Constants.LEVEL_MAP.get(level);
+        Constants.BlockType[][] level1 = Constants.LEVEL_MAP.get(level);
         main.silverBlockMaxHits = (level % 8 == 0 ? main.silverBlockMaxHits + 1 : main.silverBlockMaxHits);
-        for (int iy = 0; iy < level2.length; iy++) {
-            for (int ix = 0; ix < level2[iy].length; ix++) {
+        for (int iy = 0; iy < level1.length; iy++) {
+            for (int ix = 0; ix < level1[iy].length; ix++) {
                 Block block;
-                final Constants.BlockType blockType = level2[iy][ix];
+                final Constants.BlockType blockType = level1[iy][ix];
                 switch (blockType) {
                     case GOLD ->
                             block = new Block(Images.goldBlockImg, GameConstants.INSET + ix * GameConstants.BLOCK_STEP_X, GameConstants.INSET + 110 + iy * GameConstants.BLOCK_STEP_Y, 0, blockType.maxHits, blockType);

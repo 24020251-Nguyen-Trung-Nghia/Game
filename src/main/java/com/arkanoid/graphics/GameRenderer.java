@@ -17,7 +17,6 @@ public class GameRenderer {
     }
 
     // ==================== BACKGROUND RENDERING ====================
-
     public void drawBackground(final int level) {
         main.bkgCtx.clearRect(0, 0, GameConstants.WIDTH, GameConstants.HEIGHT);
         main.bkgCtx.setFill(Color.BLACK);
@@ -29,13 +28,13 @@ public class GameRenderer {
         if (main.running && main.noOfLifes > 0) {
             // Game đang chạy - vẽ background level
             if (level % 4 == 0) {
-                main.bkgCtx.setFill(main.images.bkgPatternFill4);
+                main.bkgCtx.setFill(Images.bkgPatternFill4);
             } else if (level % 3 == 0) {
-                main.bkgCtx.setFill(main.images.bkgPatternFill3);
+                main.bkgCtx.setFill(Images.bkgPatternFill3);
             } else if (level % 2 == 0) {
-                main.bkgCtx.setFill(main.images.bkgPatternFill2);
+                main.bkgCtx.setFill(Images.bkgPatternFill2);
             } else {
-                main.bkgCtx.setFill(main.images.bkgPatternFill1);
+                main.bkgCtx.setFill(Images.bkgPatternFill1);
             }
             main.bkgCtx.fillRect(0, GameConstants.UPPER_INSET, GameConstants.WIDTH, GameConstants.HEIGHT);
 
@@ -57,8 +56,8 @@ public class GameRenderer {
                 main.ctx.fillText("Hit space to start", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.6);
             }
 
-            main.bkgCtx.drawImage(main.images.logoImg, (GameConstants.WIDTH - main.images.logoImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.25);
-            main.bkgCtx.drawImage(main.images.copyrightImg, (GameConstants.WIDTH - main.images.copyrightImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.75);
+            main.bkgCtx.drawImage(Images.logoImg, (GameConstants.WIDTH - Images.logoImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.25);
+            main.bkgCtx.drawImage(Images.copyrightImg, (GameConstants.WIDTH - Images.copyrightImg.getWidth()) * 0.5, GameConstants.HEIGHT * 0.75);
         }
     }
 
@@ -261,6 +260,4 @@ public class GameRenderer {
             main.ctx.fillText("READY", GameConstants.WIDTH * 0.5, GameConstants.HEIGHT * 0.65 + 2 * GameConstants.SCORE_FONT.getSize());
         }
     }
-
-
 }
