@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends Application {
     // ==================== SINGLETON INSTANCES ====================
@@ -120,66 +121,9 @@ public class Main extends Application {
         System.out.println("Đã chọn ván: " + paddleType.name());
         this.paddleState = paddleType;
         if (this.paddle != null) {
-            // Cập nhật kích thước paddle nếu đã được khởi tạo
             this.paddle.width = paddleType.width;
             this.paddle.bounds.width = paddleType.width;
         }
-    }
-
-    // ==================== KEY HANDLER FOR GAME ====================
-    private void setGameKeyHandler(Scene scene) {
-        scene.setOnKeyPressed(e -> {
-            if (running) {
-                if (movingPaddleOut) return;
-                switch (e.getCode()) {
-                    case RIGHT, D -> movePaddleRight();
-                    case LEFT, A -> movePaddleLeft();
-                    case SPACE -> handleSpaceKey();
-                }
-            } else {
-                // Nếu game chưa chạy, bấm SPACE để bắt đầu
-                if (e.getCode() == KeyCode.SPACE && noOfLifes > 0) {
-                    startGame();
-                }
-            }
-        });
-
-        scene.setOnKeyReleased(e -> {
-            switch (e.getCode()) {
-                case RIGHT, D -> movingRight = false;
-                case LEFT, A -> movingLeft = false;
-            }
-        });
-    }
-
-    private void handleSpaceKey() {
-        final long activeBalls = balls.stream().filter(ball -> ball.active).count();
-        if (activeBalls > 0) {
-            if (EnumDefinitions.PaddleState.LASER == paddleState) {
-                fire(paddle.bounds.centerX);
-            }
-        } else {
-            stickyPaddle = false;
-            balls.forEach(ball -> {
-                ball.active = true;
-                ball.bornTimestamp = Instant.now().getEpochSecond();
-            });
-        }
-    }
-
-    private void startGame() {
-        running = true;
-        stickyPaddle = false;
-
-        if (balls.isEmpty()) {
-            spawnBall();
-        } else {
-            balls.forEach(ball -> {
-                ball.active = true;
-                ball.bornTimestamp = Instant.now().getEpochSecond();
-            });
-        }
-        renderCurrentScreen();
     }
 
     // ==================== MENU NAVIGATION METHODS ====================
@@ -189,11 +133,6 @@ public class Main extends Application {
             mainScene = mainMenuController.getScene();
             primaryStage.setScene(mainScene);
             primaryStage.setTitle("Arkanoid - Menu");
-
-            // Tắt handler phím của game
-            mainScene.setOnKeyPressed(null);
-            mainScene.setOnKeyReleased(null);
-
             System.out.println("Hiển thị Main Menu");
         } catch (Exception e) {
             System.err.println("Lỗi khi hiển thị Main Menu:");
@@ -207,7 +146,6 @@ public class Main extends Application {
             mainScene = boardSelectController.getScene();
             primaryStage.setScene(mainScene);
             primaryStage.setTitle("Arkanoid - Chọn Ván");
-
             System.out.println("Hiển thị Board Select");
         } catch (Exception e) {
             System.err.println("Lỗi khi hiển thị Board Select:");
@@ -221,7 +159,6 @@ public class Main extends Application {
             mainScene = levelSelectController.getScene();
             primaryStage.setScene(mainScene);
             primaryStage.setTitle("Arkanoid - Chọn Level");
-
             System.out.println("Hiển thị Level Select");
         } catch (Exception e) {
             System.err.println("Lỗi khi hiển thị Level Select:");
@@ -229,135 +166,68 @@ public class Main extends Application {
         }
     }
 
-
-    private void debugKeyEvent(KeyCode code, String type) {
-        System.out.println("🔑 " + type + ": " + code +
-                " | GameState: " + gameState +
-                " | Running: " + running +
-                " | MovingLeft: " + movingLeft +
-                " | MovingRight: " + movingRight);
-    }
-
     public void showGameSceneAndStart(int selectedLevel) {
         try {
             this.level = selectedLevel;
 
-            // ✅ TẠO MỘT StackPane MỚI mỗi lần vào game
             StackPane newGameRootPane = new StackPane();
 
-            // ✅ Khởi tạo canvas nếu chưa có
             if (bkgCanvas == null || canvas == null || brdrCanvas == null) {
                 setupCanvas();
             }
 
-            // ✅ Thêm canvas vào StackPane mới
             newGameRootPane.getChildren().clear();
             newGameRootPane.getChildren().addAll(bkgCanvas, canvas, brdrCanvas);
             newGameRootPane.setAlignment(Pos.CENTER);
 
-            // ✅ LUÔN tạo Scene mới để tránh conflict
             Scene gameScene = new Scene(newGameRootPane, GameConstants.WIDTH, GameConstants.HEIGHT);
 
-            // ✅ QUAN TRỌNG: XÓA tất cả key handlers cũ và chỉ dùng DIRECT HANDLERS
+            // Input handling đơn giản
             gameScene.setOnKeyPressed(e -> {
-                debugKeyEvent(e.getCode(), "GAME_PRESSED");
-
-                // ✅ XỬ LÝ PAUSE_MENU TRƯỚC
                 if (gameState == GameState.PAUSE_MENU) {
                     handlePauseMenuInput(e.getCode());
                     return;
                 }
 
-                // ✅ XỬ LÝ SAVE_CREDENTIALS
                 if (gameState == GameState.SAVE_CREDENTIALS) {
                     handleSaveCredentialsInput(e.getCode());
                     return;
                 }
 
-                // ✅ Xử lý khi đang PLAYING
                 if (gameState == GameState.PLAYING) {
-                    if (running) {
-                        if (movingPaddleOut) return;
-                        switch (e.getCode()) {
-                            case RIGHT, D -> {
-                                movingRight = true;
-                                movingLeft = false;
-                            }
-                            case LEFT, A -> {
-                                movingLeft = true;
-                                movingRight = false;
-                            }
-                            case SPACE -> handleSpaceKey();
-                        }
-                    } else {
-                        if (e.getCode() == KeyCode.SPACE && noOfLifes > 0) {
-                            startGame();
-                        }
-                    }
-
-                    if (e.getCode() == KeyCode.ESCAPE) {
-                        gameState = GameState.PAUSE_MENU;
-                        pauseIndex = 0;
-                        renderCurrentScreen();
-                    }
-                }
-            });
-
-            // ✅ THÊM XỬ LÝ KEY TYPED CHO SAVE_CREDENTIALS
-            gameScene.setOnKeyTyped(e -> {
-                String ch = e.getCharacter();
-
-                if (gameState == GameState.SAVE_CREDENTIALS) {
-                    if (enteringUsername) {
-                        if ("\b".equals(ch)) {
-                            if (!inputUsername.isEmpty())
-                                inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
-                        } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                            inputUsername += ch;
-                        }
-                        renderCurrentScreen();
-                    } else if (enteringPassword) {
-                        if ("\b".equals(ch)) {
-                            if (!inputPassword.isEmpty())
-                                inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
-                        } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                            inputPassword += ch;
-                        }
-                        renderCurrentScreen();
-                    }
+                    handlePlayingInput(e.getCode());
                 }
             });
 
             gameScene.setOnKeyReleased(e -> {
-                debugKeyEvent(e.getCode(), "GAME_RELEASED");
-
-                // ✅ CHỈ xử lý khi đang trong trạng thái PLAYING
-                if (gameState != GameState.PLAYING) return;
-
-                switch (e.getCode()) {
-                    case RIGHT, D -> movingRight = false;
-                    case LEFT, A -> movingLeft = false;
+                if (gameState == GameState.PLAYING) {
+                    switch (e.getCode()) {
+                        case RIGHT, D -> movingRight = false;
+                        case LEFT, A -> movingLeft = false;
+                    }
                 }
             });
 
-            // ✅ THÊM MOUSE HANDLER cho canvas
-            canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
+            // Thêm xử lý key typed cho nhập văn bản
+            gameScene.setOnKeyTyped(e -> {
+                if (gameState == GameState.SAVE_CREDENTIALS) {
+                    handleSaveCredentialsKeyTyped(e.getCharacter());
+                } else if (gameState == GameState.LOGIN_SCREEN) {
+                    handleLoginScreenKeyTyped(e.getCharacter());
+                }
+            });
 
-            // ✅ ĐẢM BẢO FOCUS
+            canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseHandler);
             canvas.setFocusTraversable(true);
             newGameRootPane.setFocusTraversable(true);
 
             primaryStage.setScene(gameScene);
             primaryStage.setTitle("Arkanoid - Level " + selectedLevel);
-
-            // ✅ CẬP NHẬT GAME STATE QUAN TRỌNG
             gameState = GameState.PLAYING;
 
-            // Reset và bắt đầu game
             resetGameForNewLevel();
             setupBlocks.setupBlocks(selectedLevel);
 
-            // ✅ REQUEST FOCUS SAU KHI SCENE ĐƯỢC SHOW
             Platform.runLater(() -> {
                 newGameRootPane.requestFocus();
                 gameRenderer.drawBackground(selectedLevel);
@@ -367,8 +237,6 @@ public class Main extends Application {
             });
 
             System.out.println("🎮 Bắt đầu Level " + selectedLevel);
-            System.out.println("🔧 Game state: " + gameState);
-            System.out.println("🎯 Key handler trực tiếp đã được kích hoạt");
 
         } catch (Exception e) {
             System.err.println("Lỗi khi bắt đầu game:");
@@ -411,10 +279,7 @@ public class Main extends Application {
         readyLevelVisible = false;
         showStartHint = true;
 
-        // Khởi tạo lại paddle
         paddle = new Paddle(this);
-
-        // Đảm bảo paddle có vị trí hợp lệ
         paddle.x = GameConstants.WIDTH * 0.5 - paddleState.width * 0.5;
         paddle.y = GameConstants.HEIGHT - GameConstants.PADDLE_OFFSET_Y;
         paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
@@ -551,31 +416,13 @@ public class Main extends Application {
                 case TOP_RIGHT -> topRightDoorAlpha = 0.99;
             }
         }
-
         updateCounters();
     }
 
     private void updateCounters() {
-        if (paddleResetCounter > 0) {
-            paddleResetCounter--;
-            if (paddleResetCounter == 0) {
-                paddleState = EnumDefinitions.PaddleState.STANDARD;
-            }
-        }
-        if (speedResetCounter > 0) {
-            speedResetCounter--;
-            if (speedResetCounter == 0) {
-                ballSpeed = GameConstants.BALL_SPEED;
-            }
-        }
-        if (nextLevelDoorCounter > 0) {
-            nextLevelDoorCounter--;
-            if (nextLevelDoorCounter == 0 && !movingPaddleOut) {
-                nextLevelDoorAlpha = 1.0;
-                nextLevelDoorOpen = false;
-                gameRenderer.drawBorder();
-            }
-        }
+        if (paddleResetCounter > 0) paddleResetCounter--;
+        if (speedResetCounter > 0) speedResetCounter--;
+        if (nextLevelDoorCounter > 0) nextLevelDoorCounter--;
     }
 
     private void updateAnimations(long now) {
@@ -624,12 +471,40 @@ public class Main extends Application {
             if (nextLevelDoorOpen) {
                 gameRenderer.drawBorder();
             }
+
+            // Kiểm tra hoàn thành level
+            if (isDestroyAll() && running && !movingPaddleOut) {
+                handleLevelCompleted();
+            }
+
             lastTimerCall = now;
         }
 
         if (movingPaddleOut) {
             handlePaddleExit();
         }
+    }
+
+    // Phương thức kiểm tra hoàn thành level
+    public boolean isDestroyAll() {
+        for(Block b : blocks) {
+            if (!b.blockType.equals(Constants.BlockType.GOLD)) return false;
+        }
+        return true;
+    }
+
+    private void handleLevelCompleted() {
+        System.out.println("🎉 Đã phá hết gạch ở Level " + level);
+        running = false;
+        unlockNextLevel(level);
+
+        // Chuyển về chọn level sau 2 giây
+        executor.schedule(() -> {
+            Platform.runLater(() -> {
+                System.out.println("🔄 Chuyển về màn hình chọn level");
+                showLevelSelect();
+            });
+        }, 2, TimeUnit.SECONDS);
     }
 
     private void handlePaddleMovement() {
@@ -646,12 +521,9 @@ public class Main extends Application {
         if (paddle.x > GameConstants.WIDTH) {
             unlockNextLevel(level);
             level++;
-            if (level > Constants.LEVEL_MAP.size()) {
-                level = 1;
-            }
+            if (level > Constants.LEVEL_MAP.size()) level = 1;
             score += 10_000;
 
-            // ✅ QUAN TRỌNG: RESET TRẠNG THÁI VÀ LOAD BLOCKS MỚI
             running = false;
             balls.clear();
             blocks.clear();
@@ -667,17 +539,11 @@ public class Main extends Application {
             readyLevelVisible = false;
             showStartHint = true;
 
-            // ✅ RESET PADDLE
             paddle.x = GameConstants.WIDTH * 0.5 - paddleState.width * 0.5;
             paddle.y = GameConstants.HEIGHT - GameConstants.PADDLE_OFFSET_Y;
             paddle.bounds.set(paddle.x, paddle.y, paddleState.width, paddle.height);
 
-            // ✅ LOAD BLOCKS MỚI CHO LEVEL MỚI
             setupBlocks.setupBlocks(level);
-
-            System.out.println("🎯 Chuyển đến Level " + level + " - Đã load blocks mới");
-
-            // ✅ BẮT ĐẦU LEVEL MỚI
             startLevel.startLevel(level);
         }
     }
@@ -689,49 +555,177 @@ public class Main extends Application {
         }
     }
 
-    private void loadResources() {
-        Images.loadImages(this);
-        AutoClips.loadSounds(this);
-        ensurePlayerFileExists();
+    // ==================== INPUT HANDLING METHODS ====================
+    private void handlePlayingInput(KeyCode code) {
+        if (code == KeyCode.ESCAPE) {
+            gameState = GameState.PAUSE_MENU;
+            pauseIndex = 0;
+            renderCurrentScreen();
+            return;
+        }
+
+        // Khi game over hoặc hoàn thành level, bấm SPACE để quay lại chọn level
+        if ((noOfLifes == 0 || isDestroyAll()) && code == KeyCode.SPACE) {
+            showLevelSelect();
+            return;
+        }
+
+        if (!running && !movingPaddleOut && noOfLifes > 0) {
+            if (code == KeyCode.SPACE) {
+                startGame();
+                return;
+            }
+        }
+
+        if (running && !movingPaddleOut) {
+            switch (code) {
+                case RIGHT, D -> movingRight = true;
+                case LEFT, A -> movingLeft = true;
+                case SPACE -> handleSpaceKey();
+            }
+        }
     }
 
-    private void initializeGameObjects() {
-        paddle = new Paddle(this);
-        balls = new CopyOnWriteArrayList<>();
-        blocks = new CopyOnWriteArrayList<>();
-        bonusBlocks = new CopyOnWriteArrayList<>();
-        enemies = new CopyOnWriteArrayList<>();
-        explosions = new CopyOnWriteArrayList<>();
-        torpedoes = new CopyOnWriteArrayList<>();
-        noOfLifes = 3;
-        score = 0;
+    private void handleSpaceKey() {
+        final long activeBalls = balls.stream().filter(ball -> ball.active).count();
+        if (activeBalls > 0) {
+            if (EnumDefinitions.PaddleState.LASER == paddleState) {
+                fire(paddle.bounds.centerX);
+            }
+        } else {
+            stickyPaddle = false;
+            balls.forEach(ball -> {
+                ball.active = true;
+                ball.bornTimestamp = Instant.now().getEpochSecond();
+            });
+        }
     }
 
-    // ==================== KEYBOARD INPUT HANDLING ====================
+    private void startGame() {
+        running = true;
+        stickyPaddle = false;
+
+        if (balls.isEmpty()) {
+            spawnBall();
+        } else {
+            balls.forEach(ball -> {
+                ball.active = true;
+                ball.bornTimestamp = Instant.now().getEpochSecond();
+            });
+        }
+        renderCurrentScreen();
+    }
+
+    private void handlePauseMenuInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                pauseIndex = (pauseIndex - 1 + 2) % 2;
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                pauseIndex = (pauseIndex + 1) % 2;
+                renderCurrentScreen();
+            }
+            case SPACE, ENTER -> {
+                if (pauseIndex == 1) {
+                    exitWithoutSave();
+                } else {
+                    gameState = GameState.SAVE_CREDENTIALS;
+                    inputUsername = "";
+                    inputPassword = "";
+                    enteringUsername = true;
+                    enteringPassword = false;
+                    renderCurrentScreen();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PLAYING;
+                renderCurrentScreen();
+            }
+        }
+    }
+
+    public void handleSaveCredentialsInput(KeyCode code) {
+        switch (code) {
+            case UP -> {
+                if (enteringPassword) {
+                    enteringPassword = false;
+                    enteringUsername = true;
+                }
+                renderCurrentScreen();
+            }
+            case DOWN -> {
+                if (enteringUsername) {
+                    enteringUsername = false;
+                    enteringPassword = true;
+                }
+                renderCurrentScreen();
+            }
+            case ENTER -> {
+                if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
+                    savePlayer(inputUsername.trim(), inputPassword.trim());
+                    exitAfterSave();
+                }
+            }
+            case ESCAPE -> {
+                gameState = GameState.PAUSE_MENU;
+                renderCurrentScreen();
+            }
+            case TAB -> {
+                if (enteringUsername) {
+                    enteringUsername = false;
+                    enteringPassword = true;
+                } else {
+                    enteringUsername = true;
+                    enteringPassword = false;
+                }
+                renderCurrentScreen();
+            }
+        }
+    }
+
+    private void handleSaveCredentialsKeyTyped(String ch) {
+        if (enteringUsername) {
+            if ("\b".equals(ch)) {
+                if (!inputUsername.isEmpty())
+                    inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+            } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                inputUsername += ch;
+            }
+            renderCurrentScreen();
+        } else if (enteringPassword) {
+            if ("\b".equals(ch)) {
+                if (!inputPassword.isEmpty())
+                    inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+            } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                inputPassword += ch;
+            }
+            renderCurrentScreen();
+        }
+    }
+
+    // ==================== GLOBAL INPUT HANDLING ====================
     @Override
     public void start(final Stage stage) {
         this.primaryStage = stage;
         gameStartTime = Instant.now();
 
-        // ✅ FIX: Khởi tạo gameRootPane và canvas ngay từ đầu
-        setupCanvas(); // Đảm bảo canvas được tạo
+        setupCanvas();
         if (gameRootPane.getChildren().isEmpty()) {
             initializeGameRootPane();
         }
 
-        // ✅ Tạo scene với gameRootPane
         mainScene = new Scene(gameRootPane, GameConstants.WIDTH, GameConstants.HEIGHT);
 
-        mainScene.setOnKeyPressed(this::handleKeyPressed);
-        mainScene.setOnKeyReleased(this::handleKeyReleased);
-        mainScene.setOnKeyTyped(this::handleKeyTyped);
+        mainScene.setOnKeyPressed(this::handleGlobalKeyPressed);
+        mainScene.setOnKeyReleased(this::handleGlobalKeyReleased);
+        mainScene.setOnKeyTyped(this::handleGlobalKeyTyped);
 
         stage.setTitle("Arkanoid");
         stage.setScene(mainScene);
         stage.show();
         stage.setResizable(false);
 
-        // ✅ FIX: Render sau khi stage.show()
         Platform.runLater(() -> {
             if (gameState.equals(GameState.START_MENU)) {
                 MenuRenderer.renderStartMenu(this, menuIndex);
@@ -749,81 +743,43 @@ public class Main extends Application {
         Platform.exit();
     }
 
-    private void handleKeyPressed(KeyEvent e) {
+    private void handleGlobalKeyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
-        debugKeyEvent(code, "GLOBAL_PRESSED");
 
-        // ✅ Xử lý theo game state - CHỈ các state không phải game scene
         switch (gameState) {
             case START_MENU -> handleStartMenuInput(code);
             case LOGIN_SCREEN -> handleLoginScreenInput(code);
-            // ❌ BỎ QUA PAUSE_MENU và SAVE_CREDENTIALS - để game scene handler xử lý
             case SELECT_PADLE_AND_LEVEL -> {
                 // Không xử lý ở đây, để controller riêng xử lý
             }
-            case PLAYING, PAUSE_MENU, SAVE_CREDENTIALS -> {
-                // Các state này được xử lý bởi game scene handler
-                return;
+            // Các state PLAYING, PAUSE_MENU, SAVE_CREDENTIALS được xử lý trong game scene
+        }
+    }
+
+    private void handleGlobalKeyReleased(KeyEvent e) {
+        // Chỉ xử lý khi không ở trong game
+        if (gameState != GameState.PLAYING) {
+            KeyCode code = e.getCode();
+            if (gameState == GameState.PLAYING) {
+                switch (code) {
+                    case RIGHT, D -> movingRight = false;
+                    case LEFT, A -> movingLeft = false;
+                }
             }
         }
     }
 
-    private void handleKeyReleased(KeyEvent e) {
-        // ✅ KHÔNG xử lý key events toàn cục khi đang trong game
-        if (gameState == GameState.PLAYING) {
-            return;
-        }
-        KeyCode code = e.getCode();
-        if (gameState == GameState.PLAYING) {
-            switch (code) {
-                case RIGHT, D -> movingRight = false;
-                case LEFT, A -> movingLeft = false;
-            }
-        }
-    }
-
-    private void handleKeyTyped(KeyEvent e) {
+    private void handleGlobalKeyTyped(KeyEvent e) {
         String ch = e.getCharacter();
+
         if (gameState == GameState.LOGIN_SCREEN) {
-            if (enteringUsername) {
-                if ("\b".equals(ch)) {
-                    if (!inputUsername.isEmpty())
-                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputUsername += ch;
-                }
-                renderCurrentScreen();
-            } else if (enteringPassword) {
-                if ("\b".equals(ch)) {
-                    if (!inputPassword.isEmpty())
-                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputPassword += ch;
-                }
-                renderCurrentScreen();
-            }
+            handleLoginScreenKeyTyped(ch);
         } else if (gameState == GameState.SAVE_CREDENTIALS) {
-            if (enteringUsername) {
-                if ("\b".equals(ch)) {
-                    if (!inputUsername.isEmpty())
-                        inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputUsername += ch;
-                }
-                renderCurrentScreen();
-            } else if (enteringPassword) {
-                if ("\b".equals(ch)) {
-                    if (!inputPassword.isEmpty())
-                        inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
-                } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
-                    inputPassword += ch;
-                }
-                renderCurrentScreen();
-            }
+            handleSaveCredentialsKeyTyped(ch);
         }
     }
 
-    // ==================== INPUT HANDLING METHODS ====================
+    // ==================== MENU INPUT HANDLING ====================
     private void handleStartMenuInput(KeyCode code) {
         switch (code) {
             case UP -> {
@@ -836,10 +792,8 @@ public class Main extends Application {
             }
             case SPACE, ENTER -> {
                 if (menuIndex == 0) {
-                    // "New Player" - bắt đầu từ chọn ván
                     enterAsNewPlayer();
                 } else {
-                    // "Old Player" - vào màn hình đăng nhập
                     gameState = GameState.LOGIN_SCREEN;
                     inputUsername = "";
                     inputPassword = "";
@@ -887,115 +841,23 @@ public class Main extends Application {
         }
     }
 
-    private void handlePlayingInput(KeyCode code) {
-        if (code == KeyCode.ESCAPE) {
-            gameState = GameState.PAUSE_MENU;
-            pauseIndex = 0;
+    private void handleLoginScreenKeyTyped(String ch) {
+        if (enteringUsername) {
+            if ("\b".equals(ch)) {
+                if (!inputUsername.isEmpty())
+                    inputUsername = inputUsername.substring(0, inputUsername.length() - 1);
+            } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                inputUsername += ch;
+            }
             renderCurrentScreen();
-            return;
-        }
-
-        // SỬA QUAN TRỌNG: Khi game over (noOfLifes == 0), bấm SPACE để quay lại chọn level
-        if (noOfLifes == 0 && code == KeyCode.SPACE) {
-            showLevelSelect();
-            return;
-        }
-
-        if (!running && !movingPaddleOut && noOfLifes > 0) {
-            // Nếu game chưa chạy nhưng vẫn còn mạng, bấm SPACE để bắt đầu
-            if (code == KeyCode.SPACE) {
-                startGame();
-                return;
+        } else if (enteringPassword) {
+            if ("\b".equals(ch)) {
+                if (!inputPassword.isEmpty())
+                    inputPassword = inputPassword.substring(0, inputPassword.length() - 1);
+            } else if (!"\r".equals(ch) && !"\n".equals(ch)) {
+                inputPassword += ch;
             }
-        }
-
-        if (running && !movingPaddleOut) {
-            switch (code) {
-                case RIGHT, D -> movingRight = true;
-                case LEFT, A -> movingLeft = true;
-                case SPACE -> handleSpaceKey();
-            }
-        }
-    }
-
-    private void handlePauseMenuInput(KeyCode code) {
-        switch (code) {
-            case UP -> {
-                pauseIndex = (pauseIndex - 1 + 2) % 2;
-                renderCurrentScreen();
-            }
-            case DOWN -> {
-                pauseIndex = (pauseIndex + 1) % 2;
-                renderCurrentScreen();
-            }
-            case SPACE, ENTER -> {
-                if (pauseIndex == 1) {
-                    exitWithoutSave();
-                } else {
-                    gameState = GameState.SAVE_CREDENTIALS;
-                    inputUsername = "";
-                    inputPassword = "";
-                    enteringUsername = true;
-                    enteringPassword = false;
-                    renderCurrentScreen();
-                }
-            }
-            case ESCAPE -> {
-                gameState = GameState.PLAYING;
-                renderCurrentScreen();
-            }
-        }
-    }
-
-    public void handleSaveCredentialsInput(KeyCode code) {
-        System.out.println("💾 SAVE CREDENTIALS - Key pressed: " + code);
-        System.out.println("   - Current state: enteringUsername=" + enteringUsername + ", enteringPassword=" + enteringPassword);
-        System.out.println("   - Input: username='" + inputUsername + "', password='" + "*".repeat(inputPassword.length()) + "'");
-
-        switch (code) {
-            case UP -> {
-                if (enteringPassword) {
-                    enteringPassword = false;
-                    enteringUsername = true;
-                    System.out.println("   ↪ Chuyển sang nhập Username");
-                }
-                renderCurrentScreen();
-            }
-            case DOWN -> {
-                if (enteringUsername) {
-                    enteringUsername = false;
-                    enteringPassword = true;
-                    System.out.println("   ↪ Chuyển sang nhập Password");
-                }
-                renderCurrentScreen();
-            }
-            case ENTER -> {
-                if (!inputUsername.isBlank() && !inputPassword.isBlank()) {
-                    System.out.println("✅ Lưu thông tin player");
-                    savePlayer(inputUsername.trim(), inputPassword.trim());
-                    exitAfterSave();
-                } else {
-                    System.out.println("❌ Username hoặc password không được để trống");
-                }
-            }
-            case ESCAPE -> {
-                System.out.println("⎋ Quay lại Pause Menu");
-                gameState = GameState.PAUSE_MENU;
-                renderCurrentScreen();
-            }
-            case TAB -> {
-                // Chuyển đổi giữa username và password field
-                if (enteringUsername) {
-                    enteringUsername = false;
-                    enteringPassword = true;
-                    System.out.println("   ↪ Tab: Chuyển sang nhập Password");
-                } else {
-                    enteringUsername = true;
-                    enteringPassword = false;
-                    System.out.println("   ↪ Tab: Chuyển sang nhập Username");
-                }
-                renderCurrentScreen();
-            }
+            renderCurrentScreen();
         }
     }
 
@@ -1024,28 +886,19 @@ public class Main extends Application {
         gameState = GameState.SELECT_PADLE_AND_LEVEL;
         level = 1;
         highest_level = 1;
-
-        // ✅ HIỂN THỊ MÀN HÌNH CHỌN VÁN TRƯỚC, RỒI ĐẾN CHỌN LEVEL
         showBoardSelect();
     }
 
     private void attemptLogin() {
         if (checkLogin(inputUsername.trim(), inputPassword.trim())) {
             System.out.println("✅ Đăng nhập thành công - Chuyển đến chọn level");
-
-            // ✅ THAY VÌ VÀO THẲNG GAME, CHUYỂN ĐẾN CHỌN LEVEL
             resetGame();
             gameState = GameState.SELECT_PADLE_AND_LEVEL;
-
-            // ✅ HIỂN THỊ MÀN HÌNH CHỌN LEVEL
             showLevelSelect();
-
-            // ✅ RESET INPUT FIELDS
             inputUsername = "";
             inputPassword = "";
             enteringUsername = false;
             enteringPassword = false;
-
         } else {
             loginFailed = true;
             inputPassword = "";
@@ -1073,10 +926,7 @@ public class Main extends Application {
         readyLevelVisible = false;
         showStartHint = false;
 
-        // Khởi tạo lại paddle
         paddle = new Paddle(this);
-
-        // QUAN TRỌNG: Setup lại blocks cho level hiện tại
         setupBlocks.setupBlocks(level);
     }
 
@@ -1108,9 +958,7 @@ public class Main extends Application {
     }
 
     private void fire(final double x) {
-        if (!torpedoes.isEmpty()) {
-            return;
-        }
+        if (!torpedoes.isEmpty()) return;
         torpedoes.add(new Torpedo(Images.torpedoImg, x, GameConstants.HEIGHT - 50));
         playSound(AutoClips.laserSnd);
     }
@@ -1134,15 +982,9 @@ public class Main extends Application {
     }
 
     public void spawnBall() {
-        if (!balls.isEmpty()) {
-            return;
-        }
+        if (!balls.isEmpty()) return;
         balls.add(new Ball(this, Images.ballImg, paddle.bounds.centerX, paddle.bounds.minY - Images.ballImg.getHeight() * 0.5 - 1, (GameConstants.RND.nextDouble() * (2 * ballSpeed) - ballSpeed)));
-
-        // Đảm bảo running được set đúng khi spawn ball mới
-        if (noOfLifes > 0) {
-            running = true;
-        }
+        if (noOfLifes > 0) running = true;
     }
 
     public void startScreen() {
@@ -1151,6 +993,24 @@ public class Main extends Application {
         gameRenderer.drawBorder();
     }
 
+    // ==================== RESOURCE MANAGEMENT ====================
+    private void loadResources() {
+        Images.loadImages(this);
+        AutoClips.loadSounds(this);
+        ensurePlayerFileExists();
+    }
+
+    private void initializeGameObjects() {
+        paddle = new Paddle(this);
+        balls = new CopyOnWriteArrayList<>();
+        blocks = new CopyOnWriteArrayList<>();
+        bonusBlocks = new CopyOnWriteArrayList<>();
+        enemies = new CopyOnWriteArrayList<>();
+        explosions = new CopyOnWriteArrayList<>();
+        torpedoes = new CopyOnWriteArrayList<>();
+        noOfLifes = 3;
+        score = 0;
+    }
     // ==================== PLAYER MANAGEMENT ====================
     private void ensurePlayerFileExists() {
         try {
