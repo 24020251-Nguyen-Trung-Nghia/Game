@@ -8,12 +8,12 @@
 
 ## 👥 Author
 **Group [Số nhóm] – Class [Mã lớp]**
-1. [Nguyễn Trung Nghĩa] – [24020]
+1. [Nguyễn Trung Nghĩa] – [24020251]
 2. [Nguyễn Huy Trọng] – [24020332]
 3. [Nguyễn Xuân Tiến] – [24020323]
 
 
-**Instructor:** [Tên giảng viên]  
+**Instructor:** [Kiều Văn Tuyên , Vũ Minh Hiếu]  
 **Semester:** [HK1 – Năm học 2025-2026]
 
 ---
@@ -85,9 +85,9 @@ The game runs on **three threads** to ensure smooth performance and responsivene
 | `←` or `A` | Move paddle left |
 | `→` or `D` | Move paddle right |
 | `SPACE` | Launch ball / Shoot laser |
-| `P` or `ESC` | Pause game |
-| `R` | Restart game |
-| `Q` | Quit to menu |
+|  `ESC` | Pause game |
+
+|
 
 ### How to Play
 1. **Start the game**: Click "New Game" from the main menu.
@@ -112,11 +112,14 @@ The game runs on **three threads** to ensure smooth performance and responsivene
 
 
 ### Scoring System
-- Normal Brick: 100 points
-- Strong Brick: 300 points
-- Explosive Brick: 500 points + nearby bricks
-- Power-up Collection: 50 points
-- Combo Multiplier: x2, x3, x4... for consecutive hits
+- Gray Block, goldblock : 0 point
+- WhiteBlock : 10 points
+- Orange Block : 60 points
+- Lime Block : 70 points
+- Ruby Block : 80 points
+- Blue Block : 90 points
+- MGNT Block : 100 points
+- Yellow Block : 110 points
 
 ---
 
