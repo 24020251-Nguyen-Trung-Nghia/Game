@@ -40,7 +40,7 @@ public class Constants {
     protected static final BlockType[][] LEVEL_1 =
             {{BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE},
                     {BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE, BlockType.NONE},
-                    {BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY},
+                    {BlockType.GOLD, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY, BlockType.GRAY},
                     {BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY, BlockType.RUBY},
                     {BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW, BlockType.YLLW},
                     {BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE, BlockType.BLUE},

@@ -55,6 +55,7 @@ dependencies {
     implementation "org.openjfx:javafx-controls:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-media:${javafxVersion}:${platform}"
     implementation "org.openjfx:javafx-fxml:${javafxVersion}:${platform}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
 
